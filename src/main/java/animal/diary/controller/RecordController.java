@@ -19,7 +19,7 @@ public class RecordController {
 
     @PostMapping("/weight")
     public ResponseEntity<ResponseDTO<RecordResponseDTO>> recordWeight(@RequestBody RecordNumberDTO dto) {
-        RecordResponseDTO result = recordService.record(dto, "weight");
+        RecordResponseDTO result = recordService.recordWeight(dto);
 
         return ResponseEntity
                 .status(SuccessCode.SUCCESS_SAVE_WEIGHT.getStatus().value())
@@ -35,6 +35,12 @@ public class RecordController {
                 .body(new ResponseDTO<>(SuccessCode.SUCCESS_GET_WEIGHT_BY_DATE, result));
     }
 
+    @PostMapping("/energy")
+    public ResponseEntity<ResponseDTO<RecordResponseDTO>> recordEnergy(@RequestBody RecordNumberDTO dto) {
+        RecordResponseDTO result = recordService.recordEnergy(dto);
 
-
+        return ResponseEntity
+                .status(SuccessCode.SUCCESS_SAVE_ENERGY.getStatus().value())
+                .body(new ResponseDTO<>(SuccessCode.SUCCESS_SAVE_ENERGY, result));
+    }
 }

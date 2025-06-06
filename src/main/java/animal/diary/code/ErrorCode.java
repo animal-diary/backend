@@ -37,6 +37,7 @@ public enum ErrorCode {
     GENDER_INVALID(HttpStatus.NOT_ACCEPTABLE, "성별을 잘못 입력했습니다."),
     HEALTH_INVALID(HttpStatus.NOT_ACCEPTABLE, "건강 상태를 잘못 입력했습니다."),
     NEUTERED_INVALID(HttpStatus.NOT_ACCEPTABLE, "중성화 여부를 잘못 입력했습니다."),
+    STATE_INVALID(HttpStatus.NOT_ACCEPTABLE, "상태를 잘못 입력했습니다."),
     DATE_INVALID(HttpStatus.NOT_ACCEPTABLE, "오늘보다 미래의 날짜를 선택할 수 없습니다."),
 
     /**
