@@ -83,6 +83,13 @@ public class GlobalExceptionHandler {
                 .body(new ErrorResponseDTO(ErrorCode.DATE_INVALID));
     }
 
+    @ExceptionHandler(InvalidStateException.class)
+    protected ResponseEntity<ErrorResponseDTO> handleInvalidState(final InvalidStateException e) {
+        return ResponseEntity
+                .status(ErrorCode.STATE_INVALID.getStatus().value())
+                .body(new ErrorResponseDTO(ErrorCode.STATE_INVALID));
+    }
+
     @ExceptionHandler(EmptyListException.class)
     protected ResponseEntity<ResponseDTO<List<Object>>> handleEmptyList(final EmptyListException e) {
         return ResponseEntity
