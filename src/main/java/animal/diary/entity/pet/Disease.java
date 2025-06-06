@@ -1,6 +1,9 @@
 package animal.diary.entity.pet;
 
+import animal.diary.exception.DiseaseInvalidException;
 import lombok.Getter;
+
+import java.util.Arrays;
 
 @Getter
 public enum Disease {
@@ -19,4 +22,10 @@ public enum Disease {
         this.koreanName = koreanName;
     }
 
+    public static Disease fromString(String value) {
+        return Arrays.stream(Disease.values())
+                .filter(d -> d.name().equalsIgnoreCase(value) || d.koreanName.equals(value))
+                .findFirst()
+                .orElseThrow(() -> new DiseaseInvalidException("Invalid disease value: " + value));
+    }
 }
