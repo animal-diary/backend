@@ -68,5 +68,11 @@ public class GlobalExceptionHandler {
                 .body(new ErrorResponseDTO(ErrorCode.HEALTH_INVALID));
     }
 
+    @ExceptionHandler(PetNotFoundException.class)
+    protected ResponseEntity<ErrorResponseDTO> handlePetNotFound(final PetNotFoundException e) {
+        return ResponseEntity
+                .status(ErrorCode.PET_NOT_FOUND.getStatus().value())
+                .body(new ErrorResponseDTO(ErrorCode.PET_NOT_FOUND));
+    }
 
 }

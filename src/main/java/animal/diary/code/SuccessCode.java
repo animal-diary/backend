@@ -26,6 +26,12 @@ public enum SuccessCode {
     SUCCESS_SAVE_STRATEGY_EFFECT(HttpStatus.OK, "전략에 대한 효과를 저장했습니다"),
     SUCCESS_SAVE_RECOMMEND_STRATEGY(HttpStatus.OK, "추천한 전략을 저장했습니다."),
 
+    /**
+     * record
+     * */
+    SUCCESS_SAVE_WEIGHT(HttpStatus.CREATED, "몸무게를 성공적으로 등록했습니다."),
+
+
     ;
     private final HttpStatus status;
     private final String message;
