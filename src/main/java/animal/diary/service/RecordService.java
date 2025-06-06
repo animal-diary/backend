@@ -85,7 +85,7 @@ public class RecordService {
         else {return null;}
     }
 
-    public ResponseDateListDTO getEnergyByDate(RequestDateDTO dto) {
+    public ResponseDateListDTO getEnergyOrAppetiteByDate(RequestDateDTO dto, String category) {
         Pet pet = getPetOrThrow(dto.getPetId());
 
         LocalDate date = dto.getDate();
@@ -93,14 +93,28 @@ public class RecordService {
         validateDate(dto.getDate());
 
         LocalDateTime[] range = getStartAndEndOfDay(dto.getDate());
+        List<ResponseDateDTO> result = null;
 
-        List<Energy> energyList = energyRepository.findAllByPetIdAndCreatedAtBetween(pet.getId(), range[0], range[1]);
 
-        if (energyList.isEmpty()) {
-            throw new EmptyListException("비어었음");
+        if (category.equals("energy")) {
+            List<Energy> energyList = energyRepository.findAllByPetIdAndCreatedAtBetween(pet.getId(), range[0], range[1]);
+
+            if (energyList.isEmpty()) {
+                throw new EmptyListException("비어었음");
+            }
+
+            result = energyList.stream().map((ResponseDateDTO::energyToDTO)).toList();
+        }
+        else if (category.equals("appetite")){
+            List<Appetite> appetites = appetiteRepository.findAllByPetIdAndCreatedAtBetween(pet.getId(), range[0], range[1]);
+
+            if (appetites.isEmpty()) {
+                throw new EmptyListException("비어었음");
+            }
+
+            result = appetites.stream().map((ResponseDateDTO::appetiteToDTO)).toList();
         }
 
-        List<ResponseDateDTO> result = energyList.stream().map((ResponseDateDTO::energyToDTO)).toList();
 
         return ResponseDateListDTO.builder()
                 .date(date)

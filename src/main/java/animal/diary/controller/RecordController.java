@@ -48,11 +48,11 @@ public class RecordController {
 
     @PostMapping("/energy/date")
     public ResponseEntity<ResponseDTO<ResponseDateListDTO>> getEnergyByDate(@RequestBody RequestDateDTO dto) {
-        ResponseDateListDTO result = recordService.getEnergyByDate(dto);
+        ResponseDateListDTO result = recordService.getEnergyOrAppetiteByDate(dto, "energy");
 
         return ResponseEntity
-                .status(SuccessCode.SUCCESS_GET_WEIGHT_BY_DATE.getStatus().value())
-                .body(new ResponseDTO<>(SuccessCode.SUCCESS_GET_WEIGHT_BY_DATE, result));
+                .status(SuccessCode.SUCCESS_GET_ENERGY_BY_DATE.getStatus().value())
+                .body(new ResponseDTO<>(SuccessCode.SUCCESS_GET_ENERGY_BY_DATE, result));
     }
 
     // 식욕 상태
@@ -65,5 +65,13 @@ public class RecordController {
                 .body(new ResponseDTO<>(SuccessCode.SUCCESS_SAVE_APPETITE, result));
     }
 
+    @PostMapping("/appetite/date")
+    public ResponseEntity<ResponseDTO<ResponseDateListDTO>> getAppetiteByDate(@RequestBody RequestDateDTO dto) {
+        ResponseDateListDTO result = recordService.getEnergyOrAppetiteByDate(dto, "appetite");
+
+        return ResponseEntity
+                .status(SuccessCode.SUCCESS_GET_APPETITE_BY_DATE.getStatus().value())
+                .body(new ResponseDTO<>(SuccessCode.SUCCESS_GET_APPETITE_BY_DATE, result));
+    }
 
 }
