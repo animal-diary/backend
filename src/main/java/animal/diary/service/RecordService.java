@@ -3,6 +3,8 @@ package animal.diary.service;
 import animal.diary.dto.*;
 import animal.diary.entity.pet.Pet;
 import animal.diary.entity.record.Weight;
+import animal.diary.exception.EmptyListException;
+import animal.diary.exception.InvalidDateException;
 import animal.diary.exception.PetNotFoundException;
 import animal.diary.repository.PetRepository;
 import animal.diary.repository.WeightRepository;
@@ -36,19 +38,20 @@ public class RecordService {
     public ResponseWeightDateDTO getWeightsByDate(RequestWeightDateDTO dto) {
         Pet pet = petRepository.findById(dto.getPetId())
                 .orElseThrow(() -> new PetNotFoundException("펫 못 찾음"));
-
         LocalDate date = dto.getDate();
+
+        if (date.isAfter(LocalDate.now())) {
+            throw new InvalidDateException("미래 선택 ㄴㄴ");
+        }
         LocalDateTime start = date.atStartOfDay();
 
         LocalDateTime end = date.atTime(LocalTime.MAX);
 
         List<Weight> weights = weightRepository.findAllByPetIdAndCreatedAtBetween(dto.getPetId(), start, end);
 
-        System.out.println("start = " + start);
-        System.out.println("end = " + end);
-        weights.forEach(w -> System.out.println(w.getCreatedAt()));
-
-
+        if (weights.isEmpty()) {
+            throw new EmptyListException("비어었음");
+        }
         List<ResponseWeightDTO> result = weights.stream().map((ResponseWeightDTO::weightToDTO)).toList();
 
         return ResponseWeightDateDTO.builder()

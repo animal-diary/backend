@@ -1,15 +1,16 @@
 package animal.diary.exception;
 
 import animal.diary.code.ErrorCode;
+import animal.diary.code.SuccessCode;
 import animal.diary.dto.response.ErrorResponseDTO;
+import animal.diary.dto.response.ResponseDTO;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -75,4 +76,17 @@ public class GlobalExceptionHandler {
                 .body(new ErrorResponseDTO(ErrorCode.PET_NOT_FOUND));
     }
 
+    @ExceptionHandler(InvalidDateException.class)
+    protected ResponseEntity<ErrorResponseDTO> handleInvalidDate(final InvalidDateException e) {
+        return ResponseEntity
+                .status(ErrorCode.DATE_INVALID.getStatus().value())
+                .body(new ErrorResponseDTO(ErrorCode.DATE_INVALID));
+    }
+
+    @ExceptionHandler(EmptyListException.class)
+    protected ResponseEntity<ResponseDTO<List<Object>>> handleEmptyList(final EmptyListException e) {
+        return ResponseEntity
+                .status(SuccessCode.SUCCESS_BUT_EMPTY.getStatus().value())
+                .body(new ResponseDTO<>(SuccessCode.SUCCESS_BUT_EMPTY, Collections.emptyList()));
+    }
 }
