@@ -29,9 +29,7 @@ public class RecordService {
     
     // 뭄무게
     public RecordResponseDTO recordWeight(RecordNumberDTO dto) {
-        Pet pet = petRepository.findById(dto.getPetId())
-                .orElseThrow(() -> new PetNotFoundException("펫 못 찾음"));
-
+        Pet pet = getPetOrThrow(dto.getPetId());
 
         Weight weight = RecordNumberDTO.toWeightEntity(dto, pet);
 
@@ -40,41 +38,75 @@ public class RecordService {
         return RecordResponseDTO.weightToDTO(weight);
     }
 
-    public ResponseWeightDateDTO getWeightsByDate(RequestWeightDateDTO dto) {
-        Pet pet = petRepository.findById(dto.getPetId())
-                .orElseThrow(() -> new PetNotFoundException("펫 못 찾음"));
+    public ResponseDateListDTO getWeightsByDate(RequestDateDTO dto) {
+        Pet pet = getPetOrThrow(dto.getPetId());
+
         LocalDate date = dto.getDate();
 
-        if (date.isAfter(LocalDate.now())) {
-            throw new InvalidDateException("미래 선택 ㄴㄴ");
-        }
+        validateDate(dto.getDate());
 
-        LocalDateTime start = date.atStartOfDay();
-        LocalDateTime end = date.atTime(LocalTime.MAX);
+        LocalDateTime[] range = getStartAndEndOfDay(dto.getDate());
 
-        List<Weight> weights = weightRepository.findAllByPetIdAndCreatedAtBetween(dto.getPetId(), start, end);
+        List<Weight> weights = weightRepository.findAllByPetIdAndCreatedAtBetween(pet.getId(), range[0], range[1]);
 
         if (weights.isEmpty()) {
             throw new EmptyListException("비어었음");
         }
 
-        List<ResponseWeightDTO> result = weights.stream().map((ResponseWeightDTO::weightToDTO)).toList();
+        List<ResponseDateDTO> result = weights.stream().map((ResponseDateDTO::weightToDTO)).toList();
 
-        return ResponseWeightDateDTO.builder()
+        return ResponseDateListDTO.builder()
                 .date(date)
-                .weightDTOS(result)
+                .dateDTOS(result)
                 .build();
     }
 
     // 기력 상태
     public RecordResponseDTO recordEnergy(RecordNumberDTO dto) {
-        Pet pet = petRepository.findById(dto.getPetId())
-                .orElseThrow(() -> new PetNotFoundException("펫 못 찾음"));
+        Pet pet = getPetOrThrow(dto.getPetId());
 
         Energy energy = RecordNumberDTO.toEnergyEntity(dto, pet);
 
         energyRepository.save(energy);
 
         return RecordResponseDTO.energyToDTO(energy);
+    }
+
+    public ResponseDateListDTO getEnergyByDate(RequestDateDTO dto) {
+        Pet pet = getPetOrThrow(dto.getPetId());
+
+        LocalDate date = dto.getDate();
+
+        validateDate(dto.getDate());
+
+        LocalDateTime[] range = getStartAndEndOfDay(dto.getDate());
+
+        List<Energy> energyList = energyRepository.findAllByPetIdAndCreatedAtBetween(pet.getId(), range[0], range[1]);
+
+        if (energyList.isEmpty()) {
+            throw new EmptyListException("비어었음");
+        }
+
+        List<ResponseDateDTO> result = energyList.stream().map((ResponseDateDTO::energyToDTO)).toList();
+
+        return ResponseDateListDTO.builder()
+                .date(date)
+                .dateDTOS(result)
+                .build();
+    }
+
+    private Pet getPetOrThrow(Long petId) {
+        return petRepository.findById(petId)
+                .orElseThrow(() -> new PetNotFoundException("펫 못 찾음"));
+    }
+
+    private void validateDate(LocalDate date) {
+        if (date.isAfter(LocalDate.now())) {
+            throw new InvalidDateException("미래 선택 ㄴㄴ");
+        }
+    }
+
+    private LocalDateTime[] getStartAndEndOfDay(LocalDate date) {
+        return new LocalDateTime[]{date.atStartOfDay(), date.atTime(LocalTime.MAX)};
     }
 }

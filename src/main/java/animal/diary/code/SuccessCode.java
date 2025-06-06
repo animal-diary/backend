@@ -32,7 +32,7 @@ public enum SuccessCode {
     SUCCESS_SAVE_WEIGHT(HttpStatus.CREATED, "몸무게를 성공적으로 저장했습니다."),
     SUCCESS_GET_WEIGHT_BY_DATE(HttpStatus.OK, "날짜별 몸무게를 성공적으로 불러왔습니다."),
     SUCCESS_SAVE_ENERGY(HttpStatus.CREATED, "기력 상태를 성공적으로 저장했습니다."),
-
+    SUCCESS_GET_ENERGY_BY_DATE(HttpStatus.OK, "날짜별 기력 상태를 성공적으로 불러왔습니다."),
     SUCCESS_BUT_EMPTY(HttpStatus.OK, "조회에 성공했으나, 리스트가 비어있습니다."),
     ;
     private final HttpStatus status;

@@ -7,7 +7,7 @@ import java.time.LocalDate;
 
 @Getter
 @Data
-public class RequestWeightDateDTO {
+public class RequestDateDTO {
     private LocalDate date;
     private Long petId;
 }
