@@ -25,7 +25,7 @@ public enum ErrorCode {
      * 404
      */
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, "사용자를 찾을 수 없습니다."),
-
+    PET_NOT_FOUND(HttpStatus.NOT_FOUND, "반려동물 정보를 찾을 수 없습니다."),
     PARENT_MESSAGE_NOT_FOUND(HttpStatus.NOT_FOUND, "이전 메시지가 존재하지 않습니다."),
     RECOMMEND_STRATEGY_NOT_FOUND(HttpStatus.NOT_FOUND, "추천한 전략이 존재하지 않습니다."),
 
