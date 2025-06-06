@@ -30,7 +30,7 @@ public enum SuccessCode {
      * record
      * */
     SUCCESS_SAVE_WEIGHT(HttpStatus.CREATED, "몸무게를 성공적으로 등록했습니다."),
-
+    SUCCESS_GET_WEIGHT_BY_DATE(HttpStatus.OK, "날짜별 몸무게를 성공적으로 불러왔습니다."),
 
     ;
     private final HttpStatus status;
