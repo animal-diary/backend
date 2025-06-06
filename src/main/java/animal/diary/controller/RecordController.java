@@ -39,7 +39,7 @@ public class RecordController {
     // 기력 상태
     @PostMapping("/energy")
     public ResponseEntity<ResponseDTO<RecordResponseDTO>> recordEnergy(@RequestBody RecordNumberDTO dto) {
-        RecordResponseDTO result = recordService.recordEnergy(dto);
+        RecordResponseDTO result = recordService.recordEnergyAndAppetite(dto, "energy");
 
         return ResponseEntity
                 .status(SuccessCode.SUCCESS_SAVE_ENERGY.getStatus().value())
@@ -53,6 +53,16 @@ public class RecordController {
         return ResponseEntity
                 .status(SuccessCode.SUCCESS_GET_WEIGHT_BY_DATE.getStatus().value())
                 .body(new ResponseDTO<>(SuccessCode.SUCCESS_GET_WEIGHT_BY_DATE, result));
+    }
+
+    // 식욕 상태
+    @PostMapping("/appetite")
+    public ResponseEntity<ResponseDTO<RecordResponseDTO>> recordAppetite(@RequestBody RecordNumberDTO dto) {
+        RecordResponseDTO result = recordService.recordEnergyAndAppetite(dto, "appetite");
+
+        return ResponseEntity
+                .status(SuccessCode.SUCCESS_SAVE_APPETITE.getStatus().value())
+                .body(new ResponseDTO<>(SuccessCode.SUCCESS_SAVE_APPETITE, result));
     }
 
 
