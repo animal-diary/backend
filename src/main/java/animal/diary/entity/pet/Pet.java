@@ -30,6 +30,7 @@ public class Pet {
     private Type type;
 
     @Enumerated(EnumType.STRING)
+    @Getter
     @NotNull
     private Gender gender;
 
@@ -48,6 +49,7 @@ public class Pet {
 
     @ElementCollection(targetClass = Disease.class)
     @Enumerated(EnumType.STRING)
+    @Getter
     @CollectionTable(name = "pet_diseases", joinColumns = @JoinColumn(name = "pet_id"))
     @Column(name = "disease")
     private List<Disease> diseases = new ArrayList<>();
