@@ -17,10 +17,10 @@ public enum SuccessCode {
     SUCCESS_LOGOUT(HttpStatus.OK, "성공적으로 로그아웃했습니다."),
 
     /**
-     * Chat
+     * Pet
      */
     SUCCESS_SAVE_PET(HttpStatus.CREATED, "반려동물 등록이 완료되었습니다."),
-    SUCCESS_SAVE_EMOTIONS(HttpStatus.OK, "감정이 저장되었습니다."),
+    SUCCESS_GET_PET_LIST(HttpStatus.OK, "나의 반려동물 정보를 성공적으로 불러왔습니다."),
     SUCCESS_SAVE_MESSAGE(HttpStatus.OK, "메시지가 저장되었습니다."),
     SUCCESS_SAVE_SELECT_STRATEGY(HttpStatus.OK, "전략을 선택하였습니다."),
     SUCCESS_SAVE_STRATEGY_EFFECT(HttpStatus.OK, "전략에 대한 효과를 저장했습니다"),
