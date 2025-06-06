@@ -2,11 +2,13 @@ package animal.diary.service;
 
 import animal.diary.dto.*;
 import animal.diary.entity.pet.Pet;
+import animal.diary.entity.record.Appetite;
 import animal.diary.entity.record.Energy;
 import animal.diary.entity.record.Weight;
 import animal.diary.exception.EmptyListException;
 import animal.diary.exception.InvalidDateException;
 import animal.diary.exception.PetNotFoundException;
+import animal.diary.repository.AppetiteRepository;
 import animal.diary.repository.EnergyRepository;
 import animal.diary.repository.PetRepository;
 import animal.diary.repository.WeightRepository;
@@ -25,6 +27,7 @@ public class RecordService {
     private final WeightRepository weightRepository;
     private final PetRepository petRepository;
     private final EnergyRepository energyRepository;
+    private final AppetiteRepository appetiteRepository;
 
     
     // 뭄무게
@@ -62,14 +65,24 @@ public class RecordService {
     }
 
     // 기력 상태
-    public RecordResponseDTO recordEnergy(RecordNumberDTO dto) {
+    public RecordResponseDTO recordEnergyAndAppetite(RecordNumberDTO dto, String category) {
         Pet pet = getPetOrThrow(dto.getPetId());
 
-        Energy energy = RecordNumberDTO.toEnergyEntity(dto, pet);
+        if (category.equals("energy")) {
+            Energy energy = RecordNumberDTO.toEnergyEntity(dto, pet);
+            energyRepository.save(energy);
 
-        energyRepository.save(energy);
+            return RecordResponseDTO.energyToDTO(energy);
 
-        return RecordResponseDTO.energyToDTO(energy);
+        }
+        else if (category.equals("appetite")) {
+            Appetite appetite = RecordNumberDTO.toAppetiteEntity(dto, pet);
+            appetiteRepository.save(appetite);
+
+            return RecordResponseDTO.appetiteToDTO(appetite);
+        }
+
+        else {return null;}
     }
 
     public ResponseDateListDTO getEnergyByDate(RequestDateDTO dto) {

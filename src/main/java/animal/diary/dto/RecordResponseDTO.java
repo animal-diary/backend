@@ -1,5 +1,6 @@
 package animal.diary.dto;
 
+import animal.diary.entity.record.Appetite;
 import animal.diary.entity.record.Energy;
 import animal.diary.entity.record.Weight;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -31,6 +32,14 @@ public class RecordResponseDTO {
                 .petId(energy.getPet().getId())
                 .state(energy.getState().name())
                 .createdAt(energy.getCreatedAt())
+                .build();
+    }
+
+    public static RecordResponseDTO appetiteToDTO(Appetite appetite) {
+        return RecordResponseDTO.builder()
+                .petId(appetite.getPet().getId())
+                .state(appetite.getState().name())
+                .createdAt(appetite.getCreatedAt())
                 .build();
     }
 
