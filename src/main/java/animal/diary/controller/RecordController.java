@@ -1,14 +1,13 @@
 package animal.diary.controller;
 
 import animal.diary.code.SuccessCode;
-import animal.diary.dto.RecordNumberDTO;
-import animal.diary.dto.RecordResponseDTO;
-import animal.diary.dto.RequestDateDTO;
-import animal.diary.dto.ResponseDateListDTO;
+import animal.diary.dto.*;
 import animal.diary.dto.response.ResponseDTO;
 import animal.diary.service.RecordService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -18,7 +17,7 @@ public class RecordController {
     private final RecordService recordService;
 
     @PostMapping("/weight")
-    public ResponseEntity<ResponseDTO<RecordResponseDTO>> recordWeight(@RequestBody RecordNumberDTO dto) {
+    public ResponseEntity<ResponseDTO<RecordResponseDTO>> recordWeight(@Validated(WeightGroup.class) @RequestBody RecordNumberDTO dto) {
         RecordResponseDTO result = recordService.recordWeight(dto);
 
         return ResponseEntity
@@ -27,7 +26,7 @@ public class RecordController {
     }
 
     @PostMapping("/weight/date")
-    public ResponseEntity<ResponseDTO<ResponseDateListDTO>> getWeightsByDate(@RequestBody RequestDateDTO dto) {
+    public ResponseEntity<ResponseDTO<ResponseDateListDTO>> getWeightsByDate(@Valid @RequestBody RequestDateDTO dto) {
         ResponseDateListDTO result = recordService.getWeightsByDate(dto);
 
         return ResponseEntity
@@ -38,7 +37,7 @@ public class RecordController {
     
     // 기력 상태
     @PostMapping("/energy")
-    public ResponseEntity<ResponseDTO<RecordResponseDTO>> recordEnergy(@RequestBody RecordNumberDTO dto) {
+    public ResponseEntity<ResponseDTO<RecordResponseDTO>> recordEnergy(@Validated(StateGroup.class)@RequestBody RecordNumberDTO dto) {
         RecordResponseDTO result = recordService.recordEnergyAndAppetite(dto, "energy");
 
         return ResponseEntity
@@ -47,7 +46,7 @@ public class RecordController {
     }
 
     @PostMapping("/energy/date")
-    public ResponseEntity<ResponseDTO<ResponseDateListDTO>> getEnergyByDate(@RequestBody RequestDateDTO dto) {
+    public ResponseEntity<ResponseDTO<ResponseDateListDTO>> getEnergyByDate(@Valid @RequestBody RequestDateDTO dto) {
         ResponseDateListDTO result = recordService.getEnergyOrAppetiteByDate(dto, "energy");
 
         return ResponseEntity
@@ -57,7 +56,7 @@ public class RecordController {
 
     // 식욕 상태
     @PostMapping("/appetite")
-    public ResponseEntity<ResponseDTO<RecordResponseDTO>> recordAppetite(@RequestBody RecordNumberDTO dto) {
+    public ResponseEntity<ResponseDTO<RecordResponseDTO>> recordAppetite(@Validated(StateGroup.class) @RequestBody RecordNumberDTO dto) {
         RecordResponseDTO result = recordService.recordEnergyAndAppetite(dto, "appetite");
 
         return ResponseEntity
@@ -66,12 +65,23 @@ public class RecordController {
     }
 
     @PostMapping("/appetite/date")
-    public ResponseEntity<ResponseDTO<ResponseDateListDTO>> getAppetiteByDate(@RequestBody RequestDateDTO dto) {
+    public ResponseEntity<ResponseDTO<ResponseDateListDTO>> getAppetiteByDate(@Valid @RequestBody RequestDateDTO dto) {
         ResponseDateListDTO result = recordService.getEnergyOrAppetiteByDate(dto, "appetite");
 
         return ResponseEntity
                 .status(SuccessCode.SUCCESS_GET_APPETITE_BY_DATE.getStatus().value())
                 .body(new ResponseDTO<>(SuccessCode.SUCCESS_GET_APPETITE_BY_DATE, result));
+    }
+
+
+    // 호흡 수
+    @PostMapping("/RR")
+    public ResponseEntity<ResponseDTO<RecordResponseDTO>> recordRR(@Validated(CountGroup.class) @RequestBody RecordNumberDTO dto) {
+        RecordResponseDTO result = recordService.recordRR(dto);
+
+        return ResponseEntity
+                .status(SuccessCode.SUCCESS_SAVE_RR.getStatus().value())
+                .body(new ResponseDTO<>(SuccessCode.SUCCESS_SAVE_RR, result));
     }
 
 }
