@@ -7,9 +7,16 @@ import animal.diary.dto.RequestDateDTO;
 import animal.diary.dto.ResponseDateListDTO;
 import animal.diary.dto.response.ResponseDTO;
 import animal.diary.service.RecordService;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.util.List;
 
 @RestController
 @RequestMapping("/record")
@@ -74,4 +81,16 @@ public class RecordController {
                 .body(new ResponseDTO<>(SuccessCode.SUCCESS_GET_APPETITE_BY_DATE, result));
     }
 
+    // 특이사항
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ResponseDTO<RecordResponseDTO>> recordSignificant(
+            @Valid @RequestPart("dto") RecordNumberDTO dto) {
+        //,@RequestPart(value = "files", required = false) List<MultipartFile> files) throws IOException {
+
+        RecordResponseDTO result = recordService.recordSignificant(dto);//, files);
+
+        return ResponseEntity
+                .status(SuccessCode.SUCCESS_SAVE_SIGNIFICANT.getStatus().value())
+                .body(new ResponseDTO<>(SuccessCode.SUCCESS_SAVE_SIGNIFICANT, result));
+    }
 }

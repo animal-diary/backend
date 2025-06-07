@@ -4,16 +4,15 @@ import animal.diary.dto.*;
 import animal.diary.entity.pet.Pet;
 import animal.diary.entity.record.Appetite;
 import animal.diary.entity.record.Energy;
+import animal.diary.entity.record.Significant;
 import animal.diary.entity.record.Weight;
 import animal.diary.exception.EmptyListException;
 import animal.diary.exception.InvalidDateException;
 import animal.diary.exception.PetNotFoundException;
-import animal.diary.repository.AppetiteRepository;
-import animal.diary.repository.EnergyRepository;
-import animal.diary.repository.PetRepository;
-import animal.diary.repository.WeightRepository;
+import animal.diary.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -28,6 +27,7 @@ public class RecordService {
     private final PetRepository petRepository;
     private final EnergyRepository energyRepository;
     private final AppetiteRepository appetiteRepository;
+    private final SignificantRepository significantRepository;
 
     
     // 뭄무게
@@ -64,7 +64,7 @@ public class RecordService {
                 .build();
     }
 
-    // 기력 상태
+    // 기력 상태 and 식욕 상태
     public RecordResponseDTO recordEnergyAndAppetite(RecordNumberDTO dto, String category) {
         Pet pet = getPetOrThrow(dto.getPetId());
 
@@ -105,6 +105,8 @@ public class RecordService {
 
             result = energyList.stream().map((ResponseDateDTO::energyToDTO)).toList();
         }
+
+
         else if (category.equals("appetite")){
             List<Appetite> appetites = appetiteRepository.findAllByPetIdAndCreatedAtBetween(pet.getId(), range[0], range[1]);
 
@@ -122,6 +124,18 @@ public class RecordService {
                 .build();
     }
 
+    // 파일 저장 필요
+    public RecordResponseDTO recordSignificant(RecordNumberDTO dto) { //, List<MultipartFile> files) {
+        Pet pet = getPetOrThrow(dto.getPetId());
+
+        Significant significant = RecordNumberDTO.toSignificantEntity(dto, pet);
+        significantRepository.save(significant);
+
+        return RecordResponseDTO.significantToDTO(significant);
+    }
+
+
+
     private Pet getPetOrThrow(Long petId) {
         return petRepository.findById(petId)
                 .orElseThrow(() -> new PetNotFoundException("펫 못 찾음"));
@@ -136,4 +150,5 @@ public class RecordService {
     private LocalDateTime[] getStartAndEndOfDay(LocalDate date) {
         return new LocalDateTime[]{date.atStartOfDay(), date.atTime(LocalTime.MAX)};
     }
+
 }
