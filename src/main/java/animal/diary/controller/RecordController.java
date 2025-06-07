@@ -84,4 +84,15 @@ public class RecordController {
                 .body(new ResponseDTO<>(SuccessCode.SUCCESS_SAVE_RR, result));
     }
 
+    @PostMapping("/RR/date")
+    public ResponseEntity<ResponseDTO<ResponseDateListDTO>> getRRByDate(@Valid @RequestBody RequestDateDTO dto) {
+        ResponseDateListDTO result = recordService.getRRByDate(dto);
+
+        return ResponseEntity
+                .status(SuccessCode.SUCCESS_GET_RR_BY_DATE.getStatus().value())
+                .body(new ResponseDTO<>(SuccessCode.SUCCESS_GET_RR_BY_DATE, result));
+    }
+
+
+
 }

@@ -2,6 +2,7 @@ package animal.diary.dto;
 
 import animal.diary.entity.record.Appetite;
 import animal.diary.entity.record.Energy;
+import animal.diary.entity.record.RespiratoryRate;
 import animal.diary.entity.record.Weight;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Builder;
@@ -17,6 +18,7 @@ public class ResponseDateDTO {
     private String state;
     private Float weight;
     private LocalTime createdTime;
+    private Integer count;
 
     public static ResponseDateDTO weightToDTO(Weight weight) {
         return ResponseDateDTO.builder()
@@ -39,6 +41,14 @@ public class ResponseDateDTO {
                 .diaryId(appetite.getId())
                 .state(appetite.getState().name())
                 .createdTime(appetite.getCreatedAt().toLocalTime())
+                .build();
+    }
+
+    public static ResponseDateDTO respiratoryRateTODTO(RespiratoryRate respiratoryRate) {
+        return ResponseDateDTO.builder()
+                .diaryId(respiratoryRate.getId())
+                .count(respiratoryRate.getCount())
+                .createdTime(respiratoryRate.getCreatedAt().toLocalTime())
                 .build();
     }
 }

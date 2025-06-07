@@ -58,6 +58,7 @@ public class RecordService {
 
         return ResponseDateListDTO.builder()
                 .date(date)
+                .type(pet.getType().toString())
                 .dateDTOS(result)
                 .build();
     }
@@ -116,6 +117,7 @@ public class RecordService {
 
         return ResponseDateListDTO.builder()
                 .date(date)
+                .type(pet.getType().toString())
                 .dateDTOS(result)
                 .build();
     }
@@ -132,7 +134,27 @@ public class RecordService {
         return RecordResponseDTO.respiratoryRateToDTO(respiratoryRate);
     }
 
+    public ResponseDateListDTO getRRByDate(RequestDateDTO dto) {
+        Pet pet = getPetOrThrow(dto.getPetId());
 
+        validateDate(dto.getDate());
+
+        LocalDateTime[] range = getStartAndEndOfDay(dto.getDate());
+
+        List<RespiratoryRate> respiratoryRateList = rrRepository.findAllByPetIdAndCreatedAtBetween(pet.getId(), range[0], range[1]);
+
+        if (respiratoryRateList.isEmpty()) {
+            throw new EmptyListException("비어었음");
+        }
+
+        List<ResponseDateDTO> result = respiratoryRateList.stream().map((ResponseDateDTO::respiratoryRateTODTO)).toList();
+
+        return ResponseDateListDTO.builder()
+                .date(dto.getDate())
+                .type(pet.getType().toString())
+                .dateDTOS(result)
+                .build();
+    }
 
 
     private Pet getPetOrThrow(Long petId) {
@@ -149,4 +171,6 @@ public class RecordService {
     private LocalDateTime[] getStartAndEndOfDay(LocalDate date) {
         return new LocalDateTime[]{date.atStartOfDay(), date.atTime(LocalTime.MAX)};
     }
+
+
 }
