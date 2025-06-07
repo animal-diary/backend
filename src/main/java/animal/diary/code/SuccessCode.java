@@ -36,6 +36,9 @@ public enum SuccessCode {
     SUCCESS_SAVE_APPETITE(HttpStatus.CREATED, "식욕 상태를 성공적으로 저장했습니다."),
     SUCCESS_GET_APPETITE_BY_DATE(HttpStatus.OK, "날짜별 식욕 상태를 성공적으로 불러왔습니다."),
 
+    SUCCESS_SAVE_RR(HttpStatus.CREATED, "호흡 수를 성공적으로 저장했습니다."),
+    SUCCESS_GET_RR_BY_DATE(HttpStatus.OK, "날짜별 호흡 수를 성공적으로 불러왔습니다."),
+
     SUCCESS_BUT_EMPTY(HttpStatus.OK, "조회에 성공했으나, 리스트가 비어있습니다."),
     ;
     private final HttpStatus status;

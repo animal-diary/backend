@@ -4,14 +4,12 @@ import animal.diary.dto.*;
 import animal.diary.entity.pet.Pet;
 import animal.diary.entity.record.Appetite;
 import animal.diary.entity.record.Energy;
+import animal.diary.entity.record.RespiratoryRate;
 import animal.diary.entity.record.Weight;
 import animal.diary.exception.EmptyListException;
 import animal.diary.exception.InvalidDateException;
 import animal.diary.exception.PetNotFoundException;
-import animal.diary.repository.AppetiteRepository;
-import animal.diary.repository.EnergyRepository;
-import animal.diary.repository.PetRepository;
-import animal.diary.repository.WeightRepository;
+import animal.diary.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -28,7 +26,7 @@ public class RecordService {
     private final PetRepository petRepository;
     private final EnergyRepository energyRepository;
     private final AppetiteRepository appetiteRepository;
-
+    private final RRRepository rrRepository;
     
     // 뭄무게
     public RecordResponseDTO recordWeight(RecordNumberDTO dto) {
@@ -121,6 +119,21 @@ public class RecordService {
                 .dateDTOS(result)
                 .build();
     }
+
+
+    // 호흡 수
+    public RecordResponseDTO recordRR(RecordNumberDTO dto) {
+        Pet pet = getPetOrThrow(dto.getPetId());
+
+        RespiratoryRate respiratoryRate = RecordNumberDTO.toRespiratoryRateEntity(dto, pet);
+
+        rrRepository.save(respiratoryRate);
+
+        return RecordResponseDTO.respiratoryRateToDTO(respiratoryRate);
+    }
+
+
+
 
     private Pet getPetOrThrow(Long petId) {
         return petRepository.findById(petId)
