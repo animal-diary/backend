@@ -52,4 +52,11 @@ public class RecordNumberDTO {
                 .pet(pet)
                 .build();
     }
+
+    public static HeartRate toHeartRateEntity(RecordNumberDTO dto, Pet pet) {
+        return HeartRate.builder()
+                .count(dto.getCount())
+                .pet(pet)
+                .build();
+    }
 }
