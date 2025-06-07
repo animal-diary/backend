@@ -58,6 +58,7 @@ public class RecordService {
 
         return ResponseDateListDTO.builder()
                 .date(date)
+                .type(pet.getType().toString())
                 .dateDTOS(result)
                 .build();
     }
@@ -116,6 +117,7 @@ public class RecordService {
 
         return ResponseDateListDTO.builder()
                 .date(date)
+                .type(pet.getType().toString())
                 .dateDTOS(result)
                 .build();
     }
@@ -141,10 +143,15 @@ public class RecordService {
 
         List<RespiratoryRate> respiratoryRateList = rrRepository.findAllByPetIdAndCreatedAtBetween(pet.getId(), range[0], range[1]);
 
+        if (respiratoryRateList.isEmpty()) {
+            throw new EmptyListException("비어었음");
+        }
+
         List<ResponseDateDTO> result = respiratoryRateList.stream().map((ResponseDateDTO::respiratoryRateTODTO)).toList();
 
         return ResponseDateListDTO.builder()
                 .date(dto.getDate())
+                .type(pet.getType().toString())
                 .dateDTOS(result)
                 .build();
     }
