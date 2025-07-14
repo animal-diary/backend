@@ -77,7 +77,7 @@ public class RecordController {
     // 호흡 수
     @PostMapping("/RR")
     public ResponseEntity<ResponseDTO<RecordResponseDTO>> recordRR(@Validated(CountGroup.class) @RequestBody RecordNumberDTO dto) {
-        RecordResponseDTO result = recordService.recordRR(dto);
+        RecordResponseDTO result = recordService.recordRRAndHeartRate(dto, "RR");
 
         return ResponseEntity
                 .status(SuccessCode.SUCCESS_SAVE_RR.getStatus().value())
@@ -93,6 +93,23 @@ public class RecordController {
                 .body(new ResponseDTO<>(SuccessCode.SUCCESS_GET_RR_BY_DATE, result));
     }
 
+    // 심박수
+    @PostMapping("/heart-rate")
+    public ResponseEntity<ResponseDTO<RecordResponseDTO>> recordHeartRate(@Validated(CountGroup.class) @RequestBody RecordNumberDTO dto) {
+        RecordResponseDTO result = recordService.recordRRAndHeartRate(dto, "heart-rate");
 
+        return ResponseEntity
+                .status(SuccessCode.SUCCESS_SAVE_RR.getStatus().value())
+                .body(new ResponseDTO<>(SuccessCode.SUCCESS_SAVE_RR, result));
+    }
+
+    @PostMapping("/heart-rate/date")
+    public ResponseEntity<ResponseDTO<ResponseDateListDTO>> getHeartRateByDate(@Valid @RequestBody RequestDateDTO dto) {
+        ResponseDateListDTO result = recordService.getRRByDate(dto);
+
+        return ResponseEntity
+                .status(SuccessCode.SUCCESS_GET_RR_BY_DATE.getStatus().value())
+                .body(new ResponseDTO<>(SuccessCode.SUCCESS_GET_RR_BY_DATE, result));
+    }
 
 }
