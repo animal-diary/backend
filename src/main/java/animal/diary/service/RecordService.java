@@ -1,5 +1,6 @@
 package animal.diary.service;
 
+import animal.diary.code.VitalCategory;
 import animal.diary.dto.*;
 import animal.diary.entity.pet.Pet;
 import animal.diary.entity.record.*;
@@ -124,16 +125,16 @@ public class RecordService {
 
 
     // 호흡 수
-    public RecordResponseDTO recordRRAndHeartRate(RecordNumberDTO dto, String category) {
+    public RecordResponseDTO recordRRAndHeartRate(RecordNumberDTO dto, VitalCategory category) {
         Pet pet = getPetOrThrow(dto.getPetId());
 
-        if (category.equals("RR")) {
+        if (category == VitalCategory.RR) {
             RespiratoryRate respiratoryRate = RecordNumberDTO.toRespiratoryRateEntity(dto, pet);
             rrRepository.save(respiratoryRate);
             return RecordResponseDTO.respiratoryRateToDTO(respiratoryRate);
 
         }
-        else if (category.equals("heart-rate")){
+        else if (category == VitalCategory.HEART_RATE){
             HeartRate heartRate = RecordNumberDTO.toHeartRateEntity(dto, pet);
             heartRateRepository.save(heartRate);
             return RecordResponseDTO.heartRateToDTO(heartRate);
@@ -144,13 +145,13 @@ public class RecordService {
 
     }
 
-    public ResponseDateListDTO getRROrHeartRateByDate(RequestDateDTO dto, String category) {
+    public ResponseDateListDTO getRROrHeartRateByDate(RequestDateDTO dto, VitalCategory category) {
         Pet pet = getPetOrThrow(dto.getPetId());
         validateDate(dto.getDate());
 
         LocalDateTime[] range = getStartAndEndOfDay(dto.getDate());
 
-        if (category.equals("RR")) {
+        if (category == VitalCategory.RR) {
             List<RespiratoryRate> respiratoryRateList =
                     rrRepository.findAllByPetIdAndCreatedAtBetween(pet.getId(), range[0], range[1]);
 
@@ -169,7 +170,7 @@ public class RecordService {
                     .build();
         }
 
-        else if (category.equals("heart-rate")) {
+        else if (category == VitalCategory.HEART_RATE) {
             List<HeartRate> heartRateList =
                     heartRateRepository.findAllByPetIdAndCreatedAtBetween(pet.getId(), range[0], range[1]);
 
