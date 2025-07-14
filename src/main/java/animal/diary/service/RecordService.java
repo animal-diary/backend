@@ -144,27 +144,55 @@ public class RecordService {
 
     }
 
-    public ResponseDateListDTO getRRByDate(RequestDateDTO dto) {
+    public ResponseDateListDTO getRROrHeartRateByDate(RequestDateDTO dto, String category) {
         Pet pet = getPetOrThrow(dto.getPetId());
-
         validateDate(dto.getDate());
 
         LocalDateTime[] range = getStartAndEndOfDay(dto.getDate());
 
-        List<RespiratoryRate> respiratoryRateList = rrRepository.findAllByPetIdAndCreatedAtBetween(pet.getId(), range[0], range[1]);
+        if (category.equals("RR")) {
+            List<RespiratoryRate> respiratoryRateList =
+                    rrRepository.findAllByPetIdAndCreatedAtBetween(pet.getId(), range[0], range[1]);
 
-        if (respiratoryRateList.isEmpty()) {
-            throw new EmptyListException("비어었음");
+            if (respiratoryRateList.isEmpty()) {
+                throw new EmptyListException("호흡 수 기록이 없습니다.");
+            }
+
+            List<ResponseDateDTO> result = respiratoryRateList.stream()
+                    .map(ResponseDateDTO::respiratoryRateTODTO)
+                    .toList();
+
+            return ResponseDateListDTO.builder()
+                    .date(dto.getDate())
+                    .type(pet.getType().toString())
+                    .dateDTOS(result)
+                    .build();
         }
 
-        List<ResponseDateDTO> result = respiratoryRateList.stream().map((ResponseDateDTO::respiratoryRateTODTO)).toList();
+        else if (category.equals("heart-rate")) {
+            List<HeartRate> heartRateList =
+                    heartRateRepository.findAllByPetIdAndCreatedAtBetween(pet.getId(), range[0], range[1]);
 
-        return ResponseDateListDTO.builder()
-                .date(dto.getDate())
-                .type(pet.getType().toString())
-                .dateDTOS(result)
-                .build();
+            if (heartRateList.isEmpty()) {
+                throw new EmptyListException("심박수 기록이 없습니다.");
+            }
+
+            List<ResponseDateDTO> result = heartRateList.stream()
+                    .map(ResponseDateDTO::heartRateToDTO)
+                    .toList();
+
+            return ResponseDateListDTO.builder()
+                    .date(dto.getDate())
+                    .type(pet.getType().toString())
+                    .dateDTOS(result)
+                    .build();
+        }
+
+        else {
+            throw new IllegalArgumentException("Invalid category: " + category);
+        }
     }
+
 
 
     private Pet getPetOrThrow(Long petId) {

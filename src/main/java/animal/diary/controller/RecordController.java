@@ -212,7 +212,7 @@ public class RecordController {
     })
     @PostMapping("/RR/date")
     public ResponseEntity<ResponseDTO<ResponseDateListDTO>> getRRByDate(@Valid @RequestBody RequestDateDTO dto) {
-        ResponseDateListDTO result = recordService.getRRByDate(dto);
+        ResponseDateListDTO result = recordService.getRROrHeartRateByDate(dto, "RR");
 
         return ResponseEntity
                 .status(SuccessCode.SUCCESS_GET_RR_BY_DATE.getStatus().value())
@@ -261,7 +261,7 @@ public class RecordController {
     })
     @PostMapping("/heart-rate/date")
     public ResponseEntity<ResponseDTO<ResponseDateListDTO>> getHeartRateByDate(@Valid @RequestBody RequestDateDTO dto) {
-        ResponseDateListDTO result = recordService.getRRByDate(dto);
+        ResponseDateListDTO result = recordService.getRROrHeartRateByDate(dto, "heart-rate");
 
         return ResponseEntity
                 .status(SuccessCode.SUCCESS_GET_HEART_RATE_BY_DATE.getStatus().value())

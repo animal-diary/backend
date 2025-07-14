@@ -51,6 +51,15 @@ public class ResponseDateDTO {
                 .build();
     }
 
+    // 심박수
+    public static ResponseDateDTO heartRateToDTO(HeartRate heartRate) {
+        return ResponseDateDTO.builder()
+                .diaryId(heartRate.getId())
+                .count(heartRate.getCount())
+                .createdTime(heartRate.getCreatedAt().toLocalTime())
+                .build();
+    }
+
     public static ResponseDateDTO syncopeToDTO(Syncope syncope) {
         return ResponseDateDTO.builder()
                 .diaryId(syncope.getId())
