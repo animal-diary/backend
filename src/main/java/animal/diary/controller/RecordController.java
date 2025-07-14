@@ -240,8 +240,8 @@ public class RecordController {
         RecordResponseDTO result = recordService.recordRRAndHeartRate(dto, "heart-rate");
 
         return ResponseEntity
-                .status(SuccessCode.SUCCESS_SAVE_RR.getStatus().value())
-                .body(new ResponseDTO<>(SuccessCode.SUCCESS_SAVE_RR, result));
+                .status(SuccessCode.SUCCESS_SAVE_HEART_RATE.getStatus().value())
+                .body(new ResponseDTO<>(SuccessCode.SUCCESS_SAVE_HEART_RATE, result));
     }
 
     @Operation(summary = "심박수 날짜별 조회", description = "특정 날짜의 심박수 기록을 조회합니다.")
@@ -264,8 +264,8 @@ public class RecordController {
         ResponseDateListDTO result = recordService.getRRByDate(dto);
 
         return ResponseEntity
-                .status(SuccessCode.SUCCESS_GET_RR_BY_DATE.getStatus().value())
-                .body(new ResponseDTO<>(SuccessCode.SUCCESS_GET_RR_BY_DATE, result));
+                .status(SuccessCode.SUCCESS_GET_HEART_RATE_BY_DATE.getStatus().value())
+                .body(new ResponseDTO<>(SuccessCode.SUCCESS_GET_HEART_RATE_BY_DATE, result));
     }
 
     // 기절 상태
