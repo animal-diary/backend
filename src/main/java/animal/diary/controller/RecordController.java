@@ -131,4 +131,23 @@ public class RecordController {
                 .body(new ResponseDTO<>(SuccessCode.SUCCESS_GET_SYNCOPE_BY_DATE, result));
     }
 
+    // 소변 상태
+    @PostMapping("/urine")
+    public ResponseEntity<ResponseDTO<RecordResponseDTO>> recordUrine(@Validated(UrineGroup.class) @RequestBody RecordNumberDTO dto) {
+        RecordResponseDTO result = recordService.recordUrinary(dto);
+
+        return ResponseEntity
+                .status(SuccessCode.SUCCESS_SAVE_URINE.getStatus().value())
+                .body(new ResponseDTO<>(SuccessCode.SUCCESS_SAVE_URINE, result));
+    }
+
+    @PostMapping("/urine/date")
+    public ResponseEntity<ResponseDTO<ResponseDateListDTO>> getUrineByDate(@Valid @RequestBody RequestDateDTO dto) {
+        ResponseDateListDTO result = recordService.getUrinaryByDate(dto);
+
+        return ResponseEntity
+                .status(SuccessCode.SUCCESS_GET_URINE_BY_DATE.getStatus().value())
+                .body(new ResponseDTO<>(SuccessCode.SUCCESS_GET_URINE_BY_DATE, result));
+    }
+
 }

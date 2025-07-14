@@ -1,10 +1,6 @@
 package animal.diary.dto;
 
-import animal.diary.entity.record.Appetite;
-import animal.diary.entity.record.Energy;
-import animal.diary.entity.record.RespiratoryRate;
-import animal.diary.entity.record.Syncope;
-import animal.diary.entity.record.Weight;
+import animal.diary.entity.record.*;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Builder;
 import lombok.Getter;
@@ -20,6 +16,8 @@ public class ResponseDateDTO {
     private Float weight;
     private LocalTime createdTime;
     private Integer count;
+    private String urineState;
+    private String urineAmount;
 
     public static ResponseDateDTO weightToDTO(Weight weight) {
         return ResponseDateDTO.builder()
@@ -58,6 +56,15 @@ public class ResponseDateDTO {
                 .diaryId(syncope.getId())
                 .state(syncope.getState().name())
                 .createdTime(syncope.getCreatedAt().toLocalTime())
+                .build();
+    }
+
+    public static ResponseDateDTO urinaryToDTO(Urinary urinary) {
+        return ResponseDateDTO.builder()
+                .diaryId(urinary.getId())
+                .urineState(urinary.getState().name())
+                .urineAmount(urinary.getOutput().name())
+                .createdTime(urinary.getCreatedAt().toLocalTime())
                 .build();
     }
 }
