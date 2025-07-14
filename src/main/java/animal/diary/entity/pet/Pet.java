@@ -55,7 +55,7 @@ public class Pet {
     private List<Disease> diseases = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "users_id", nullable = false)
     private User user;
 
     public void setDiseases(List<Disease> diseaseList) {

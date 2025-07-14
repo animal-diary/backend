@@ -1,4 +1,4 @@
-package animal.diary.entity.record;
+package animal.diary.entity.record.state;
 
 import animal.diary.exception.InvalidStateException;
 import lombok.Getter;

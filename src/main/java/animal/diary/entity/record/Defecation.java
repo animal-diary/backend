@@ -1,5 +1,6 @@
 package animal.diary.entity.record;
 
+import animal.diary.entity.record.state.StoolState;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;

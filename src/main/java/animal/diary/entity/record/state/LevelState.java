@@ -1,6 +1,5 @@
-package animal.diary.entity.record;
+package animal.diary.entity.record.state;
 
-import animal.diary.entity.pet.Health;
 import animal.diary.exception.InvalidHealthException;
 
 import java.util.Arrays;
