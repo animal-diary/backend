@@ -58,4 +58,12 @@ public class RecordResponseDTO {
                 .build();
     }
 
+    public static RecordResponseDTO syncopeToDTO(Syncope syncope) {
+        return RecordResponseDTO.builder()
+                .petId(syncope.getPet().getId())
+                .state(syncope.getState().name())
+                .createdAt(syncope.getCreatedAt())
+                .build();
+    }
+
 }

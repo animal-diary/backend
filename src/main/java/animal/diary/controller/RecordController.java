@@ -112,4 +112,23 @@ public class RecordController {
                 .body(new ResponseDTO<>(SuccessCode.SUCCESS_GET_RR_BY_DATE, result));
     }
 
+    // 기절 상태
+    @PostMapping("/syncope")
+    public ResponseEntity<ResponseDTO<RecordResponseDTO>> recordSyncope(@Validated(BinaryStateGroup.class) @RequestBody RecordNumberDTO dto) {
+        RecordResponseDTO result = recordService.recordSyncope(dto);
+
+        return ResponseEntity
+                .status(SuccessCode.SUCCESS_SAVE_SYNCOPE.getStatus().value())
+                .body(new ResponseDTO<>(SuccessCode.SUCCESS_SAVE_SYNCOPE, result));
+    }
+
+    @PostMapping("/syncope/date")
+    public ResponseEntity<ResponseDTO<ResponseDateListDTO>> getSyncopeByDate(@Valid @RequestBody RequestDateDTO dto) {
+        ResponseDateListDTO result = recordService.getSyncopeByDate(dto);
+
+        return ResponseEntity
+                .status(SuccessCode.SUCCESS_GET_SYNCOPE_BY_DATE.getStatus().value())
+                .body(new ResponseDTO<>(SuccessCode.SUCCESS_GET_SYNCOPE_BY_DATE, result));
+    }
+
 }

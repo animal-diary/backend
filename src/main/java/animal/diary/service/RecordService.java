@@ -25,6 +25,7 @@ public class RecordService {
     private final AppetiteRepository appetiteRepository;
     private final RRRepository rrRepository;
     private final HeartRateRepository heartRateRepository;
+    private final SyncopeRepository syncopeRepository;
     
     // 뭄무게
     public RecordResponseDTO recordWeight(RecordNumberDTO dto) {
@@ -178,6 +179,39 @@ public class RecordService {
 
     private LocalDateTime[] getStartAndEndOfDay(LocalDate date) {
         return new LocalDateTime[]{date.atStartOfDay(), date.atTime(LocalTime.MAX)};
+    }
+
+    // 기절 상태
+    public RecordResponseDTO recordSyncope(RecordNumberDTO dto) {
+        Pet pet = getPetOrThrow(dto.getPetId());
+
+        Syncope syncope = RecordNumberDTO.toSyncopeEntity(dto, pet);
+        syncopeRepository.save(syncope);
+
+        return RecordResponseDTO.syncopeToDTO(syncope);
+    }
+
+    public ResponseDateListDTO getSyncopeByDate(RequestDateDTO dto) {
+        Pet pet = getPetOrThrow(dto.getPetId());
+
+        LocalDate date = dto.getDate();
+        validateDate(dto.getDate());
+
+        LocalDateTime[] range = getStartAndEndOfDay(dto.getDate());
+
+        List<Syncope> syncopeList = syncopeRepository.findAllByPetIdAndCreatedAtBetween(pet.getId(), range[0], range[1]);
+
+        if (syncopeList.isEmpty()) {
+            throw new EmptyListException("비어었음");
+        }
+
+        List<ResponseDateDTO> result = syncopeList.stream().map(ResponseDateDTO::syncopeToDTO).toList();
+
+        return ResponseDateListDTO.builder()
+                .date(date)
+                .type(pet.getType().toString())
+                .dateDTOS(result)
+                .build();
     }
 
 

@@ -3,6 +3,7 @@ package animal.diary.dto;
 import animal.diary.entity.record.Appetite;
 import animal.diary.entity.record.Energy;
 import animal.diary.entity.record.RespiratoryRate;
+import animal.diary.entity.record.Syncope;
 import animal.diary.entity.record.Weight;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Builder;
@@ -49,6 +50,14 @@ public class ResponseDateDTO {
                 .diaryId(respiratoryRate.getId())
                 .count(respiratoryRate.getCount())
                 .createdTime(respiratoryRate.getCreatedAt().toLocalTime())
+                .build();
+    }
+
+    public static ResponseDateDTO syncopeToDTO(Syncope syncope) {
+        return ResponseDateDTO.builder()
+                .diaryId(syncope.getId())
+                .state(syncope.getState().name())
+                .createdTime(syncope.getCreatedAt().toLocalTime())
                 .build();
     }
 }
