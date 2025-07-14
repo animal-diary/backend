@@ -1,5 +1,7 @@
 package animal.diary.entity.record;
 
+import animal.diary.entity.record.state.AbnormalState;
+import animal.diary.entity.record.state.BinaryState;
 import jakarta.persistence.*;
 
 import java.util.List;

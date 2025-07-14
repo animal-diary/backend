@@ -1,6 +1,7 @@
 package animal.diary.entity.record;
 
-import animal.diary.entity.pet.Pet;
+import animal.diary.entity.record.state.LevelState;
+import animal.diary.entity.record.state.UrineState;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;

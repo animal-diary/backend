@@ -2,8 +2,13 @@ package animal.diary.controller;
 
 import animal.diary.code.SuccessCode;
 import animal.diary.dto.*;
+import animal.diary.dto.response.ErrorResponseDTO;
 import animal.diary.dto.response.ResponseDTO;
 import animal.diary.service.RecordService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -13,9 +18,25 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/record")
 @RequiredArgsConstructor
+@Tag(name = "Record Controller", description = "기록 관련 API")
 public class RecordController {
     private final RecordService recordService;
 
+    @Operation(summary = "몸무게 기록", description = "몸무게를 기록합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "몸무게 기록 성공", content = {
+                    @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json",
+                            schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = RecordResponseDTO.class))
+            }),
+            @ApiResponse(responseCode = "400", description = "잘못된 요청", content = {
+                    @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json",
+                            schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = ErrorResponseDTO.class))
+            }),
+            @ApiResponse(responseCode = "404", description = "반려동물 정보 없음", content = {
+                    @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json",
+                            schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = ErrorResponseDTO.class))
+            })
+    })
     @PostMapping("/weight")
     public ResponseEntity<ResponseDTO<RecordResponseDTO>> recordWeight(@Validated(WeightGroup.class) @RequestBody RecordNumberDTO dto) {
         RecordResponseDTO result = recordService.recordWeight(dto);
@@ -25,6 +46,21 @@ public class RecordController {
                 .body(new ResponseDTO<>(SuccessCode.SUCCESS_SAVE_WEIGHT, result));
     }
 
+    @Operation(summary = "몸무게 날짜별 조회", description = "특정 날짜의 몸무게 기록을 조회합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "몸무게 날짜별 조회 성공", content = {
+                    @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json",
+                            schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = ResponseDateListDTO.class))
+            }),
+            @ApiResponse(responseCode = "400", description = "잘못된 요청", content = {
+                    @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json",
+                            schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = ErrorResponseDTO.class))
+            }),
+            @ApiResponse(responseCode = "404", description = "반려동물 정보 없음", content = {
+                    @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json",
+                            schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = ErrorResponseDTO.class))
+            })
+    })
     @PostMapping("/weight/date")
     public ResponseEntity<ResponseDTO<ResponseDateListDTO>> getWeightsByDate(@Valid @RequestBody RequestDateDTO dto) {
         ResponseDateListDTO result = recordService.getWeightsByDate(dto);
@@ -36,6 +72,21 @@ public class RecordController {
 
     
     // 기력 상태
+    @Operation(summary = "기력 상태 기록", description = "기력 상태를 기록합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "기력 상태 기록 성공", content = {
+                    @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json",
+                            schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = RecordResponseDTO.class))
+            }),
+            @ApiResponse(responseCode = "400", description = "잘못된 요청", content = {
+                    @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json",
+                            schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = ErrorResponseDTO.class))
+            }),
+            @ApiResponse(responseCode = "404", description = "반려동물 정보 없음", content = {
+                    @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json",
+                            schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = ErrorResponseDTO.class))
+            })
+    })
     @PostMapping("/energy")
     public ResponseEntity<ResponseDTO<RecordResponseDTO>> recordEnergy(@Validated(StateGroup.class)@RequestBody RecordNumberDTO dto) {
         RecordResponseDTO result = recordService.recordEnergyAndAppetite(dto, "energy");
@@ -45,6 +96,21 @@ public class RecordController {
                 .body(new ResponseDTO<>(SuccessCode.SUCCESS_SAVE_ENERGY, result));
     }
 
+    @Operation(summary = "기력 상태 날짜별 조회", description = "특정 날짜의 기력 상태 기록을 조회합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "기력 상태 날짜별 조회 성공", content = {
+                    @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json",
+                            schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = ResponseDateListDTO.class))
+            }),
+            @ApiResponse(responseCode = "400", description = "잘못된 요청", content = {
+                    @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json",
+                            schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = ErrorResponseDTO.class))
+            }),
+            @ApiResponse(responseCode = "404", description = "반려동물 정보 없음", content = {
+                    @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json",
+                            schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = ErrorResponseDTO.class))
+            })
+    })
     @PostMapping("/energy/date")
     public ResponseEntity<ResponseDTO<ResponseDateListDTO>> getEnergyByDate(@Valid @RequestBody RequestDateDTO dto) {
         ResponseDateListDTO result = recordService.getEnergyOrAppetiteByDate(dto, "energy");
@@ -55,6 +121,21 @@ public class RecordController {
     }
 
     // 식욕 상태
+    @Operation(summary = "식욕 상태 기록", description = "식욕 상태를 기록합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "식욕 상태 기록 성공", content = {
+                    @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json",
+                            schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = RecordResponseDTO.class))
+            }),
+            @ApiResponse(responseCode = "400", description = "잘못된 요청", content = {
+                    @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json",
+                            schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = ErrorResponseDTO.class))
+            }),
+            @ApiResponse(responseCode = "404", description = "반려동물 정보 없음", content = {
+                    @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json",
+                            schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = ErrorResponseDTO.class))
+            })
+    })
     @PostMapping("/appetite")
     public ResponseEntity<ResponseDTO<RecordResponseDTO>> recordAppetite(@Validated(StateGroup.class) @RequestBody RecordNumberDTO dto) {
         RecordResponseDTO result = recordService.recordEnergyAndAppetite(dto, "appetite");
@@ -64,6 +145,21 @@ public class RecordController {
                 .body(new ResponseDTO<>(SuccessCode.SUCCESS_SAVE_APPETITE, result));
     }
 
+    @Operation(summary = "식욕 상태 날짜별 조회", description = "특정 날짜의 식욕 상태 기록을 조회합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "식욕 상태 날짜별 조회 성공", content = {
+                    @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json",
+                            schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = ResponseDateListDTO.class))
+            }),
+            @ApiResponse(responseCode = "400", description = "잘못된 요청", content = {
+                    @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json",
+                            schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = ErrorResponseDTO.class))
+            }),
+            @ApiResponse(responseCode = "404", description = "반려동물 정보 없음", content = {
+                    @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json",
+                            schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = ErrorResponseDTO.class))
+            })
+    })
     @PostMapping("/appetite/date")
     public ResponseEntity<ResponseDTO<ResponseDateListDTO>> getAppetiteByDate(@Valid @RequestBody RequestDateDTO dto) {
         ResponseDateListDTO result = recordService.getEnergyOrAppetiteByDate(dto, "appetite");
@@ -75,6 +171,21 @@ public class RecordController {
 
 
     // 호흡 수
+    @Operation(summary = "호흡 수 기록", description = "호흡 수를 기록합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "호흡 수 기록 성공", content = {
+                    @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json",
+                            schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = RecordResponseDTO.class))
+            }),
+            @ApiResponse(responseCode = "400", description = "잘못된 요청", content = {
+                    @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json",
+                            schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = ErrorResponseDTO.class))
+            }),
+            @ApiResponse(responseCode = "404", description = "반려동물 정보 없음", content = {
+                    @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json",
+                            schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = ErrorResponseDTO.class))
+            })
+    })
     @PostMapping("/RR")
     public ResponseEntity<ResponseDTO<RecordResponseDTO>> recordRR(@Validated(CountGroup.class) @RequestBody RecordNumberDTO dto) {
         RecordResponseDTO result = recordService.recordRRAndHeartRate(dto, "RR");
@@ -84,6 +195,21 @@ public class RecordController {
                 .body(new ResponseDTO<>(SuccessCode.SUCCESS_SAVE_RR, result));
     }
 
+    @Operation(summary = "호흡 수 날짜별 조회", description = "특정 날짜의 호흡 수 기록을 조회합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "호흡 수 날짜별 조회 성공", content = {
+                    @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json",
+                            schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = ResponseDateListDTO.class))
+            }),
+            @ApiResponse(responseCode = "400", description = "잘못된 요청", content = {
+                    @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json",
+                            schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = ErrorResponseDTO.class))
+            }),
+            @ApiResponse(responseCode = "404", description = "반려동물 정보 없음", content = {
+                    @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json",
+                            schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = ErrorResponseDTO.class))
+            })
+    })
     @PostMapping("/RR/date")
     public ResponseEntity<ResponseDTO<ResponseDateListDTO>> getRRByDate(@Valid @RequestBody RequestDateDTO dto) {
         ResponseDateListDTO result = recordService.getRRByDate(dto);
@@ -94,6 +220,21 @@ public class RecordController {
     }
 
     // 심박수
+    @Operation(summary = "심박수 기록", description = "심박수를 기록합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "심박수 기록 성공", content = {
+                    @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json",
+                            schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = RecordResponseDTO.class))
+            }),
+            @ApiResponse(responseCode = "400", description = "잘못된 요청", content = {
+                    @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json",
+                            schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = ErrorResponseDTO.class))
+            }),
+            @ApiResponse(responseCode = "404", description = "반려동물 정보 없음", content = {
+                    @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json",
+                            schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = ErrorResponseDTO.class))
+            })
+    })
     @PostMapping("/heart-rate")
     public ResponseEntity<ResponseDTO<RecordResponseDTO>> recordHeartRate(@Validated(CountGroup.class) @RequestBody RecordNumberDTO dto) {
         RecordResponseDTO result = recordService.recordRRAndHeartRate(dto, "heart-rate");
@@ -103,6 +244,21 @@ public class RecordController {
                 .body(new ResponseDTO<>(SuccessCode.SUCCESS_SAVE_RR, result));
     }
 
+    @Operation(summary = "심박수 날짜별 조회", description = "특정 날짜의 심박수 기록을 조회합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "심박수 날짜별 조회 성공", content = {
+                    @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json",
+                            schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = ResponseDateListDTO.class))
+            }),
+            @ApiResponse(responseCode = "400", description = "잘못된 요청", content = {
+                    @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json",
+                            schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = ErrorResponseDTO.class))
+            }),
+            @ApiResponse(responseCode = "404", description = "반려동물 정보 없음", content = {
+                    @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json",
+                            schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = ErrorResponseDTO.class))
+            })
+    })
     @PostMapping("/heart-rate/date")
     public ResponseEntity<ResponseDTO<ResponseDateListDTO>> getHeartRateByDate(@Valid @RequestBody RequestDateDTO dto) {
         ResponseDateListDTO result = recordService.getRRByDate(dto);
@@ -113,6 +269,21 @@ public class RecordController {
     }
 
     // 기절 상태
+    @Operation(summary = "기절 상태 기록", description = "기절 상태를 기록합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "기절 상태 기록 성공", content = {
+                    @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json",
+                            schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = RecordResponseDTO.class))
+            }),
+            @ApiResponse(responseCode = "400", description = "잘못된 요청", content = {
+                    @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json",
+                            schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = ErrorResponseDTO.class))
+            }),
+            @ApiResponse(responseCode = "404", description = "반려동물 정보 없음", content = {
+                    @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json",
+                            schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = ErrorResponseDTO.class))
+            })
+    })
     @PostMapping("/syncope")
     public ResponseEntity<ResponseDTO<RecordResponseDTO>> recordSyncope(@Validated(BinaryStateGroup.class) @RequestBody RecordNumberDTO dto) {
         RecordResponseDTO result = recordService.recordSyncope(dto);
@@ -122,6 +293,21 @@ public class RecordController {
                 .body(new ResponseDTO<>(SuccessCode.SUCCESS_SAVE_SYNCOPE, result));
     }
 
+    @Operation(summary = "기절 상태 날짜별 조회", description = "특정 날짜의 기절 상태 기록을 조회합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "기절 상태 날짜별 조회 성공", content = {
+                    @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json",
+                            schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = ResponseDateListDTO.class))
+            }),
+            @ApiResponse(responseCode = "400", description = "잘못된 요청", content = {
+                    @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json",
+                            schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = ErrorResponseDTO.class))
+            }),
+            @ApiResponse(responseCode = "404", description = "반려동물 정보 없음", content = {
+                    @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json",
+                            schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = ErrorResponseDTO.class))
+            })
+    })
     @PostMapping("/syncope/date")
     public ResponseEntity<ResponseDTO<ResponseDateListDTO>> getSyncopeByDate(@Valid @RequestBody RequestDateDTO dto) {
         ResponseDateListDTO result = recordService.getSyncopeByDate(dto);
@@ -132,6 +318,21 @@ public class RecordController {
     }
 
     // 소변 상태
+    @Operation(summary = "소변 상태 기록", description = "소변 상태를 기록합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "소변 상태 기록 성공", content = {
+                    @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json",
+                            schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = RecordResponseDTO.class))
+            }),
+            @ApiResponse(responseCode = "400", description = "잘못된 요청", content = {
+                    @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json",
+                            schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = ErrorResponseDTO.class))
+            }),
+            @ApiResponse(responseCode = "404", description = "반려동물 정보 없음", content = {
+                    @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json",
+                            schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = ErrorResponseDTO.class))
+            })
+    })
     @PostMapping("/urine")
     public ResponseEntity<ResponseDTO<RecordResponseDTO>> recordUrine(@Validated(UrineGroup.class) @RequestBody RecordNumberDTO dto) {
         RecordResponseDTO result = recordService.recordUrinary(dto);
@@ -141,6 +342,21 @@ public class RecordController {
                 .body(new ResponseDTO<>(SuccessCode.SUCCESS_SAVE_URINE, result));
     }
 
+    @Operation(summary = "소변 상태 날짜별 조회", description = "특정 날짜의 소변 상태 기록을 조회합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "소변 상태 날짜별 조회 성공", content = {
+                    @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json",
+                            schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = ResponseDateListDTO.class))
+            }),
+            @ApiResponse(responseCode = "400", description = "잘못된 요청", content = {
+                    @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json",
+                            schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = ErrorResponseDTO.class))
+            }),
+            @ApiResponse(responseCode = "404", description = "반려동물 정보 없음", content = {
+                    @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json",
+                            schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = ErrorResponseDTO.class))
+            })
+    })
     @PostMapping("/urine/date")
     public ResponseEntity<ResponseDTO<ResponseDateListDTO>> getUrineByDate(@Valid @RequestBody RequestDateDTO dto) {
         ResponseDateListDTO result = recordService.getUrinaryByDate(dto);
