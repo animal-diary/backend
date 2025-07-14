@@ -23,6 +23,8 @@ public class RecordNumberDTO {
     private Integer count;
     @NotNull(groups = StateGroup.class, message = "상태는 필수입니다.")
     private String state;
+    @NotNull(groups = BinaryStateGroup.class, message = "기절 상태는 필수입니다.")
+    private String binaryState;
 
 
     public static Weight toWeightEntity(RecordNumberDTO dto, Pet pet) {
@@ -56,6 +58,13 @@ public class RecordNumberDTO {
     public static HeartRate toHeartRateEntity(RecordNumberDTO dto, Pet pet) {
         return HeartRate.builder()
                 .count(dto.getCount())
+                .pet(pet)
+                .build();
+    }
+
+    public static Syncope toSyncopeEntity(RecordNumberDTO dto, Pet pet) {
+        return Syncope.builder()
+                .state(BinaryState.fromString(dto.getBinaryState(), () -> new InvalidStateException("기절 상태가 올바르지 않습니다.")))
                 .pet(pet)
                 .build();
     }
