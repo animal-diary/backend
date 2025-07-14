@@ -137,7 +137,7 @@ public class RecordService {
             return RecordResponseDTO.heartRateToDTO(heartRate);
         }
         else {
-            return null;
+            throw new IllegalArgumentException("Invalid category: " + category);
         }
 
     }
