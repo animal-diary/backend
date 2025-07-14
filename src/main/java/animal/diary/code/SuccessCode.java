@@ -45,6 +45,9 @@ public enum SuccessCode {
     SUCCESS_SAVE_SYNCOPE(HttpStatus.CREATED, "기절 상태를 성공적으로 저장했습니다."),
     SUCCESS_GET_SYNCOPE_BY_DATE(HttpStatus.OK, "날짜별 기절 상태를 성공적으로 불러왔습니다."),
 
+    SUCCESS_SAVE_URINE(HttpStatus.CREATED, "소변 상태를 성공적으로 저장했습니다."),
+    SUCCESS_GET_URINE_BY_DATE(HttpStatus.OK, "날짜별 소변 상태를 성공적으로 불러왔습니다."),
+
     SUCCESS_BUT_EMPTY(HttpStatus.OK, "조회에 성공했으나, 리스트가 비어있습니다."),
     ;
     private final HttpStatus status;

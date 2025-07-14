@@ -16,6 +16,8 @@ public class RecordResponseDTO {
     private Float weight;
     private String state;
     private Integer count;
+    private String urineState;
+    private String urineAmount;
     private LocalDateTime createdAt;
 
     public static RecordResponseDTO weightToDTO(Weight weight) {
@@ -63,6 +65,15 @@ public class RecordResponseDTO {
                 .petId(syncope.getPet().getId())
                 .state(syncope.getState().name())
                 .createdAt(syncope.getCreatedAt())
+                .build();
+    }
+
+    public static RecordResponseDTO urinaryToDTO(Urinary urinary) {
+        return RecordResponseDTO.builder()
+                .petId(urinary.getPet().getId())
+                .urineState(urinary.getState().name())
+                .urineAmount(urinary.getOutput().name())
+                .createdAt(urinary.getCreatedAt())
                 .build();
     }
 

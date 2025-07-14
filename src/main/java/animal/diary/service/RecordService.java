@@ -26,6 +26,7 @@ public class RecordService {
     private final RRRepository rrRepository;
     private final HeartRateRepository heartRateRepository;
     private final SyncopeRepository syncopeRepository;
+    private final UrinaryRepository urinaryRepository;
     
     // 뭄무게
     public RecordResponseDTO recordWeight(RecordNumberDTO dto) {
@@ -206,6 +207,39 @@ public class RecordService {
         }
 
         List<ResponseDateDTO> result = syncopeList.stream().map(ResponseDateDTO::syncopeToDTO).toList();
+
+        return ResponseDateListDTO.builder()
+                .date(date)
+                .type(pet.getType().toString())
+                .dateDTOS(result)
+                .build();
+    }
+
+    // 소변 상태
+    public RecordResponseDTO recordUrinary(RecordNumberDTO dto) {
+        Pet pet = getPetOrThrow(dto.getPetId());
+
+        Urinary urinary = RecordNumberDTO.toUrinaryEntity(dto, pet);
+        urinaryRepository.save(urinary);
+
+        return RecordResponseDTO.urinaryToDTO(urinary);
+    }
+
+    public ResponseDateListDTO getUrinaryByDate(RequestDateDTO dto) {
+        Pet pet = getPetOrThrow(dto.getPetId());
+
+        LocalDate date = dto.getDate();
+        validateDate(dto.getDate());
+
+        LocalDateTime[] range = getStartAndEndOfDay(dto.getDate());
+
+        List<Urinary> urinaryList = urinaryRepository.findAllByPetIdAndCreatedAtBetween(pet.getId(), range[0], range[1]);
+
+        if (urinaryList.isEmpty()) {
+            throw new EmptyListException("비어었음");
+        }
+
+        List<ResponseDateDTO> result = urinaryList.stream().map(ResponseDateDTO::urinaryToDTO).toList();
 
         return ResponseDateListDTO.builder()
                 .date(date)

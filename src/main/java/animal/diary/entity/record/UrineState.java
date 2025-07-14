@@ -1,6 +1,10 @@
 package animal.diary.entity.record;
 
+import animal.diary.exception.InvalidStateException;
 import lombok.Getter;
+
+import java.util.Arrays;
+import java.util.function.Supplier;
 
 @Getter
 public enum UrineState {
@@ -14,5 +18,18 @@ public enum UrineState {
     private final String description;
     UrineState(String description) {
         this.description = description;
+    }
+
+    // Default version with fixed exception type
+    public static UrineState fromString(String value) {
+        return fromString(value, () -> new InvalidStateException("Invalid UrineState value: " + value));
+    }
+
+    // Version that accepts custom exception supplier
+    public static UrineState fromString(String value, Supplier<? extends RuntimeException> exceptionSupplier) {
+        return Arrays.stream(UrineState.values())
+                .filter(state -> state.name().equalsIgnoreCase(value.trim()))
+                .findFirst()
+                .orElseThrow(exceptionSupplier);
     }
 }

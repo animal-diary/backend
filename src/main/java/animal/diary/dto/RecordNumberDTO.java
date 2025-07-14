@@ -25,6 +25,10 @@ public class RecordNumberDTO {
     private String state;
     @NotNull(groups = BinaryStateGroup.class, message = "기절 상태는 필수입니다.")
     private String binaryState;
+    @NotNull(groups = UrineGroup.class, message = "소변 상태는 필수입니다.")
+    private String urineState;
+    @NotNull(groups = UrineGroup.class, message = "소변량은 필수입니다.")
+    private String urineAmount;
 
 
     public static Weight toWeightEntity(RecordNumberDTO dto, Pet pet) {
@@ -65,6 +69,14 @@ public class RecordNumberDTO {
     public static Syncope toSyncopeEntity(RecordNumberDTO dto, Pet pet) {
         return Syncope.builder()
                 .state(BinaryState.fromString(dto.getBinaryState(), () -> new InvalidStateException("기절 상태가 올바르지 않습니다.")))
+                .pet(pet)
+                .build();
+    }
+
+    public static Urinary toUrinaryEntity(RecordNumberDTO dto, Pet pet) {
+        return Urinary.builder()
+                .state(UrineState.fromString(dto.getUrineState(), () -> new InvalidStateException("소변 상태가 올바르지 않습니다.")))
+                .output(LevelState.fromString(dto.getUrineAmount(), () -> new InvalidStateException("소변량 상태가 올바르지 않습니다.")))
                 .pet(pet)
                 .build();
     }
