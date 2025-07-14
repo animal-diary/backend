@@ -1,6 +1,7 @@
 package animal.diary.controller;
 
 import animal.diary.code.SuccessCode;
+import animal.diary.code.VitalCategory;
 import animal.diary.dto.*;
 import animal.diary.dto.response.ErrorResponseDTO;
 import animal.diary.dto.response.ResponseDTO;
@@ -188,7 +189,7 @@ public class RecordController {
     })
     @PostMapping("/RR")
     public ResponseEntity<ResponseDTO<RecordResponseDTO>> recordRR(@Validated(CountGroup.class) @RequestBody RecordNumberDTO dto) {
-        RecordResponseDTO result = recordService.recordRRAndHeartRate(dto, "RR");
+        RecordResponseDTO result = recordService.recordRRAndHeartRate(dto, VitalCategory.RR);
 
         return ResponseEntity
                 .status(SuccessCode.SUCCESS_SAVE_RR.getStatus().value())
@@ -212,7 +213,7 @@ public class RecordController {
     })
     @PostMapping("/RR/date")
     public ResponseEntity<ResponseDTO<ResponseDateListDTO>> getRRByDate(@Valid @RequestBody RequestDateDTO dto) {
-        ResponseDateListDTO result = recordService.getRROrHeartRateByDate(dto, "RR");
+        ResponseDateListDTO result = recordService.getRROrHeartRateByDate(dto, VitalCategory.RR);
 
         return ResponseEntity
                 .status(SuccessCode.SUCCESS_GET_RR_BY_DATE.getStatus().value())
@@ -237,7 +238,7 @@ public class RecordController {
     })
     @PostMapping("/heart-rate")
     public ResponseEntity<ResponseDTO<RecordResponseDTO>> recordHeartRate(@Validated(CountGroup.class) @RequestBody RecordNumberDTO dto) {
-        RecordResponseDTO result = recordService.recordRRAndHeartRate(dto, "heart-rate");
+        RecordResponseDTO result = recordService.recordRRAndHeartRate(dto, VitalCategory.HEART_RATE);
 
         return ResponseEntity
                 .status(SuccessCode.SUCCESS_SAVE_HEART_RATE.getStatus().value())
@@ -261,7 +262,7 @@ public class RecordController {
     })
     @PostMapping("/heart-rate/date")
     public ResponseEntity<ResponseDTO<ResponseDateListDTO>> getHeartRateByDate(@Valid @RequestBody RequestDateDTO dto) {
-        ResponseDateListDTO result = recordService.getRROrHeartRateByDate(dto, "heart-rate");
+        ResponseDateListDTO result = recordService.getRROrHeartRateByDate(dto, VitalCategory.HEART_RATE);
 
         return ResponseEntity
                 .status(SuccessCode.SUCCESS_GET_HEART_RATE_BY_DATE.getStatus().value())
