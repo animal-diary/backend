@@ -16,6 +16,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
+
 @RestController
 @RequestMapping("/record")
 @RequiredArgsConstructor
@@ -62,8 +64,14 @@ public class RecordController {
                             schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = ErrorResponseDTO.class))
             })
     })
-    @PostMapping("/weight/date")
-    public ResponseEntity<ResponseDTO<ResponseDateListDTO>> getWeightsByDate(@Valid @RequestBody RequestDateDTO dto) {
+    @GetMapping("/weight/date")
+    public ResponseEntity<ResponseDTO<ResponseDateListDTO>> getWeightsByDate(
+            @RequestParam LocalDate date, 
+            @RequestParam Long petId) {
+        RequestDateDTO dto = new RequestDateDTO();
+        dto.setDate(date);
+        dto.setPetId(petId);
+        
         ResponseDateListDTO result = recordService.getWeightsByDate(dto);
 
         return ResponseEntity
@@ -112,8 +120,14 @@ public class RecordController {
                             schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = ErrorResponseDTO.class))
             })
     })
-    @PostMapping("/energy/date")
-    public ResponseEntity<ResponseDTO<ResponseDateListDTO>> getEnergyByDate(@Valid @RequestBody RequestDateDTO dto) {
+    @GetMapping("/energy/date")
+    public ResponseEntity<ResponseDTO<ResponseDateListDTO>> getEnergyByDate(
+            @RequestParam LocalDate date, 
+            @RequestParam Long petId) {
+        RequestDateDTO dto = new RequestDateDTO();
+        dto.setDate(date);
+        dto.setPetId(petId);
+        
         ResponseDateListDTO result = recordService.getEnergyOrAppetiteByDate(dto, "energy");
 
         return ResponseEntity
@@ -161,8 +175,14 @@ public class RecordController {
                             schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = ErrorResponseDTO.class))
             })
     })
-    @PostMapping("/appetite/date")
-    public ResponseEntity<ResponseDTO<ResponseDateListDTO>> getAppetiteByDate(@Valid @RequestBody RequestDateDTO dto) {
+    @GetMapping("/appetite/date")
+    public ResponseEntity<ResponseDTO<ResponseDateListDTO>> getAppetiteByDate(
+            @RequestParam LocalDate date, 
+            @RequestParam Long petId) {
+        RequestDateDTO dto = new RequestDateDTO();
+        dto.setDate(date);
+        dto.setPetId(petId);
+        
         ResponseDateListDTO result = recordService.getEnergyOrAppetiteByDate(dto, "appetite");
 
         return ResponseEntity
@@ -211,8 +231,14 @@ public class RecordController {
                             schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = ErrorResponseDTO.class))
             })
     })
-    @PostMapping("/RR/date")
-    public ResponseEntity<ResponseDTO<ResponseDateListDTO>> getRRByDate(@Valid @RequestBody RequestDateDTO dto) {
+    @GetMapping("/RR/date")
+    public ResponseEntity<ResponseDTO<ResponseDateListDTO>> getRRByDate(
+            @RequestParam LocalDate date, 
+            @RequestParam Long petId) {
+        RequestDateDTO dto = new RequestDateDTO();
+        dto.setDate(date);
+        dto.setPetId(petId);
+        
         ResponseDateListDTO result = recordService.getRROrHeartRateByDate(dto, VitalCategory.RR);
 
         return ResponseEntity
@@ -260,8 +286,14 @@ public class RecordController {
                             schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = ErrorResponseDTO.class))
             })
     })
-    @PostMapping("/heart-rate/date")
-    public ResponseEntity<ResponseDTO<ResponseDateListDTO>> getHeartRateByDate(@Valid @RequestBody RequestDateDTO dto) {
+    @GetMapping("/heart-rate/date")
+    public ResponseEntity<ResponseDTO<ResponseDateListDTO>> getHeartRateByDate(
+            @RequestParam LocalDate date, 
+            @RequestParam Long petId) {
+        RequestDateDTO dto = new RequestDateDTO();
+        dto.setDate(date);
+        dto.setPetId(petId);
+        
         ResponseDateListDTO result = recordService.getRROrHeartRateByDate(dto, VitalCategory.HEART_RATE);
 
         return ResponseEntity
@@ -309,8 +341,14 @@ public class RecordController {
                             schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = ErrorResponseDTO.class))
             })
     })
-    @PostMapping("/syncope/date")
-    public ResponseEntity<ResponseDTO<ResponseDateListDTO>> getSyncopeByDate(@Valid @RequestBody RequestDateDTO dto) {
+    @GetMapping("/syncope/date")
+    public ResponseEntity<ResponseDTO<ResponseDateListDTO>> getSyncopeByDate(
+            @RequestParam LocalDate date, 
+            @RequestParam Long petId) {
+        RequestDateDTO dto = new RequestDateDTO();
+        dto.setDate(date);
+        dto.setPetId(petId);
+        
         ResponseDateListDTO result = recordService.getSyncopeByDate(dto);
 
         return ResponseEntity
@@ -358,8 +396,14 @@ public class RecordController {
                             schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = ErrorResponseDTO.class))
             })
     })
-    @PostMapping("/urine/date")
-    public ResponseEntity<ResponseDTO<ResponseDateListDTO>> getUrineByDate(@Valid @RequestBody RequestDateDTO dto) {
+    @GetMapping("/urine/date")
+    public ResponseEntity<ResponseDTO<ResponseDateListDTO>> getUrineByDate(
+            @RequestParam LocalDate date, 
+            @RequestParam Long petId) {
+        RequestDateDTO dto = new RequestDateDTO();
+        dto.setDate(date);
+        dto.setPetId(petId);
+        
         ResponseDateListDTO result = recordService.getUrinaryByDate(dto);
 
         return ResponseEntity
