@@ -12,11 +12,14 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @RestController
 @RequestMapping("/record")
@@ -40,7 +43,7 @@ public class RecordController {
                             schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = ErrorResponseDTO.class))
             })
     })
-    @PostMapping("/weight")
+    @PostMapping(value = "/weight")
     public ResponseEntity<ResponseDTO<RecordResponseDTO>> recordWeight(@Validated(WeightGroup.class) @RequestBody RecordNumberDTO dto) {
         RecordResponseDTO result = recordService.recordWeight(dto);
 
@@ -65,13 +68,7 @@ public class RecordController {
             })
     })
     @GetMapping("/weight/date")
-    public ResponseEntity<ResponseDTO<ResponseDateListDTO>> getWeightsByDate(
-            @RequestParam LocalDate date, 
-            @RequestParam Long petId) {
-        RequestDateDTO dto = new RequestDateDTO();
-        dto.setDate(date);
-        dto.setPetId(petId);
-        
+    public ResponseEntity<ResponseDTO<ResponseDateListDTO>> getWeightsByDate(@Valid @ModelAttribute RequestDateDTO dto) {
         ResponseDateListDTO result = recordService.getWeightsByDate(dto);
 
         return ResponseEntity
@@ -121,13 +118,7 @@ public class RecordController {
             })
     })
     @GetMapping("/energy/date")
-    public ResponseEntity<ResponseDTO<ResponseDateListDTO>> getEnergyByDate(
-            @RequestParam LocalDate date, 
-            @RequestParam Long petId) {
-        RequestDateDTO dto = new RequestDateDTO();
-        dto.setDate(date);
-        dto.setPetId(petId);
-        
+    public ResponseEntity<ResponseDTO<ResponseDateListDTO>> getEnergyByDate(@Valid @ModelAttribute RequestDateDTO dto) {
         ResponseDateListDTO result = recordService.getEnergyOrAppetiteByDate(dto, "energy");
 
         return ResponseEntity
@@ -176,13 +167,7 @@ public class RecordController {
             })
     })
     @GetMapping("/appetite/date")
-    public ResponseEntity<ResponseDTO<ResponseDateListDTO>> getAppetiteByDate(
-            @RequestParam LocalDate date, 
-            @RequestParam Long petId) {
-        RequestDateDTO dto = new RequestDateDTO();
-        dto.setDate(date);
-        dto.setPetId(petId);
-        
+    public ResponseEntity<ResponseDTO<ResponseDateListDTO>> getAppetiteByDate(@Valid @ModelAttribute RequestDateDTO dto) {
         ResponseDateListDTO result = recordService.getEnergyOrAppetiteByDate(dto, "appetite");
 
         return ResponseEntity
@@ -232,13 +217,7 @@ public class RecordController {
             })
     })
     @GetMapping("/RR/date")
-    public ResponseEntity<ResponseDTO<ResponseDateListDTO>> getRRByDate(
-            @RequestParam LocalDate date, 
-            @RequestParam Long petId) {
-        RequestDateDTO dto = new RequestDateDTO();
-        dto.setDate(date);
-        dto.setPetId(petId);
-        
+    public ResponseEntity<ResponseDTO<ResponseDateListDTO>> getRRByDate(@Valid @ModelAttribute RequestDateDTO dto) {
         ResponseDateListDTO result = recordService.getRROrHeartRateByDate(dto, VitalCategory.RR);
 
         return ResponseEntity
@@ -287,13 +266,7 @@ public class RecordController {
             })
     })
     @GetMapping("/heart-rate/date")
-    public ResponseEntity<ResponseDTO<ResponseDateListDTO>> getHeartRateByDate(
-            @RequestParam LocalDate date, 
-            @RequestParam Long petId) {
-        RequestDateDTO dto = new RequestDateDTO();
-        dto.setDate(date);
-        dto.setPetId(petId);
-        
+    public ResponseEntity<ResponseDTO<ResponseDateListDTO>> getHeartRateByDate(@Valid @ModelAttribute RequestDateDTO dto) {
         ResponseDateListDTO result = recordService.getRROrHeartRateByDate(dto, VitalCategory.HEART_RATE);
 
         return ResponseEntity
@@ -342,13 +315,7 @@ public class RecordController {
             })
     })
     @GetMapping("/syncope/date")
-    public ResponseEntity<ResponseDTO<ResponseDateListDTO>> getSyncopeByDate(
-            @RequestParam LocalDate date, 
-            @RequestParam Long petId) {
-        RequestDateDTO dto = new RequestDateDTO();
-        dto.setDate(date);
-        dto.setPetId(petId);
-        
+    public ResponseEntity<ResponseDTO<ResponseDateListDTO>> getSyncopeByDate(@Valid @ModelAttribute RequestDateDTO dto) {
         ResponseDateListDTO result = recordService.getSyncopeByDate(dto);
 
         return ResponseEntity
@@ -397,19 +364,92 @@ public class RecordController {
             })
     })
     @GetMapping("/urine/date")
-    public ResponseEntity<ResponseDTO<ResponseDateListDTO>> getUrineByDate(
-            @RequestParam LocalDate date, 
-            @RequestParam Long petId) {
-
-        RequestDateDTO dto = new RequestDateDTO();
-        dto.setDate(date);
-        dto.setPetId(petId);
-        
+    public ResponseEntity<ResponseDTO<ResponseDateListDTO>> getUrineByDate(@Valid @ModelAttribute RequestDateDTO dto) {
         ResponseDateListDTO result = recordService.getUrinaryByDate(dto);
 
         return ResponseEntity
                 .status(SuccessCode.SUCCESS_GET_URINE_BY_DATE.getStatus().value())
                 .body(new ResponseDTO<>(SuccessCode.SUCCESS_GET_URINE_BY_DATE, result));
+    }
+
+    // 소리 기록
+    @Operation(summary = "소리 기록", description = "소리를 기록합니다.")
+    @PostMapping(value = "/sound", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ResponseDTO<RecordResponseDTO>> recordSound(
+            @RequestPart @Valid SoundRecordDTO dto,
+            @RequestPart(value = "images", required = false) List<MultipartFile> images) {
+        // TODO: Implement sound recording service method
+        return null;
+    }
+
+    // 대변 상태 기록
+    @Operation(summary = "대변 상태 기록", description = "대변 상태를 기록합니다.")
+    @PostMapping(value = "/defecation", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ResponseDTO<RecordResponseDTO>> recordDefecation(
+            @RequestPart @Valid DefecationRecordDTO dto,
+            @RequestPart(value = "images", required = false) List<MultipartFile> images) {
+        // TODO: Implement defecation recording service method
+        return null;
+    }
+
+    // 피부 상태 기록
+    @Operation(summary = "피부 상태 기록", description = "피부 상태를 기록합니다.")
+    @PostMapping(value = "/skin", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ResponseDTO<RecordResponseDTO>> recordSkin(
+            @RequestPart @Valid SkinRecordDTO dto,
+            @RequestPart(value = "images", required = false) List<MultipartFile> images) {
+        // TODO: Implement skin recording service method
+        return null;
+    }
+
+    // 콧물 상태 기록
+    @Operation(summary = "콧물 상태 기록", description = "콧물 상태를 기록합니다.")
+    @PostMapping(value = "/snot", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ResponseDTO<RecordResponseDTO>> recordSnot(
+            @RequestPart @Valid SnotRecordDTO dto,
+            @RequestPart(value = "images", required = false) List<MultipartFile> images) {
+        // TODO: Implement snot recording service method
+        return null;
+    }
+
+    // 구토 상태 기록
+    @Operation(summary = "구토 상태 기록", description = "구토 상태를 기록합니다.")
+    @PostMapping(value = "/vomiting", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ResponseDTO<RecordResponseDTO>> recordVomiting(
+            @RequestPart @Valid VomitingRecordDTO dto,
+            @RequestPart(value = "images", required = false) List<MultipartFile> images) {
+        // TODO: Implement vomiting recording service method
+        return null;
+    }
+
+    // 걸음 상태 기록
+    @Operation(summary = "걸음 상태 기록", description = "걸음 상태를 기록합니다.")
+    @PostMapping(value = "/walking", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ResponseDTO<RecordResponseDTO>> recordWalking(
+            @RequestPart @Valid WalkingRecordDTO dto,
+            @RequestPart(value = "image", required = false) MultipartFile image) {
+        // TODO: Implement walking recording service method
+        return null;
+    }
+
+    // 경련 상태 기록
+    @Operation(summary = "경련 상태 기록", description = "경련 상태를 기록합니다.")
+    @PostMapping(value = "/convulsion", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ResponseDTO<RecordResponseDTO>> recordConvulsion(
+            @RequestPart @Valid ConvulsionRecordDTO dto,
+            @RequestPart(value = "image", required = false) MultipartFile image) {
+        // TODO: Implement convulsion recording service method
+        return null;
+    }
+
+    // 특이사항 기록
+    @Operation(summary = "특이사항 기록", description = "특이사항을 기록합니다.")
+    @PostMapping(value = "/significant", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ResponseDTO<RecordResponseDTO>> recordSignificant(
+            @RequestPart @Valid SignificantRecordDTO dto,
+            @RequestPart(value = "images", required = false) List<MultipartFile> images) {
+        // TODO: Implement significant recording service method
+        return null;
     }
 
 }
