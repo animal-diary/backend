@@ -12,7 +12,5 @@ import java.util.List;
 public class Skin extends Diary{
     private NumberState state;
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "skin_id")  // 💡 여기에 들어갈 이름!
-    private List<File> imageFiles;
+    private List<String> imageUrls;
 }

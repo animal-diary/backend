@@ -400,6 +400,7 @@ public class RecordController {
     public ResponseEntity<ResponseDTO<ResponseDateListDTO>> getUrineByDate(
             @RequestParam LocalDate date, 
             @RequestParam Long petId) {
+
         RequestDateDTO dto = new RequestDateDTO();
         dto.setDate(date);
         dto.setPetId(petId);

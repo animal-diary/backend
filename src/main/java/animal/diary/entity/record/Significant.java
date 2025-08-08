@@ -11,7 +11,6 @@ import java.util.List;
 public class Significant extends Diary{
     private String title;
     private String content;
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "significant_id")  // 💡 여기에 들어갈 이름!
-    private List<File> imageFiles;
+
+    private List<String> imageUrls;
 }
