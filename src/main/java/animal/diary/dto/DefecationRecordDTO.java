@@ -15,6 +15,4 @@ public class DefecationRecordDTO {
     
     @NotNull(message = "대변 상태는 필수입니다.")
     private String state;
-    
-    private List<MultipartFile> images;
 }
