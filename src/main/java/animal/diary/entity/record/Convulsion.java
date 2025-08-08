@@ -2,6 +2,7 @@ package animal.diary.entity.record;
 
 import animal.diary.entity.record.state.AbnormalState;
 import animal.diary.entity.record.state.BinaryState;
+import animal.diary.util.AbnormalStateConverter;
 import jakarta.persistence.*;
 
 import java.util.List;
@@ -10,13 +11,9 @@ import java.util.List;
 public class Convulsion extends Diary{
     private BinaryState state;
 
-    @ElementCollection(targetClass = AbnormalState.class)
     @Enumerated(EnumType.STRING)
-    @CollectionTable(name = "observation_abnormal_states", joinColumns = @JoinColumn(name = "observation_id"))
-    @Column(name = "state")
+    @Convert(converter = AbnormalStateConverter.class)
     private List<AbnormalState> abnormalState;
 
-    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "file_id")
-    private File file;
+    private String imageUrl;
 }

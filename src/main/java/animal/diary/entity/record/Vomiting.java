@@ -1,6 +1,7 @@
 package animal.diary.entity.record;
 
 import animal.diary.entity.record.state.BinaryState;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
@@ -10,8 +11,9 @@ import java.util.List;
 
 @Entity
 public class Vomiting extends Diary{
+    @Schema(description = "상태", example = "O, X")
     private BinaryState state;
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "vomiting_id")  // 💡 여기에 들어갈 이름!
-    private List<File> imageFiles;
+
+    @Schema(description = "토 이미지", example = "https://example.com/vomiting1.jpg, https://example.com/vomiting2.jpg")
+    private List<String> imageFiles;
 }

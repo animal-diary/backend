@@ -5,11 +5,11 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 
+import java.util.List;
+
 @Entity
 public class Sound extends Diary{
     private String title;
 
-    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "file_id")
-    private File file;
+    private List<String> imageUrls;
 }

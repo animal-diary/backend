@@ -26,6 +26,7 @@ import org.springframework.web.context.WebApplicationContext;
 import java.time.LocalDate;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
@@ -106,13 +107,9 @@ class UrineRecordIntegrationTest {
                 .andExpect(status().isCreated());
 
         // Then retrieve by date
-        RequestDateDTO dateDTO = new RequestDateDTO();
-        dateDTO.setPetId(testPet.getId());
-        dateDTO.setDate(LocalDate.now());
-
-        mockMvc.perform(post("/record/urine/date")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(dateDTO)))
+        mockMvc.perform(get("/record/urine/date")
+                        .param("date", LocalDate.now().toString())
+                        .param("petId", testPet.getId().toString()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value("SUCCESS_GET_URINE_BY_DATE"))
                 .andExpect(jsonPath("$.data.dateDTOS[0].urineState").value("BLOODY"))

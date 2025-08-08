@@ -11,7 +11,6 @@ import java.util.List;
 @Entity
 public class Defecation extends Diary{
     private StoolState state;
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "defaction_id")  // 💡 여기에 들어갈 이름!
-    private List<File> imageFiles;
+
+    private List<String> imageUrls;
 }
