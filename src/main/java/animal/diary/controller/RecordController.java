@@ -12,11 +12,14 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @RestController
 @RequestMapping("/record")
@@ -40,7 +43,7 @@ public class RecordController {
                             schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = ErrorResponseDTO.class))
             })
     })
-    @PostMapping("/weight")
+    @PostMapping(value = "/weight")
     public ResponseEntity<ResponseDTO<RecordResponseDTO>> recordWeight(@Validated(WeightGroup.class) @RequestBody RecordNumberDTO dto) {
         RecordResponseDTO result = recordService.recordWeight(dto);
 
@@ -410,6 +413,70 @@ public class RecordController {
         return ResponseEntity
                 .status(SuccessCode.SUCCESS_GET_URINE_BY_DATE.getStatus().value())
                 .body(new ResponseDTO<>(SuccessCode.SUCCESS_GET_URINE_BY_DATE, result));
+    }
+
+    // 소리 기록
+    @Operation(summary = "소리 기록", description = "소리를 기록합니다.")
+    @PostMapping(value = "/sound", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ResponseDTO<RecordResponseDTO>> recordSound(@Valid SoundRecordDTO dto) {
+        // TODO: Implement sound recording service method
+        return null;
+    }
+
+    // 대변 상태 기록
+    @Operation(summary = "대변 상태 기록", description = "대변 상태를 기록합니다.")
+    @PostMapping(value = "/defecation", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ResponseDTO<RecordResponseDTO>> recordDefecation(@Valid DefecationRecordDTO dto) {
+        // TODO: Implement defecation recording service method
+        return null;
+    }
+
+    // 피부 상태 기록
+    @Operation(summary = "피부 상태 기록", description = "피부 상태를 기록합니다.")
+    @PostMapping(value = "/skin", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ResponseDTO<RecordResponseDTO>> recordSkin(@Valid SkinRecordDTO dto) {
+        // TODO: Implement skin recording service method
+        return null;
+    }
+
+    // 콧물 상태 기록
+    @Operation(summary = "콧물 상태 기록", description = "콧물 상태를 기록합니다.")
+    @PostMapping(value = "/snot", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ResponseDTO<RecordResponseDTO>> recordSnot(@Valid SnotRecordDTO dto) {
+        // TODO: Implement snot recording service method
+        return null;
+    }
+
+    // 구토 상태 기록
+    @Operation(summary = "구토 상태 기록", description = "구토 상태를 기록합니다.")
+    @PostMapping(value = "/vomiting", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ResponseDTO<RecordResponseDTO>> recordVomiting(@Valid VomitingRecordDTO dto) {
+        // TODO: Implement vomiting recording service method
+        return null;
+    }
+
+    // 걸음 상태 기록
+    @Operation(summary = "걸음 상태 기록", description = "걸음 상태를 기록합니다.")
+    @PostMapping(value = "/walking", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ResponseDTO<RecordResponseDTO>> recordWalking(@Valid WalkingRecordDTO dto) {
+        // TODO: Implement walking recording service method
+        return null;
+    }
+
+    // 경련 상태 기록
+    @Operation(summary = "경련 상태 기록", description = "경련 상태를 기록합니다.")
+    @PostMapping(value = "/convulsion", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ResponseDTO<RecordResponseDTO>> recordConvulsion(@Valid ConvulsionRecordDTO dto) {
+        // TODO: Implement convulsion recording service method
+        return null;
+    }
+
+    // 특이사항 기록
+    @Operation(summary = "특이사항 기록", description = "특이사항을 기록합니다.")
+    @PostMapping(value = "/significant", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ResponseDTO<RecordResponseDTO>> recordSignificant(@Valid SignificantRecordDTO dto) {
+        // TODO: Implement significant recording service method
+        return null;
     }
 
 }
