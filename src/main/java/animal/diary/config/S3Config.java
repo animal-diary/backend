@@ -11,7 +11,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Repository;
 
-@Repository
 @Configuration
 public class S3Config {
     @Value("${cloud.aws.credentials.access-key}")
