@@ -225,22 +225,21 @@ public class QueryService {
             throw new EmptyListException("비어었음");
         }
 
-        // 이미지 조회 시에는 cloudFront 로 조회하도록 구현
-        List<String> imageCloudFrontUrls = new ArrayList<>();
-
-        significantList.forEach(significant -> {
+        // 각 record별로 개별 CloudFront URL 생성 (성능 최적화)
+        List<ResponseDateDTO> result = significantList.stream().map(significant -> {
             List<String> imageUrls = significant.getImageUrls();
-            if (imageUrls != null && !imageUrls.isEmpty()) {
-                for (String originalUrl : imageUrls) {
-                    String cloudFrontUrl = cloudFrontUrlService.generateSignedUrl(originalUrl);
-                    imageCloudFrontUrls.add(cloudFrontUrl);
-                }
+            
+            if (imageUrls == null || imageUrls.isEmpty()) {
+                return ResponseDateDTO.significantToDTO(significant, List.of());
             }
-        });
-
-        List<ResponseDateDTO> result = significantList.stream().map(
-                significant -> ResponseDateDTO.significantToDTO(significant, imageCloudFrontUrls)
-        ).toList();
+            
+            // 스트림으로 변환하여 성능 향상
+            List<String> imageCloudFrontUrls = imageUrls.stream()
+                    .map(cloudFrontUrlService::generateSignedUrl)
+                    .toList();
+            
+            return ResponseDateDTO.significantToDTO(significant, imageCloudFrontUrls);
+        }).toList();
 
         return ResponseDateListDTO.builder()
                 .date(date)
