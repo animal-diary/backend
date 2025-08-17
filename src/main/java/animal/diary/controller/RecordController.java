@@ -331,14 +331,14 @@ public class RecordController {
             - state: 콧물 상태 (CLEAR, MUCUS, BLOODY)
             - 이미지는 단일 이미지만 업로드 가능합니다.
             """)
-    @PostMapping(value = "/nasal-discharge", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/snot", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ResponseDTO<RecordResponseDTO>> recordNasalDischarge(
             @RequestPart SnotRecordDTO dto,
             @RequestPart(value = "images", required = false) List<MultipartFile> images) {
 
-        log.info("Received nasal discharge record request for pet ID: {} with state: {}", dto.getPetId(), dto.getState());
+        log.info("Received snot record request for pet ID: {} with state: {}", dto.getPetId(), dto.getState());
         RecordResponseDTO result = recordService.recordSnot(dto, images);
-        log.info("Nasal discharge record completed for pet ID: {}", dto.getPetId());
+        log.info("snot record completed for pet ID: {}", dto.getPetId());
 
         return ResponseEntity
                 .status(SuccessCode.SUCCESS_SAVE_RECORD.getStatus().value())
