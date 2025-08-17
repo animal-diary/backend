@@ -1,6 +1,7 @@
 package animal.diary.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -11,6 +12,7 @@ import java.security.PrivateKey;
 import java.security.Signature;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.util.Base64;
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class CloudFrontUrlService {
@@ -39,6 +41,7 @@ public class CloudFrontUrlService {
     }
 
     public String generateSignedUrl(String objectKey) {
+        log.info("Generating signed URL for object key: {}", objectKey);
         try {
             // PEM → PrivateKey
             PrivateKey privateKey = loadPrivateKey(privateKeyPem);
@@ -66,10 +69,13 @@ public class CloudFrontUrlService {
             String signatureEncoded = makeUrlSafe(Base64.getEncoder().encodeToString(signedBytes));
 
             // 최종 URL 조합
-            return String.format("%s?Expires=%d&Signature=%s&Key-Pair-Id=%s",
+            String signedUrl = String.format("%s?Expires=%d&Signature=%s&Key-Pair-Id=%s",
                     resourceUrl, expires, signatureEncoded, keyPairId);
+            log.info("Successfully generated signed URL for object key: {}", objectKey);
+            return signedUrl;
 
         } catch (Exception e) {
+            log.error("Failed to generate signed URL for object key: {}", objectKey, e);
             throw new RuntimeException("CloudFront Signed URL 생성 실패", e);
         }
     }

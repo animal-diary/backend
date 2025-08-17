@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -20,6 +21,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
+@Slf4j
 @RestController
 @RequestMapping("/record")
 @RequiredArgsConstructor
@@ -44,7 +46,9 @@ public class RecordController {
     })
     @PostMapping(value = "/weight")
     public ResponseEntity<ResponseDTO<RecordResponseDTO>> recordWeight(@Validated(WeightGroup.class) @RequestBody RecordNumberDTO dto) {
+        log.info("Received weight record request for pet ID: {}", dto.getPetId());
         RecordResponseDTO result = recordService.recordWeight(dto);
+        log.info("Weight record completed for pet ID: {}", dto.getPetId());
 
         return ResponseEntity
                 .status(SuccessCode.SUCCESS_SAVE_WEIGHT.getStatus().value())
@@ -68,7 +72,9 @@ public class RecordController {
     })
     @GetMapping("/weight/date")
     public ResponseEntity<ResponseDTO<ResponseDateListDTO>> getWeightsByDate(@Valid @ModelAttribute RequestDateDTO dto) {
+        log.info("Received request to get weights by date for pet ID: {} on date: {}", dto.getPetId(), dto.getDate());
         ResponseDateListDTO result = recordService.getWeightsByDate(dto);
+        log.info("Successfully retrieved weights for pet ID: {} on date: {}", dto.getPetId(), dto.getDate());
 
         return ResponseEntity
                 .status(SuccessCode.SUCCESS_GET_WEIGHT_BY_DATE.getStatus().value())
@@ -94,7 +100,9 @@ public class RecordController {
     })
     @PostMapping("/energy")
     public ResponseEntity<ResponseDTO<RecordResponseDTO>> recordEnergy(@Validated(StateGroup.class)@RequestBody RecordNumberDTO dto) {
+        log.info("Received energy record request for pet ID: {}", dto.getPetId());
         RecordResponseDTO result = recordService.recordEnergyAndAppetite(dto, "energy");
+        log.info("Energy record completed for pet ID: {}", dto.getPetId());
 
         return ResponseEntity
                 .status(SuccessCode.SUCCESS_SAVE_ENERGY.getStatus().value())
@@ -118,7 +126,9 @@ public class RecordController {
     })
     @GetMapping("/energy/date")
     public ResponseEntity<ResponseDTO<ResponseDateListDTO>> getEnergyByDate(@Valid @ModelAttribute RequestDateDTO dto) {
+        log.info("Received request to get energy by date for pet ID: {} on date: {}", dto.getPetId(), dto.getDate());
         ResponseDateListDTO result = recordService.getEnergyOrAppetiteByDate(dto, "energy");
+        log.info("Successfully retrieved energy records for pet ID: {} on date: {}", dto.getPetId(), dto.getDate());
 
         return ResponseEntity
                 .status(SuccessCode.SUCCESS_GET_ENERGY_BY_DATE.getStatus().value())
@@ -143,7 +153,9 @@ public class RecordController {
     })
     @PostMapping("/appetite")
     public ResponseEntity<ResponseDTO<RecordResponseDTO>> recordAppetite(@Validated(StateGroup.class) @RequestBody RecordNumberDTO dto) {
+        log.info("Received appetite record request for pet ID: {}", dto.getPetId());
         RecordResponseDTO result = recordService.recordEnergyAndAppetite(dto, "appetite");
+        log.info("Appetite record completed for pet ID: {}", dto.getPetId());
 
         return ResponseEntity
                 .status(SuccessCode.SUCCESS_SAVE_APPETITE.getStatus().value())
@@ -167,7 +179,9 @@ public class RecordController {
     })
     @GetMapping("/appetite/date")
     public ResponseEntity<ResponseDTO<ResponseDateListDTO>> getAppetiteByDate(@Valid @ModelAttribute RequestDateDTO dto) {
+        log.info("Received request to get appetite by date for pet ID: {} on date: {}", dto.getPetId(), dto.getDate());
         ResponseDateListDTO result = recordService.getEnergyOrAppetiteByDate(dto, "appetite");
+        log.info("Successfully retrieved appetite records for pet ID: {} on date: {}", dto.getPetId(), dto.getDate());
 
         return ResponseEntity
                 .status(SuccessCode.SUCCESS_GET_APPETITE_BY_DATE.getStatus().value())
@@ -193,7 +207,9 @@ public class RecordController {
     })
     @PostMapping("/RR")
     public ResponseEntity<ResponseDTO<RecordResponseDTO>> recordRR(@Validated(CountGroup.class) @RequestBody RecordNumberDTO dto) {
+        log.info("Received respiratory rate record request for pet ID: {}", dto.getPetId());
         RecordResponseDTO result = recordService.recordRRAndHeartRate(dto, VitalCategory.RR);
+        log.info("Respiratory rate record completed for pet ID: {}", dto.getPetId());
 
         return ResponseEntity
                 .status(SuccessCode.SUCCESS_SAVE_RR.getStatus().value())
@@ -217,7 +233,9 @@ public class RecordController {
     })
     @GetMapping("/RR/date")
     public ResponseEntity<ResponseDTO<ResponseDateListDTO>> getRRByDate(@Valid @ModelAttribute RequestDateDTO dto) {
+        log.info("Received request to get respiratory rate by date for pet ID: {} on date: {}", dto.getPetId(), dto.getDate());
         ResponseDateListDTO result = recordService.getRROrHeartRateByDate(dto, VitalCategory.RR);
+        log.info("Successfully retrieved respiratory rate records for pet ID: {} on date: {}", dto.getPetId(), dto.getDate());
 
         return ResponseEntity
                 .status(SuccessCode.SUCCESS_GET_RR_BY_DATE.getStatus().value())
@@ -242,7 +260,9 @@ public class RecordController {
     })
     @PostMapping("/heart-rate")
     public ResponseEntity<ResponseDTO<RecordResponseDTO>> recordHeartRate(@Validated(CountGroup.class) @RequestBody RecordNumberDTO dto) {
+        log.info("Received heart rate record request for pet ID: {}", dto.getPetId());
         RecordResponseDTO result = recordService.recordRRAndHeartRate(dto, VitalCategory.HEART_RATE);
+        log.info("Heart rate record completed for pet ID: {}", dto.getPetId());
 
         return ResponseEntity
                 .status(SuccessCode.SUCCESS_SAVE_HEART_RATE.getStatus().value())
@@ -266,7 +286,9 @@ public class RecordController {
     })
     @GetMapping("/heart-rate/date")
     public ResponseEntity<ResponseDTO<ResponseDateListDTO>> getHeartRateByDate(@Valid @ModelAttribute RequestDateDTO dto) {
+        log.info("Received request to get heart rate by date for pet ID: {} on date: {}", dto.getPetId(), dto.getDate());
         ResponseDateListDTO result = recordService.getRROrHeartRateByDate(dto, VitalCategory.HEART_RATE);
+        log.info("Successfully retrieved heart rate records for pet ID: {} on date: {}", dto.getPetId(), dto.getDate());
 
         return ResponseEntity
                 .status(SuccessCode.SUCCESS_GET_HEART_RATE_BY_DATE.getStatus().value())
@@ -291,7 +313,9 @@ public class RecordController {
     })
     @PostMapping("/syncope")
     public ResponseEntity<ResponseDTO<RecordResponseDTO>> recordSyncope(@Validated(BinaryStateGroup.class) @RequestBody RecordNumberDTO dto) {
+        log.info("Received syncope record request for pet ID: {}", dto.getPetId());
         RecordResponseDTO result = recordService.recordSyncope(dto);
+        log.info("Syncope record completed for pet ID: {}", dto.getPetId());
 
         return ResponseEntity
                 .status(SuccessCode.SUCCESS_SAVE_SYNCOPE.getStatus().value())
@@ -315,7 +339,9 @@ public class RecordController {
     })
     @GetMapping("/syncope/date")
     public ResponseEntity<ResponseDTO<ResponseDateListDTO>> getSyncopeByDate(@Valid @ModelAttribute RequestDateDTO dto) {
+        log.info("Received request to get syncope by date for pet ID: {} on date: {}", dto.getPetId(), dto.getDate());
         ResponseDateListDTO result = recordService.getSyncopeByDate(dto);
+        log.info("Successfully retrieved syncope records for pet ID: {} on date: {}", dto.getPetId(), dto.getDate());
 
         return ResponseEntity
                 .status(SuccessCode.SUCCESS_GET_SYNCOPE_BY_DATE.getStatus().value())
@@ -340,7 +366,9 @@ public class RecordController {
     })
     @PostMapping("/urine")
     public ResponseEntity<ResponseDTO<RecordResponseDTO>> recordUrine(@Validated(UrineGroup.class) @RequestBody RecordNumberDTO dto) {
+        log.info("Received urine record request for pet ID: {}", dto.getPetId());
         RecordResponseDTO result = recordService.recordUrinary(dto);
+        log.info("Urine record completed for pet ID: {}", dto.getPetId());
 
         return ResponseEntity
                 .status(SuccessCode.SUCCESS_SAVE_URINE.getStatus().value())
@@ -364,7 +392,9 @@ public class RecordController {
     })
     @GetMapping("/urine/date")
     public ResponseEntity<ResponseDTO<ResponseDateListDTO>> getUrineByDate(@Valid @ModelAttribute RequestDateDTO dto) {
+        log.info("Received request to get urine by date for pet ID: {} on date: {}", dto.getPetId(), dto.getDate());
         ResponseDateListDTO result = recordService.getUrinaryByDate(dto);
+        log.info("Successfully retrieved urine records for pet ID: {} on date: {}", dto.getPetId(), dto.getDate());
 
         return ResponseEntity
                 .status(SuccessCode.SUCCESS_GET_URINE_BY_DATE.getStatus().value())

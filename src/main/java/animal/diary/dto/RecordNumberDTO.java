@@ -10,9 +10,10 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.groups.Default;
 import lombok.Builder;
 import lombok.Data;
+import lombok.Getter;
 
 @Builder
-@Data
+@Getter
 public class RecordNumberDTO {
 
     @NotNull(groups = {Default.class, WeightGroup.class, CountGroup.class, StateGroup.class},

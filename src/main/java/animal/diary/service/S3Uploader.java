@@ -1,70 +1,72 @@
 package animal.diary.service;
 
-import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.model.ObjectMetadata;
-import com.amazonaws.services.s3.model.PutObjectRequest;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import software.amazon.awssdk.core.sync.RequestBody;
+import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.*;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
-@Transactional
 public class S3Uploader {
 
-    private final AmazonS3 amazonS3;
+    private final S3Client s3Client;
 
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
 
-
     public String upload(MultipartFile multipartFile, String dirName) throws IOException {
-        // 파일 이름에서 공백을 제거한 새로운 파일 이름 생성
-        //String originalFileName = multipartFile.getOriginalFilename();
-
-        // UUID를 파일명에 추가 (varchar(20)으로 들어갈 수 있도록)
+        // UUID 기반 파일명
         String uuid = UUID.randomUUID().toString().replace("-", "").substring(0, 20);
-
-        //String uniqueFileName = uuid + "_" + originalFileName.replaceAll("\\s", "_");
-
         String fileName = dirName + "/" + uuid;
-        log.info("fileName: " + fileName);
-        // S3에 파일 업로드
-        System.out.println(putS3(multipartFile, fileName));
+
+        log.info("fileName: {}", fileName);
+
+        // S3 업로드
+        putS3(multipartFile, fileName);
 
         return fileName;
     }
 
+    private void putS3(MultipartFile multipartFile, String fileName) throws IOException {
+        PutObjectRequest putObjectRequest = PutObjectRequest.builder()
+                .bucket(bucket)
+                .key(fileName)
+                .contentType(multipartFile.getContentType())
+                .contentLength(multipartFile.getSize())
+                .build();
 
-    private String putS3(MultipartFile multipartFile, String fileName) throws IOException {
-        ObjectMetadata metadata = new ObjectMetadata();
-        metadata.setContentLength(multipartFile.getSize());
-        metadata.setContentType(multipartFile.getContentType());
+        s3Client.putObject(
+                putObjectRequest,
+                RequestBody.fromInputStream(multipartFile.getInputStream(), multipartFile.getSize())
+        );
 
-        PutObjectRequest request = new PutObjectRequest(bucket, fileName, multipartFile.getInputStream(), metadata);
-
-        amazonS3.putObject(request);
-
-        return amazonS3.getUrl(bucket, fileName).toString();
+        log.info("S3 upload success: s3://{}/{}", bucket, fileName);
     }
 
     public void deleteFile(String fileName) {
         try {
-            // URL 디코딩을 통해 원래의 파일 이름을 가져옴
-            String decodedFileName = URLDecoder.decode(fileName, "UTF-8");
-            log.info("Deleting file from S3: " + decodedFileName);
-            amazonS3.deleteObject(bucket, decodedFileName);
-        } catch (UnsupportedEncodingException e) {
-            log.error("Error while decoding the file name: {}", e.getMessage());
+            String decodedFileName = URLDecoder.decode(fileName, StandardCharsets.UTF_8);
+            log.info("Deleting file from S3: {}", decodedFileName);
+
+            DeleteObjectRequest deleteObjectRequest = DeleteObjectRequest.builder()
+                    .bucket(bucket)
+                    .key(decodedFileName)
+                    .build();
+
+            s3Client.deleteObject(deleteObjectRequest);
+
+        } catch (Exception e) {
+            log.error("Error while deleting file: {}", e.getMessage());
         }
     }
 }
