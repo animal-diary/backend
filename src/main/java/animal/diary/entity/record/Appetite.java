@@ -2,6 +2,7 @@ package animal.diary.entity.record;
 
 import animal.diary.entity.record.state.LevelState;
 import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;

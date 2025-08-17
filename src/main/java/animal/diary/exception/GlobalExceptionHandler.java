@@ -36,6 +36,15 @@ public class GlobalExceptionHandler {
                 .body(new ErrorResponseDTO(ErrorCode.BAD_REQUEST, errors));
     }
 
+    // 이미지 예외
+    @ExceptionHandler(ImageSizeLimitException.class)
+    protected ResponseEntity<ErrorResponseDTO> handleImageSizeLimit(final ImageSizeLimitException e) {
+        log.warn("Image size limit exception: {}", e.getMessage());
+        return ResponseEntity
+                .status(ErrorCode.IMAGE_SIZE_LIMIT_10.getStatus().value())
+                .body(new ErrorResponseDTO(ErrorCode.IMAGE_SIZE_LIMIT_10));
+    }
+
     @ExceptionHandler(DiseaseInvalidException.class)
     protected ResponseEntity<ErrorResponseDTO> handleDiseaseInvalid(final DiseaseInvalidException e) {
         log.warn("Invalid disease exception: {}", e.getMessage());
@@ -106,5 +115,14 @@ public class GlobalExceptionHandler {
         return ResponseEntity
                 .status(SuccessCode.SUCCESS_BUT_EMPTY.getStatus().value())
                 .body(new ResponseDTO<>(SuccessCode.SUCCESS_BUT_EMPTY, Collections.emptyList()));
+    }
+
+    // 이미지 업로드 예외
+    @ExceptionHandler(ImageUploadException.class)
+    protected ResponseEntity<ErrorResponseDTO> handleImageUploadException(final ImageUploadException e) {
+        log.error("Image upload exception: {}", e.getMessage());
+        return ResponseEntity
+                .status(ErrorCode.IMAGE_UPLOAD_ERROR.getStatus().value())
+                .body(new ErrorResponseDTO(ErrorCode.IMAGE_UPLOAD_ERROR, e.getMessage()));
     }
 }

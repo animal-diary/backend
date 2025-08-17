@@ -5,13 +5,16 @@ import animal.diary.dto.*;
 import animal.diary.entity.pet.Pet;
 import animal.diary.entity.record.*;
 import animal.diary.exception.EmptyListException;
+import animal.diary.exception.ImageSizeLimitException;
 import animal.diary.exception.InvalidDateException;
 import animal.diary.exception.PetNotFoundException;
 import animal.diary.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -29,6 +32,8 @@ public class RecordService {
     private final HeartRateRepository heartRateRepository;
     private final SyncopeRepository syncopeRepository;
     private final UrinaryRepository urinaryRepository;
+    private final S3Uploader s3Uploader;
+    private final SignificantRepository significantRecordRepository;
     
     // 뭄무게
     public RecordResponseDTO recordWeight(RecordNumberDTO dto) {
@@ -304,6 +309,27 @@ public class RecordService {
                 .type(pet.getType().toString())
                 .dateDTOS(result)
                 .build();
+    }
+
+    // =============================== 특이 사항 기록 ===============================
+    public RecordResponseDTO recordSignificantRecord(SignificantRecordDTO dto, List<MultipartFile> images) throws IOException {
+        Pet pet = getPetOrThrow(dto.getPetId());
+
+        // 이미지 10장
+        if (images.size() > 10) {
+            throw new ImageSizeLimitException("이미지는 최대 10장까지 업로드할 수 있습니다.");
+        }
+
+        // 이미지 업로드
+        List<String> imageUrls = s3Uploader.uploadMultiple(images, "significant");
+
+        Significant significantRecord = SignificantRecordDTO.toEntity(dto, pet, imageUrls);
+
+        log.info("Recording significant record for pet ID: {}, title: {}", pet.getId(), dto.getTitle());
+        significantRecordRepository.save(significantRecord);
+        log.info("Successfully recorded significant record with ID: {}", significantRecord.getId());
+
+        return RecordResponseDTO.significantToDTO(significantRecord);
     }
 
 

@@ -17,6 +17,11 @@ public class RecordResponseDTO {
     private Integer count;
     private String urineState;
     private String urineAmount;
+
+    // 특이사항
+    private String title;
+    private String content;
+
     private LocalDateTime createdAt;
 
     public static RecordResponseDTO weightToDTO(Weight weight) {
@@ -76,4 +81,12 @@ public class RecordResponseDTO {
                 .build();
     }
 
+    public static RecordResponseDTO significantToDTO(Significant significant) {
+        return RecordResponseDTO.builder()
+                .petId(significant.getPet().getId())
+                .title(significant.getTitle())
+                .content(significant.getContent())
+                .createdAt(significant.getCreatedAt())
+                .build();
+    }
 }

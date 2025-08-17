@@ -1,5 +1,6 @@
 package animal.diary.service;
 
+import animal.diary.exception.ImageUploadException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -12,6 +13,8 @@ import software.amazon.awssdk.services.s3.model.*;
 import java.io.IOException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 @Slf4j
@@ -23,6 +26,21 @@ public class S3Uploader {
 
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
+
+    // 여러 이미지 업로드
+    public List<String> uploadMultiple(List<MultipartFile> multipartFiles, String dirName) {
+        return multipartFiles.stream()
+                .map(multipartFile -> {
+                    try {
+                        return upload(multipartFile, dirName);
+                    } catch (IOException e) {
+                        log.error("Error uploading file: {}", e.getMessage());
+                        throw new ImageUploadException("이미지 업로드에 실패했습니다. 파일 크기를 확인해주세요.");
+                    }
+                })
+                .filter(Objects::nonNull)
+                .toList();
+    }
 
     public String upload(MultipartFile multipartFile, String dirName) throws IOException {
         // UUID 기반 파일명
