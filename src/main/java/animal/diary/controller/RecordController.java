@@ -277,4 +277,26 @@ public class RecordController {
                 .status(SuccessCode.SUCCESS_SAVE_RECORD.getStatus().value())
                 .body(new ResponseDTO<>(SuccessCode.SUCCESS_SAVE_RECORD, result));
     }
+
+    // 경련 기록
+    @Operation(summary = "경련 상태 기록", description = """
+            경련 상태를 기록합니다.
+            - 필수 필드: petId, state, abnormalState
+            - state: 경련 상태 (O: 있음, X: 없음)
+            - abnormalState: 비정상 상태 (INCONTINENCE, DROOLING, UNCONSCIOUS, NORMAL)
+            - 이미지는 단일 이미지만 업로드 가능합니다.
+            """)
+    @PostMapping(value = "/convulsion", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ResponseDTO<RecordResponseDTO>> recordConvulsion(
+            @RequestPart ConvulsionRecordDTO dto,
+            @RequestPart(value = "image", required = false) MultipartFile image) throws IOException {
+        
+        log.info("Received convulsion record request for pet ID: {} with image: {}", dto.getPetId(), image != null);
+        RecordResponseDTO result = recordService.recordConvulsionRecord(dto, image);
+        log.info("Convulsion record completed for pet ID: {}", dto.getPetId());
+
+        return ResponseEntity
+                .status(SuccessCode.SUCCESS_SAVE_RECORD.getStatus().value())
+                .body(new ResponseDTO<>(SuccessCode.SUCCESS_SAVE_RECORD, result));
+    }
 }
