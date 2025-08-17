@@ -31,7 +31,6 @@ public class ConvulsionRecordDTO {
 
     public static Convulsion toEntity(ConvulsionRecordDTO dto, Pet pet, String imageUrl) {
         return Convulsion.builder()
-                .title("경련 " + dto.getState())
                 .state(BinaryState.fromString(dto.getState()))
                 .abnormalState(dto.getAbnormalState() != null ?
                     dto.getAbnormalState().stream()

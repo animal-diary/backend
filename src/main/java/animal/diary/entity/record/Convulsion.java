@@ -21,7 +21,6 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Convulsion extends Diary{
-    private String title;
     private BinaryState state;
 
     @Enumerated(EnumType.STRING)
