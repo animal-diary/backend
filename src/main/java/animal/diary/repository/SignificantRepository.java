@@ -1,6 +1,5 @@
 package animal.diary.repository;
 
-import animal.diary.entity.record.RespiratoryRate;
 import animal.diary.entity.record.Significant;
 import org.springframework.data.jpa.repository.JpaRepository;
 
