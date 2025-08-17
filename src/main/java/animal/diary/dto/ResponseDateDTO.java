@@ -1,6 +1,7 @@
 package animal.diary.dto;
 
 import animal.diary.entity.record.*;
+import animal.diary.entity.record.state.AbnormalState;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Builder;
 import lombok.Getter;
@@ -27,6 +28,7 @@ public class ResponseDateDTO {
 
     // 경련
     private String imageUrl;
+    private List<String> abnormalStates;
 
     public static ResponseDateDTO weightToDTO(Weight weight) {
         return ResponseDateDTO.builder()
@@ -100,8 +102,11 @@ public class ResponseDateDTO {
         return ResponseDateDTO.builder()
                 .diaryId(convulsion.getId())
                 .createdTime(convulsion.getCreatedAt().toLocalTime())
-                .title(convulsion.getState().name())
-                .content(convulsion.getAbnormalState().toString())
+                .title("경련 " + convulsion.getState().name())
+                .state(convulsion.getState().name())
+                .abnormalStates(convulsion.getAbnormalState().stream()
+                        .map(AbnormalState::getDescription)
+                        .toList())
                 .imageUrl(imageCloudFrontUrl)
                 .build();
     }
