@@ -110,4 +110,13 @@ public class ResponseDateDTO {
                 .imageUrl(imageCloudFrontUrl)
                 .build();
     }
+
+    public static ResponseDateDTO soundToDTO(Sound sound, String imageUrl) {
+        return ResponseDateDTO.builder()
+                .diaryId(sound.getId())
+                .createdTime(sound.getCreatedAt().toLocalTime())
+                .title(sound.getTitle())
+                .imageUrl(imageUrl)
+                .build();
+    }
 }

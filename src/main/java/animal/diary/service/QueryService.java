@@ -35,6 +35,7 @@ public class QueryService {
     private final SignificantRepository significantRepository;
     private final ConvulsionRepository convulsionRepository;
     private final CloudFrontUrlService cloudFrontUrlService;
+    private final SoundRepository soundRepository;
 
     // 몸무게 조회
     public ResponseDateListDTO getWeightsByDate(RequestDateDTO dto) {
@@ -284,6 +285,42 @@ public class QueryService {
                 .build();
     }
 
+    // =========================================================== 이상 소리 일별 조회
+    public ResponseDateListDTO getSoundByDate(RequestDateDTO dto) {
+        Pet pet = getPetOrThrow(dto.getPetId());
+
+        LocalDate date = dto.getDate();
+        validateDate(dto.getDate());
+
+        LocalDateTime[] range = getStartAndEndOfDay(dto.getDate());
+
+        log.info("Fetching sound records for pet ID: {} on date: {}", pet.getId(), date);
+        List<Sound> soundList = soundRepository.findAllByPetIdAndCreatedAtBetween(pet.getId(), range[0], range[1]);
+        log.info("Found {} sound records for pet ID: {} on date: {}", soundList.size(), pet.getId(), date);
+
+        if (soundList.isEmpty()) {
+            throw new EmptyListException("비어었음");
+        }
+
+        // 각 record별로 개별 CloudFront URL 생성 (성능 최적화)
+        List<ResponseDateDTO> result = soundList.stream().map(sound -> {
+            if (sound.getImageUrl() == null || sound.getImageUrl().isEmpty()) {
+                return ResponseDateDTO.soundToDTO(sound, null);
+            }
+            String imageUrl = sound.getImageUrl();
+
+            String imageCloudFrontUrl = cloudFrontUrlService.generateSignedUrl(imageUrl);
+
+            return ResponseDateDTO.soundToDTO(sound, imageCloudFrontUrl);
+        }).toList();
+
+        return ResponseDateListDTO.builder()
+                .date(date)
+                .type(pet.getType().toString())
+                .dateDTOS(result)
+                .build();
+    }
+
     // 공통 유틸리티 메서드들
     private Pet getPetOrThrow(Long petId) {
         return petRepository.findById(petId)
@@ -299,6 +336,7 @@ public class QueryService {
     private LocalDateTime[] getStartAndEndOfDay(LocalDate date) {
         return new LocalDateTime[]{date.atStartOfDay(), date.atTime(LocalTime.MAX)};
     }
+
 
 
 }
