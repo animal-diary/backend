@@ -1,12 +1,18 @@
 package animal.diary.entity.record;
 
 import jakarta.persistence.Entity;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 import java.util.List;
 
 @Entity
+@SuperBuilder
+@NoArgsConstructor
+@Getter
 public class Sound extends Diary{
     private String title;
 
-    private List<String> imageUrls;
+    private String imageUrl;
 }

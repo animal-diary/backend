@@ -1,7 +1,6 @@
 package animal.diary.controller;
 
-import animal.diary.dto.RecordNumberDTO;
-import animal.diary.dto.RequestDateDTO;
+import animal.diary.dto.record.RecordNumberDTO;
 import animal.diary.entity.pet.Pet;
 import animal.diary.entity.pet.Type;
 import animal.diary.entity.pet.Gender;

@@ -1,4 +1,4 @@
-package animal.diary.dto;
+package animal.diary.dto.record;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
