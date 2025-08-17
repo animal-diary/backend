@@ -22,6 +22,9 @@ public enum AbnormalState {
     }
 
     public static AbnormalState fromString(String value, Supplier<? extends RuntimeException> exceptionSupplier) {
+        if (value == null) {
+            throw exceptionSupplier.get();
+        }
         return Arrays.stream(AbnormalState.values())
                 .filter(state -> state.name().equalsIgnoreCase(value.trim()))
                 .findFirst()
