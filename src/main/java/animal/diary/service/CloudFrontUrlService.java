@@ -1,5 +1,6 @@
 package animal.diary.service;
 
+import animal.diary.exception.CloudUrlCreateException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -27,19 +28,21 @@ public class CloudFrontUrlService {
     private  String cloudFrontDomain;
 
     public PrivateKey loadPrivateKey(String pem) throws Exception {
-        // -----BEGIN PRIVATE KEY----- / -----END PRIVATE KEY----- 제거
         String privateKeyPEM = pem
-                .replace("-----BEGIN PRIVATE KEY-----", "")
-                .replace("-----END PRIVATE KEY-----", "")
+                .replaceAll("-----BEGIN ([A-Z ]*)-----", "")
+                .replaceAll("-----END ([A-Z ]*)-----", "")
                 .replaceAll("\\s+", "");
-
         byte[] encoded = Base64.getDecoder().decode(privateKeyPEM);
-
         PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(encoded);
-        KeyFactory keyFactory = KeyFactory.getInstance("RSA");
-        return keyFactory.generatePrivate(keySpec);
+        return KeyFactory.getInstance("RSA").generatePrivate(keySpec);
     }
 
+    /**
+     * CloudFront Signed URL 생성
+     *
+     * @param objectKey S3 객체 키
+     * @return 서명된 URL
+     */
     public String generateSignedUrl(String objectKey) {
         log.info("Generating signed URL for object key: {}", objectKey);
         try {
@@ -63,20 +66,19 @@ public class CloudFrontUrlService {
             Signature signature = Signature.getInstance("SHA1withRSA");
             signature.initSign(privateKey);
             signature.update(policy.getBytes(StandardCharsets.UTF_8));
-            byte[] signedBytes = signature.sign();
+            byte[] signedBytes = signature.sign();   // 한 번만 호출
 
             // 서명 Base64 → CloudFront URL-safe 인코딩
             String signatureEncoded = makeUrlSafe(Base64.getEncoder().encodeToString(signedBytes));
 
             // 최종 URL 조합
-            String signedUrl = String.format("%s?Expires=%d&Signature=%s&Key-Pair-Id=%s",
+            return String.format("%s?Expires=%d&Signature=%s&Key-Pair-Id=%s",
                     resourceUrl, expires, signatureEncoded, keyPairId);
-            log.info("Successfully generated signed URL for object key: {}", objectKey);
-            return signedUrl;
 
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             log.error("Failed to generate signed URL for object key: {}", objectKey, e);
-            throw new RuntimeException("CloudFront Signed URL 생성 실패", e);
+            throw new CloudUrlCreateException("CloudFront Signed URL 생성 실패");
         }
     }
 

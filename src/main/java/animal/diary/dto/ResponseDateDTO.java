@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Getter;
 
 import java.time.LocalTime;
+import java.util.List;
 
 @Builder
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -18,6 +19,11 @@ public class ResponseDateDTO {
     private Integer count;
     private String urineState;
     private String urineAmount;
+
+    // 특이사항
+    private String title;
+    private String content;
+    private List<String> imageUrls;
 
     public static ResponseDateDTO weightToDTO(Weight weight) {
         return ResponseDateDTO.builder()
@@ -74,6 +80,16 @@ public class ResponseDateDTO {
                 .urineState(urinary.getState().name())
                 .urineAmount(urinary.getOutput().name())
                 .createdTime(urinary.getCreatedAt().toLocalTime())
+                .build();
+    }
+
+    public static ResponseDateDTO significantToDTO(Significant significant, List<String> imageCloudFrontUrls) {
+        return ResponseDateDTO.builder()
+                .diaryId(significant.getId())
+                .createdTime(significant.getCreatedAt().toLocalTime())
+                .title(significant.getTitle())
+                .content(significant.getContent())
+                .imageUrls(imageCloudFrontUrls)
                 .build();
     }
 }
