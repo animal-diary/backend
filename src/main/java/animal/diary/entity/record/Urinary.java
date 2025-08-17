@@ -1,5 +1,6 @@
 package animal.diary.entity.record;
 
+import animal.diary.entity.record.state.BinaryState;
 import animal.diary.entity.record.state.LevelState;
 import animal.diary.entity.record.state.UrineState;
 import jakarta.persistence.Entity;
@@ -19,4 +20,7 @@ public class Urinary extends Diary {
 
     @Enumerated(EnumType.STRING)
     private LevelState output;
+
+    @Enumerated(EnumType.STRING)
+    private BinaryState binaryState;
 }

@@ -29,7 +29,13 @@ import java.util.List;
 public class RecordController {
     private final RecordService recordService;
 
-    @Operation(summary = "몸무게 기록", description = "몸무게를 기록합니다.")
+    // ====================================================== 몸무게 기록
+    @Operation(summary = "몸무게 기록", description = """
+            몸무게를 기록합니다.
+            - 필수 필드: petId, weight
+            - weight: 몸무게 (kg) 5.0
+            - 몸무게는 반려동물의 체중을 나타냅니다.
+            """)
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "몸무게 기록 성공", content = {
                     @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json",
@@ -82,8 +88,13 @@ public class RecordController {
     }
 
     
-    // 기력 상태
-    @Operation(summary = "기력 상태 기록", description = "기력 상태를 기록합니다.")
+    // ====================================================== 기력 상태
+    @Operation(summary = "기력 상태 기록", description = """
+            기력 상태를 기록합니다.
+            - 필수 필드: petId, state
+            - state 가능한 값: LOW, NORMAL, HIGH
+            - 기력 상태는 반려동물의 에너지 수준을 나타냅니다.
+            """)
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "기력 상태 기록 성공", content = {
                     @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json",
@@ -135,8 +146,13 @@ public class RecordController {
                 .body(new ResponseDTO<>(SuccessCode.SUCCESS_GET_ENERGY_BY_DATE, result));
     }
 
-    // 식욕 상태
-    @Operation(summary = "식욕 상태 기록", description = "식욕 상태를 기록합니다.")
+    // ================================================ 식욕 상태
+    @Operation(summary = "식욕 상태 기록", description = """
+            식욕 상태를 기록합니다.
+            - 필수 필드: petId, state
+            - state 가능한 값: LOW, NORMAL, HIGH
+            - 식욕 상태는 반려동물의 식욕 수준을 나타냅니다.
+            """)
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "식욕 상태 기록 성공", content = {
                     @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json",
@@ -189,8 +205,13 @@ public class RecordController {
     }
 
 
-    // 호흡 수
-    @Operation(summary = "호흡 수 기록", description = "호흡 수를 기록합니다.")
+    // ========================================== 호흡 수
+    @Operation(summary = "호흡 수 기록", description = """
+            호흡 수를 기록합니다.
+            - 필수 필드: petId, count
+            - count: 호흡 수 (회/분)
+            - 호흡 수는 반려동물의 호흡 횟수를 나타냅니다.
+            """)
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "호흡 수 기록 성공", content = {
                     @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json",
@@ -242,8 +263,13 @@ public class RecordController {
                 .body(new ResponseDTO<>(SuccessCode.SUCCESS_GET_RR_BY_DATE, result));
     }
 
-    // 심박수
-    @Operation(summary = "심박수 기록", description = "심박수를 기록합니다.")
+    // ===========================================  심박수
+    @Operation(summary = "심박수 기록", description = """
+            심박수를 기록합니다.
+            - 필수 필드: petId, count
+            - count: 심박수 (회/분)
+            - 심박수는 반려동물의 심장 박동 수를 나타냅니다.
+            """)
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "심박수 기록 성공", content = {
                     @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json",
@@ -295,8 +321,13 @@ public class RecordController {
                 .body(new ResponseDTO<>(SuccessCode.SUCCESS_GET_HEART_RATE_BY_DATE, result));
     }
 
-    // 기절 상태
-    @Operation(summary = "기절 상태 기록", description = "기절 상태를 기록합니다.")
+    // ============================================= 기절 상태
+    @Operation(summary = "기절 상태 기록", description = """
+            기절 상태를 기록합니다.
+            - 필수 필드: petId, binaryState
+            - 기절 상태(binaryState)는 O(있음), X(없음)으로 설정할 수 있습니다.
+            - 기절 상태는 반려동물이 기절했는지 여부를 나타냅니다.
+            """)
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "기절 상태 기록 성공", content = {
                     @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json",
@@ -349,7 +380,14 @@ public class RecordController {
     }
 
     // 소변 상태
-    @Operation(summary = "소변 상태 기록", description = "소변 상태를 기록합니다.")
+    @Operation(summary = "소변 상태 기록", description = """
+            특정 반려동물의 소변 상태를 기록합니다.
+            - 필수 필드: petId, urineState, urineAmount, binaryState
+            
+            - 소변 상태(urineState)는 BLOODY, LIGHT, DARK, NORMAL 중 하나로 설정할 수 있습니다.
+            - 소변량(urineAmount)은 NONE, LOW, NORMAL, HIGH 중 하나로 설정할 수 있습니다.
+            - 소변 냄새 상태(binaryState)는 O(있음), X(없음)으로 설정할 수 있습니다.
+            """)
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "소변 상태 기록 성공", content = {
                     @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json",
