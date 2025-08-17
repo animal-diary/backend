@@ -7,11 +7,21 @@ import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 import java.util.List;
 
 @Entity
+@SuperBuilder
+@Getter
+@NoArgsConstructor
+@AllArgsConstructor
 public class Convulsion extends Diary{
+    private String title;
     private BinaryState state;
 
     @Enumerated(EnumType.STRING)

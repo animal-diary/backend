@@ -29,6 +29,7 @@ public class RecordService {
     private final UrinaryRepository urinaryRepository;
     private final S3Uploader s3Uploader;
     private final SignificantRepository significantRecordRepository;
+    private final ConvulsionRepository convulsionRecordRepository;
     
     // 몸무게 기록
     public RecordResponseDTO recordWeight(RecordNumberDTO dto) {
@@ -43,7 +44,7 @@ public class RecordService {
         return RecordResponseDTO.weightToDTO(weight);
     }
 
-    // 기력/식욕 상태 기록
+    // ========================================================= 기력/식욕 상태 기록
     public RecordResponseDTO recordEnergyAndAppetite(RecordNumberDTO dto, String category) {
         Pet pet = getPetOrThrow(dto.getPetId());
 
@@ -68,7 +69,7 @@ public class RecordService {
         else {return null;}
     }
 
-    // 호흡수/심박수 기록
+    // ==================================================== 호흡수/심박수 기록
     public RecordResponseDTO recordRRAndHeartRate(RecordNumberDTO dto, VitalCategory category) {
         Pet pet = getPetOrThrow(dto.getPetId());
 
@@ -92,7 +93,7 @@ public class RecordService {
         }
     }
 
-    // 기절 상태 기록
+    // ============================================== 기절 상태 기록
     public RecordResponseDTO recordSyncope(RecordNumberDTO dto) {
         Pet pet = getPetOrThrow(dto.getPetId());
 
@@ -104,7 +105,7 @@ public class RecordService {
         return RecordResponseDTO.syncopeToDTO(syncope);
     }
 
-    // 소변 상태 기록
+    // ======================================================= 소변 상태 기록
     public RecordResponseDTO recordUrinary(RecordNumberDTO dto) {
         Pet pet = getPetOrThrow(dto.getPetId());
 
@@ -135,6 +136,25 @@ public class RecordService {
         log.info("Successfully recorded significant record with ID: {}", significantRecord.getId());
 
         return RecordResponseDTO.significantToDTO(significantRecord);
+    }
+
+    // 경련 기록
+    public RecordResponseDTO recordConvulsionRecord(ConvulsionRecordDTO dto, MultipartFile image) throws IOException {
+        Pet pet = getPetOrThrow(dto.getPetId());
+
+        // 단일 이미지 업로드
+        String imageUrl = null;
+        if (image != null && !image.isEmpty()) {
+            imageUrl = s3Uploader.upload(image, "convulsion");
+        }
+
+        Convulsion convulsionRecord = ConvulsionRecordDTO.toEntity(dto, pet, imageUrl);
+
+        log.info("Recording convulsion record for pet ID: {}, title: {}", pet.getId(), dto.getState());
+        convulsionRecordRepository.save(convulsionRecord);
+        log.info("Successfully recorded convulsion record with ID: {}", convulsionRecord.getId());
+
+        return RecordResponseDTO.convulsionToDTO(convulsionRecord);
     }
 
     // 공통 유틸리티 메서드

@@ -25,6 +25,9 @@ public class ResponseDateDTO {
     private String content;
     private List<String> imageUrls;
 
+    // 경련
+    private String imageUrl;
+
     public static ResponseDateDTO weightToDTO(Weight weight) {
         return ResponseDateDTO.builder()
                 .diaryId(weight.getId())
@@ -90,6 +93,16 @@ public class ResponseDateDTO {
                 .title(significant.getTitle())
                 .content(significant.getContent())
                 .imageUrls(imageCloudFrontUrls)
+                .build();
+    }
+
+    public static ResponseDateDTO convulsionToDTO(Convulsion convulsion, String imageCloudFrontUrl) {
+        return ResponseDateDTO.builder()
+                .diaryId(convulsion.getId())
+                .createdTime(convulsion.getCreatedAt().toLocalTime())
+                .title(convulsion.getState().name())
+                .content(convulsion.getAbnormalState().toString())
+                .imageUrl(imageCloudFrontUrl)
                 .build();
     }
 }

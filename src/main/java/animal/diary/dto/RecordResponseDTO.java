@@ -89,4 +89,13 @@ public class RecordResponseDTO {
                 .createdAt(significant.getCreatedAt())
                 .build();
     }
+
+    public static RecordResponseDTO convulsionToDTO(Convulsion convulsion) {
+        return RecordResponseDTO.builder()
+                .petId(convulsion.getPet().getId())
+                .title(convulsion.getState().name())
+                .content(convulsion.getAbnormalState().toString())
+                .createdAt(convulsion.getCreatedAt())
+                .build();
+    }
 }

@@ -33,6 +33,7 @@ public class QueryService {
     private final SyncopeRepository syncopeRepository;
     private final UrinaryRepository urinaryRepository;
     private final SignificantRepository significantRepository;
+    private final ConvulsionRepository convulsionRepository;
     private final CloudFrontUrlService cloudFrontUrlService;
 
     // 몸무게 조회
@@ -238,6 +239,42 @@ public class QueryService {
                     .toList();
             
             return ResponseDateDTO.significantToDTO(significant, imageCloudFrontUrls);
+        }).toList();
+
+        return ResponseDateListDTO.builder()
+                .date(date)
+                .type(pet.getType().toString())
+                .dateDTOS(result)
+                .build();
+    }
+
+    // =========================================================== 경련 상태 일별 조회
+    public ResponseDateListDTO getConvulsionByDate(RequestDateDTO dto) {
+        Pet pet = getPetOrThrow(dto.getPetId());
+
+        LocalDate date = dto.getDate();
+        validateDate(dto.getDate());
+
+        LocalDateTime[] range = getStartAndEndOfDay(dto.getDate());
+
+        log.info("Fetching convulsion records for pet ID: {} on date: {}", pet.getId(), date);
+        List<Convulsion> convulsionList = convulsionRepository.findAllByPetIdAndCreatedAtBetween(pet.getId(), range[0], range[1]);
+        log.info("Found {} convulsion records for pet ID: {} on date: {}", convulsionList.size(), pet.getId(), date);
+
+        if (convulsionList.isEmpty()) {
+            throw new EmptyListException("비어었음");
+        }
+
+        // 각 record별로 개별 CloudFront URL 생성 (성능 최적화)
+        List<ResponseDateDTO> result = convulsionList.stream().map(convulsion -> {
+            if (convulsion.getImageUrl() == null || convulsion.getImageUrl().isEmpty()) {
+                return ResponseDateDTO.convulsionToDTO(convulsion, null);
+            }
+            String imageUrl = convulsion.getImageUrl();
+
+            String imageCloudFrontUrl = cloudFrontUrlService.generateSignedUrl(imageUrl);
+            
+            return ResponseDateDTO.convulsionToDTO(convulsion, imageCloudFrontUrl);
         }).toList();
 
         return ResponseDateListDTO.builder()
