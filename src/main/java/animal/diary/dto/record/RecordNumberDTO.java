@@ -1,5 +1,6 @@
-package animal.diary.dto;
+package animal.diary.dto.record;
 
+import animal.diary.dto.*;
 import animal.diary.entity.pet.Pet;
 import animal.diary.entity.record.*;
 import animal.diary.entity.record.state.BinaryState;

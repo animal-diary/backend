@@ -98,4 +98,12 @@ public class RecordResponseDTO {
                 .createdAt(convulsion.getCreatedAt())
                 .build();
     }
+
+    public static RecordResponseDTO soundToDTO(Sound sound) {
+        return RecordResponseDTO.builder()
+                .petId(sound.getPet().getId())
+                .title(sound.getTitle())
+                .createdAt(sound.getCreatedAt())
+                .build();
+    }
 }

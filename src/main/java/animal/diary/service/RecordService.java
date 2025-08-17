@@ -3,6 +3,9 @@ package animal.diary.service;
 import animal.diary.code.ErrorCode;
 import animal.diary.code.VitalCategory;
 import animal.diary.dto.*;
+import animal.diary.dto.record.ConvulsionRecordDTO;
+import animal.diary.dto.record.RecordNumberDTO;
+import animal.diary.dto.record.SignificantRecordDTO;
 import animal.diary.entity.pet.Pet;
 import animal.diary.entity.record.*;
 import animal.diary.exception.ImageSizeLimitException;
@@ -13,7 +16,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.util.List;
 
 @Slf4j
@@ -31,6 +33,7 @@ public class RecordService {
     private final S3Uploader s3Uploader;
     private final SignificantRepository significantRecordRepository;
     private final ConvulsionRepository convulsionRecordRepository;
+    private final SoundRepository soundRepository;
     
     // 몸무게 기록
     public RecordResponseDTO recordWeight(RecordNumberDTO dto) {
@@ -118,7 +121,7 @@ public class RecordService {
         return RecordResponseDTO.urinaryToDTO(urinary);
     }
 
-    // 특이사항 기록
+    // ============================================== 특이사항 기록
     public RecordResponseDTO recordSignificantRecord(SignificantRecordDTO dto, List<MultipartFile> images) {
         Pet pet = getPetOrThrow(dto.getPetId());
 
@@ -139,12 +142,12 @@ public class RecordService {
         return RecordResponseDTO.significantToDTO(significantRecord);
     }
 
-    // 경련 기록
+    // ========================================================= 경련 기록
     public RecordResponseDTO recordConvulsionRecord(ConvulsionRecordDTO dto, MultipartFile image) {
         Pet pet = getPetOrThrow(dto.getPetId());
 
         // 단일 이미지 업로드
-        String imageUrl = null;
+        String imageUrl = "";
         if (image != null && !image.isEmpty()) {
             imageUrl = s3Uploader.upload(image, "convulsion");
         }
@@ -156,6 +159,24 @@ public class RecordService {
         log.info("Successfully recorded convulsion record with ID: {}", convulsionRecord.getId());
 
         return RecordResponseDTO.convulsionToDTO(convulsionRecord);
+    }
+
+    // ======================================================== 이상 소리 기록
+    public RecordResponseDTO recordSound(AbnormalSoundRecordDTO dto, MultipartFile image) {
+        Pet pet = getPetOrThrow(dto.getPetId());
+
+        // 이미지 업로드
+        String imageUrl = "";
+        if (image != null && !image.isEmpty()) {
+            imageUrl = s3Uploader.upload(image, "sound");
+        }
+
+        Sound sound = AbnormalSoundRecordDTO.toEntity(dto, pet, imageUrl);
+        log.info("Recording sound for pet ID: {}, title: {}", pet.getId(), dto.getTitle());
+        soundRepository.save(sound);
+        log.info("Successfully recorded sound with ID: {}", sound.getId());
+
+        return RecordResponseDTO.soundToDTO(sound);
     }
 
     // 공통 유틸리티 메서드

@@ -3,6 +3,9 @@ package animal.diary.controller;
 import animal.diary.code.SuccessCode;
 import animal.diary.code.VitalCategory;
 import animal.diary.dto.*;
+import animal.diary.dto.record.ConvulsionRecordDTO;
+import animal.diary.dto.record.RecordNumberDTO;
+import animal.diary.dto.record.SignificantRecordDTO;
 import animal.diary.dto.response.ErrorResponseDTO;
 import animal.diary.dto.response.ResponseDTO;
 import animal.diary.service.RecordService;
@@ -254,7 +257,7 @@ public class RecordController {
                 .body(new ResponseDTO<>(SuccessCode.SUCCESS_SAVE_RECORD, result));
     }
 
-    // 특이사항 기록
+    // ============================================================= 특이사항 기록
     @Operation(summary = "특이사항 기록", description = """
             특이사항을 기록합니다.
             - 필수 필드: petId, title, content
@@ -278,7 +281,7 @@ public class RecordController {
                 .body(new ResponseDTO<>(SuccessCode.SUCCESS_SAVE_RECORD, result));
     }
 
-    // 경련 기록
+    // =========================================================== 경련 기록
     @Operation(summary = "경련 상태 기록", description = """
             경련 상태를 기록합니다.
             - 필수 필드: petId, state, abnormalState
@@ -294,6 +297,26 @@ public class RecordController {
         log.info("Received convulsion record request for pet ID: {} with image: {}", dto.getPetId(), image != null);
         RecordResponseDTO result = recordService.recordConvulsionRecord(dto, image);
         log.info("Convulsion record completed for pet ID: {}", dto.getPetId());
+
+        return ResponseEntity
+                .status(SuccessCode.SUCCESS_SAVE_RECORD.getStatus().value())
+                .body(new ResponseDTO<>(SuccessCode.SUCCESS_SAVE_RECORD, result));
+    }
+
+    // =========================================================== 이상 소리 기록
+    @Operation(summary = "이상 소리 기록", description = """
+            이상 소리를 기록합니다.
+            - 필수 필드: petId
+            - 이미지는 단일 이미지만 업로드 가능합니다.
+            """)
+    @PostMapping(value = "/abnormal-sound", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ResponseDTO<RecordResponseDTO>> recordAbnormalSound(
+            @RequestPart AbnormalSoundRecordDTO dto,
+            @RequestPart(value = "image", required = false) MultipartFile image) {
+
+        log.info("Received abnormal sound record request for pet ID: {} with image: {}", dto.getPetId(), image != null);
+        RecordResponseDTO result = recordService.recordSound(dto, image);
+        log.info("Abnormal sound record completed for pet ID: {}", dto.getPetId());
 
         return ResponseEntity
                 .status(SuccessCode.SUCCESS_SAVE_RECORD.getStatus().value())
