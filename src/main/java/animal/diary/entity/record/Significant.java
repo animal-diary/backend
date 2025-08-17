@@ -1,5 +1,8 @@
 package animal.diary.entity.record;
 
+import animal.diary.util.StringListConverter;
+import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
 import lombok.Builder;
 import lombok.Getter;
@@ -16,5 +19,7 @@ public class Significant extends Diary{
     private String title;
     private String content;
 
+    @Column(length = 5000)
+    @Convert(converter = StringListConverter.class)
     private List<String> imageUrls;
 }

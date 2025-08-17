@@ -54,6 +54,8 @@ public enum ErrorCode {
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "서버 내부 오류입니다."),
     // 이미지 업로드 오류
     IMAGE_UPLOAD_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "이미지 업로드 중 오류가 발생했습니다."),
+    // 클라우드 URL 생성 오류
+    CLOUD_URL_CREATE_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "클라우드 URL 생성 중 오류가 발생했습니다.")
 
     ;
     private final HttpStatus status;

@@ -125,4 +125,22 @@ public class GlobalExceptionHandler {
                 .status(ErrorCode.IMAGE_UPLOAD_ERROR.getStatus().value())
                 .body(new ErrorResponseDTO(ErrorCode.IMAGE_UPLOAD_ERROR, e.getMessage()));
     }
+
+    // CloudFront URL 생성 예외
+    @ExceptionHandler(CloudUrlCreateException.class)
+    protected ResponseEntity<ErrorResponseDTO> handleCloudUrlCreateException(final CloudUrlCreateException e) {
+        log.error("CloudFront URL creation exception: {}", e.getMessage());
+        return ResponseEntity
+                .status(ErrorCode.CLOUD_URL_CREATE_ERROR.getStatus().value())
+                .body(new ErrorResponseDTO(ErrorCode.CLOUD_URL_CREATE_ERROR, e.getMessage()));
+    }
+
+    // IllegalArgumentException 예외 처리
+    @ExceptionHandler(IllegalArgumentException.class)
+    protected ResponseEntity<ErrorResponseDTO> handleIllegalArgumentException(final IllegalArgumentException e) {
+        log.error("Illegal argument exception: {}", e.getMessage());
+        return ResponseEntity
+                .status(ErrorCode.BAD_REQUEST.getStatus().value())
+                .body(new ErrorResponseDTO(ErrorCode.BAD_REQUEST, e.getMessage()));
+    }
 }
