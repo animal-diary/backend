@@ -263,7 +263,7 @@ public class RecordController {
     @PostMapping(value = "/significant", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ResponseDTO<RecordResponseDTO>> recordSignificant(
             @RequestPart SignificantRecordDTO dto,
-            @RequestPart(value = "images", required = false) List<MultipartFile> images) throws IOException {
+            @RequestPart(value = "images", required = false) List<MultipartFile> images) {
         
         if (images == null) {
             images = List.of(); // 빈 리스트로 초기화
@@ -289,7 +289,7 @@ public class RecordController {
     @PostMapping(value = "/convulsion", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ResponseDTO<RecordResponseDTO>> recordConvulsion(
             @RequestPart ConvulsionRecordDTO dto,
-            @RequestPart(value = "image", required = false) MultipartFile image) throws IOException {
+            @RequestPart(value = "image", required = false) MultipartFile image) {
         
         log.info("Received convulsion record request for pet ID: {} with image: {}", dto.getPetId(), image != null);
         RecordResponseDTO result = recordService.recordConvulsionRecord(dto, image);

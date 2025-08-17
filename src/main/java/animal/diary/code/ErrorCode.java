@@ -13,7 +13,7 @@ public enum ErrorCode {
     NOT_VALID_ADDRESS(HttpStatus.BAD_REQUEST, "잘못된 주소입니다."),
     // 이미지 10개까지만 가능
     IMAGE_SIZE_LIMIT_10(HttpStatus.BAD_REQUEST, "이미지는 최대 10개까지 업로드할 수 있습니다."),
-
+    IMAGE_SIZE_LIMIT_1(HttpStatus.BAD_REQUEST, "이미지는 1개만 업로드할 수 있습니다."),
     /**
      * 401
      */

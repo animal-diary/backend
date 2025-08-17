@@ -38,11 +38,11 @@ public class GlobalExceptionHandler {
 
     // 이미지 예외
     @ExceptionHandler(ImageSizeLimitException.class)
-    protected ResponseEntity<ErrorResponseDTO> handleImageSizeLimit(final ImageSizeLimitException e) {
-        log.warn("Image size limit exception: {}", e.getMessage());
+    public ResponseEntity<ErrorResponseDTO> handleImageSizeLimitException(ImageSizeLimitException ex) {
+        ErrorCode errorCode = ex.getErrorCode();
         return ResponseEntity
-                .status(ErrorCode.IMAGE_SIZE_LIMIT_10.getStatus().value())
-                .body(new ErrorResponseDTO(ErrorCode.IMAGE_SIZE_LIMIT_10));
+                .status(errorCode.getStatus())  // 예: 400 BAD_REQUEST
+                .body(new ErrorResponseDTO(errorCode));
     }
 
     @ExceptionHandler(DiseaseInvalidException.class)

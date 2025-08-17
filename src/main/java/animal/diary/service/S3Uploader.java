@@ -30,29 +30,29 @@ public class S3Uploader {
     // 여러 이미지 업로드
     public List<String> uploadMultiple(List<MultipartFile> multipartFiles, String dirName) {
         return multipartFiles.stream()
-                .map(multipartFile -> {
-                    try {
-                        return upload(multipartFile, dirName);
-                    } catch (IOException e) {
-                        log.error("Error uploading file: {}", e.getMessage());
-                        throw new ImageUploadException("이미지 업로드에 실패했습니다. 파일 크기를 확인해주세요.");
-                    }
-                })
+                .map(multipartFile -> upload(multipartFile, dirName))
                 .filter(Objects::nonNull)
                 .toList();
     }
 
-    public String upload(MultipartFile multipartFile, String dirName) throws IOException {
+    public String upload(MultipartFile multipartFile, String dirName) {
         // UUID 기반 파일명
-        String uuid = UUID.randomUUID().toString().replace("-", "").substring(0, 20);
-        String fileName = dirName + "/" + uuid;
+        try {
+            String uuid = UUID.randomUUID().toString().replace("-", "").substring(0, 20);
+            String fileName = dirName + "/" + uuid;
 
-        log.info("fileName: {}", fileName);
+            log.info("fileName: {}", fileName);
 
-        // S3 업로드
-        putS3(multipartFile, fileName);
+            // S3 업로드
+            putS3(multipartFile, fileName);
 
-        return fileName;
+            return fileName;
+        }
+        catch (IOException e) {
+            log.error("Error uploading file: {}", e.getMessage());
+            throw new ImageUploadException("이미지 업로드에 실패했습니다. 파일 크기를 확인해주세요.");
+        }
+
     }
 
     private void putS3(MultipartFile multipartFile, String fileName) throws IOException {
