@@ -1,6 +1,5 @@
 package animal.diary.entity.pet;
 
-import animal.diary.exception.InvalidHealthException;
 import animal.diary.exception.InvalidNeuteredException;
 
 import java.util.Arrays;

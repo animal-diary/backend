@@ -1,17 +1,16 @@
 package animal.diary.service;
 
-import com.amazonaws.services.cloudfront.CloudFrontUrlSigner;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.io.ByteArrayInputStream;
+import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.security.KeyFactory;
 import java.security.PrivateKey;
+import java.security.Signature;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.util.Base64;
-import java.util.Date;
 @Service
 @RequiredArgsConstructor
 public class CloudFrontUrlService {
@@ -41,22 +40,43 @@ public class CloudFrontUrlService {
 
     public String generateSignedUrl(String objectKey) {
         try {
-            // PEM 문자열 → PrivateKey 객체 변환
+            // PEM → PrivateKey
             PrivateKey privateKey = loadPrivateKey(privateKeyPem);
 
             // CloudFront 리소스 경로
-            String resourceUrl = "https://" + cloudFrontDomain + "/" + objectKey;
+            String resourceUrl = "https://" + cloudFrontDomain + "/" +
+                    URLEncoder.encode(objectKey, StandardCharsets.UTF_8);
 
-            // Signed URL 생성 (5분 유효)
-            return CloudFrontUrlSigner.getSignedURLWithCannedPolicy(
-                    resourceUrl,
-                    keyPairId,
-                    privateKey,
-                    new Date(System.currentTimeMillis() + 5 * 60 * 1000)
+            // 만료 시간 (Epoch seconds) - 지금부터 5분 후
+            long expires = (System.currentTimeMillis() / 1000L) + (5 * 60);
+
+            // "Canned Policy" 문자열
+            String policy = String.format(
+                    "{\"Statement\":[{\"Resource\":\"%s\",\"Condition\":{\"DateLessThan\":{\"AWS:EpochTime\":%d}}}]}",
+                    resourceUrl, expires
             );
+
+            // 정책에 서명 (SHA1withRSA)
+            Signature signature = Signature.getInstance("SHA1withRSA");
+            signature.initSign(privateKey);
+            signature.update(policy.getBytes(StandardCharsets.UTF_8));
+            byte[] signedBytes = signature.sign();
+
+            // 서명 Base64 → CloudFront URL-safe 인코딩
+            String signatureEncoded = makeUrlSafe(Base64.getEncoder().encodeToString(signedBytes));
+
+            // 최종 URL 조합
+            return String.format("%s?Expires=%d&Signature=%s&Key-Pair-Id=%s",
+                    resourceUrl, expires, signatureEncoded, keyPairId);
 
         } catch (Exception e) {
             throw new RuntimeException("CloudFront Signed URL 생성 실패", e);
         }
+    }
+
+    private String makeUrlSafe(String base64) {
+        return base64.replace('+', '-')
+                .replace('=', '_')
+                .replace('/', '~');
     }
 }

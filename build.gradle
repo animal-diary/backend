@@ -46,7 +46,7 @@ dependencies {
 	implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
 
 	// cloudFront
-	implementation 'com.amazonaws:aws-java-sdk-cloudfront:1.12.772'
+	implementation "software.amazon.awssdk:cloudfront"
 
 
 

@@ -1,7 +1,6 @@
 package animal.diary.repository;
 
 import animal.diary.entity.record.Energy;
-import animal.diary.entity.record.Weight;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.time.LocalDateTime;
