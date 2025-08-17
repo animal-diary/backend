@@ -3,9 +3,6 @@ package animal.diary.dto;
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Data;
-import org.springframework.web.multipart.MultipartFile;
-
-import java.util.List;
 
 @Builder
 @Data

@@ -2,10 +2,7 @@ package animal.diary.entity.record;
 
 import animal.diary.entity.record.state.BinaryState;
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToMany;
 
 import java.util.List;
 

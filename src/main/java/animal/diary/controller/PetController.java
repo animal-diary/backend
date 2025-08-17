@@ -13,11 +13,13 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@Slf4j
 @RestController
 @RequestMapping("/pets")
 @RequiredArgsConstructor
@@ -53,7 +55,9 @@ public class PetController {
     })
     @PostMapping("/register")
     public ResponseEntity<ResponseDTO<PetRegisterResponseDTO>> registerPet(@Valid @RequestBody PetRegisterDTO dto) {
+        log.info("Received pet registration request for user ID: {}", dto.getUserId());
         PetRegisterResponseDTO result = petService.registerPet(dto);
+        log.info("Pet registration completed successfully for user ID: {}", dto.getUserId());
 
         return ResponseEntity
                 .status(SuccessCode.SUCCESS_SAVE_PET.getStatus().value())
@@ -89,7 +93,9 @@ public class PetController {
     )
     @GetMapping("/my/{userId}")
     public ResponseEntity<ResponseDTO<List<GetMyPetInfoDTO>>> getMyPetInfo(@PathVariable Long userId) {
+        log.info("Received request to get pet info for user ID: {}", userId);
         List<GetMyPetInfoDTO> result = petService.getMyPetInfo(userId);
+        log.info("Successfully retrieved pet info for user ID: {}", userId);
 
         return ResponseEntity
                 .status(SuccessCode.SUCCESS_GET_PET_LIST.getStatus().value())

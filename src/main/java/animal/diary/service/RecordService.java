@@ -9,14 +9,15 @@ import animal.diary.exception.InvalidDateException;
 import animal.diary.exception.PetNotFoundException;
 import animal.diary.repository.*;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
-import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class RecordService {
@@ -35,7 +36,9 @@ public class RecordService {
 
         Weight weight = RecordNumberDTO.toWeightEntity(dto, pet);
 
+        log.info("Recording weight for pet ID: {}, weight: {}", pet.getId(), dto.getWeight());
         weightRepository.save(weight);
+        log.info("Successfully recorded weight with ID: {}", weight.getId());
 
         return RecordResponseDTO.weightToDTO(weight);
     }
@@ -49,7 +52,9 @@ public class RecordService {
 
         LocalDateTime[] range = getStartAndEndOfDay(dto.getDate());
 
+        log.info("Fetching weight records for pet ID: {} on date: {}", pet.getId(), date);
         List<Weight> weights = weightRepository.findAllByPetIdAndCreatedAtBetween(pet.getId(), range[0], range[1]);
+        log.info("Found {} weight records for pet ID: {} on date: {}", weights.size(), pet.getId(), date);
 
         if (weights.isEmpty()) {
             throw new EmptyListException("비어었음");
@@ -70,14 +75,18 @@ public class RecordService {
 
         if (category.equals("energy")) {
             Energy energy = RecordNumberDTO.toEnergyEntity(dto, pet);
+            log.info("Recording energy for pet ID: {}, energy level: {}", pet.getId(), dto.getState());
             energyRepository.save(energy);
+            log.info("Successfully recorded energy with ID: {}", energy.getId());
 
             return RecordResponseDTO.energyToDTO(energy);
 
         }
         else if (category.equals("appetite")) {
             Appetite appetite = RecordNumberDTO.toAppetiteEntity(dto, pet);
+            log.info("Recording appetite for pet ID: {}, appetite level: {}", pet.getId(), dto.getState());
             appetiteRepository.save(appetite);
+            log.info("Successfully recorded appetite with ID: {}", appetite.getId());
 
             return RecordResponseDTO.appetiteToDTO(appetite);
         }
@@ -97,7 +106,9 @@ public class RecordService {
 
 
         if (category.equals("energy")) {
+            log.info("Fetching energy records for pet ID: {} on date: {}", pet.getId(), date);
             List<Energy> energyList = energyRepository.findAllByPetIdAndCreatedAtBetween(pet.getId(), range[0], range[1]);
+            log.info("Found {} energy records for pet ID: {} on date: {}", energyList.size(), pet.getId(), date);
 
             if (energyList.isEmpty()) {
                 throw new EmptyListException("비어었음");
@@ -106,7 +117,9 @@ public class RecordService {
             result = energyList.stream().map((ResponseDateDTO::energyToDTO)).toList();
         }
         else if (category.equals("appetite")){
+            log.info("Fetching appetite records for pet ID: {} on date: {}", pet.getId(), date);
             List<Appetite> appetites = appetiteRepository.findAllByPetIdAndCreatedAtBetween(pet.getId(), range[0], range[1]);
+            log.info("Found {} appetite records for pet ID: {} on date: {}", appetites.size(), pet.getId(), date);
 
             if (appetites.isEmpty()) {
                 throw new EmptyListException("비어었음");
@@ -130,13 +143,17 @@ public class RecordService {
 
         if (category == VitalCategory.RR) {
             RespiratoryRate respiratoryRate = RecordNumberDTO.toRespiratoryRateEntity(dto, pet);
+            log.info("Recording respiratory rate for pet ID: {}, rate: {}", pet.getId(), dto.getCount());
             rrRepository.save(respiratoryRate);
+            log.info("Successfully recorded respiratory rate with ID: {}", respiratoryRate.getId());
             return RecordResponseDTO.respiratoryRateToDTO(respiratoryRate);
 
         }
         else if (category == VitalCategory.HEART_RATE){
             HeartRate heartRate = RecordNumberDTO.toHeartRateEntity(dto, pet);
+            log.info("Recording heart rate for pet ID: {}, rate: {}", pet.getId(), dto.getCount());
             heartRateRepository.save(heartRate);
+            log.info("Successfully recorded heart rate with ID: {}", heartRate.getId());
             return RecordResponseDTO.heartRateToDTO(heartRate);
         }
         else {
@@ -152,8 +169,10 @@ public class RecordService {
         LocalDateTime[] range = getStartAndEndOfDay(dto.getDate());
 
         if (category == VitalCategory.RR) {
+            log.info("Fetching respiratory rate records for pet ID: {} on date: {}", pet.getId(), dto.getDate());
             List<RespiratoryRate> respiratoryRateList =
                     rrRepository.findAllByPetIdAndCreatedAtBetween(pet.getId(), range[0], range[1]);
+            log.info("Found {} respiratory rate records for pet ID: {} on date: {}", respiratoryRateList.size(), pet.getId(), dto.getDate());
 
             if (respiratoryRateList.isEmpty()) {
                 throw new EmptyListException("호흡 수 기록이 없습니다.");
@@ -171,8 +190,10 @@ public class RecordService {
         }
 
         else if (category == VitalCategory.HEART_RATE) {
+            log.info("Fetching heart rate records for pet ID: {} on date: {}", pet.getId(), dto.getDate());
             List<HeartRate> heartRateList =
                     heartRateRepository.findAllByPetIdAndCreatedAtBetween(pet.getId(), range[0], range[1]);
+            log.info("Found {} heart rate records for pet ID: {} on date: {}", heartRateList.size(), pet.getId(), dto.getDate());
 
             if (heartRateList.isEmpty()) {
                 throw new EmptyListException("심박수 기록이 없습니다.");
@@ -216,7 +237,9 @@ public class RecordService {
         Pet pet = getPetOrThrow(dto.getPetId());
 
         Syncope syncope = RecordNumberDTO.toSyncopeEntity(dto, pet);
+        log.info("Recording syncope for pet ID: {}, frequency: {}", pet.getId(), dto.getState());
         syncopeRepository.save(syncope);
+        log.info("Successfully recorded syncope with ID: {}", syncope.getId());
 
         return RecordResponseDTO.syncopeToDTO(syncope);
     }
@@ -229,7 +252,9 @@ public class RecordService {
 
         LocalDateTime[] range = getStartAndEndOfDay(dto.getDate());
 
+        log.info("Fetching syncope records for pet ID: {} on date: {}", pet.getId(), date);
         List<Syncope> syncopeList = syncopeRepository.findAllByPetIdAndCreatedAtBetween(pet.getId(), range[0], range[1]);
+        log.info("Found {} syncope records for pet ID: {} on date: {}", syncopeList.size(), pet.getId(), date);
 
         if (syncopeList.isEmpty()) {
             throw new EmptyListException("비어었음");
@@ -249,7 +274,9 @@ public class RecordService {
         Pet pet = getPetOrThrow(dto.getPetId());
 
         Urinary urinary = RecordNumberDTO.toUrinaryEntity(dto, pet);
+        log.info("Recording urinary for pet ID: {}, frequency: {}", pet.getId(), dto.getUrineAmount());
         urinaryRepository.save(urinary);
+        log.info("Successfully recorded urinary with ID: {}", urinary.getId());
 
         return RecordResponseDTO.urinaryToDTO(urinary);
     }
@@ -262,7 +289,9 @@ public class RecordService {
 
         LocalDateTime[] range = getStartAndEndOfDay(dto.getDate());
 
+        log.info("Fetching urinary records for pet ID: {} on date: {}", pet.getId(), date);
         List<Urinary> urinaryList = urinaryRepository.findAllByPetIdAndCreatedAtBetween(pet.getId(), range[0], range[1]);
+        log.info("Found {} urinary records for pet ID: {} on date: {}", urinaryList.size(), pet.getId(), date);
 
         if (urinaryList.isEmpty()) {
             throw new EmptyListException("비어었음");

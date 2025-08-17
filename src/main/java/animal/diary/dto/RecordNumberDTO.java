@@ -1,18 +1,19 @@
 package animal.diary.dto;
 
+import animal.diary.entity.pet.Pet;
 import animal.diary.entity.record.*;
 import animal.diary.entity.record.state.BinaryState;
 import animal.diary.entity.record.state.LevelState;
 import animal.diary.entity.record.state.UrineState;
 import animal.diary.exception.InvalidStateException;
-import animal.diary.entity.pet.Pet;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.groups.Default;
 import lombok.Builder;
 import lombok.Data;
+import lombok.Getter;
 
 @Builder
-@Data
+@Getter
 public class RecordNumberDTO {
 
     @NotNull(groups = {Default.class, WeightGroup.class, CountGroup.class, StateGroup.class},

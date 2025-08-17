@@ -3,7 +3,10 @@ package animal.diary.entity.record;
 import animal.diary.entity.record.state.AbnormalState;
 import animal.diary.entity.record.state.BinaryState;
 import animal.diary.util.AbnormalStateConverter;
-import jakarta.persistence.*;
+import jakarta.persistence.Convert;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 
 import java.util.List;
 
