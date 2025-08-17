@@ -6,6 +6,7 @@ import animal.diary.dto.*;
 import animal.diary.dto.record.ConvulsionRecordDTO;
 import animal.diary.dto.record.RecordNumberDTO;
 import animal.diary.dto.record.SignificantRecordDTO;
+import animal.diary.dto.record.SnotRecordDTO;
 import animal.diary.entity.pet.Pet;
 import animal.diary.entity.record.*;
 import animal.diary.exception.ImageSizeLimitException;
@@ -34,6 +35,7 @@ public class RecordService {
     private final SignificantRepository significantRecordRepository;
     private final ConvulsionRepository convulsionRecordRepository;
     private final SoundRepository soundRepository;
+    private final SnotRepository snotRepository;
     
     // 몸무게 기록
     public RecordResponseDTO recordWeight(RecordNumberDTO dto) {
@@ -183,5 +185,25 @@ public class RecordService {
     private Pet getPetOrThrow(Long petId) {
         return petRepository.findById(petId)
                 .orElseThrow(() -> new PetNotFoundException("펫 못 찾음"));
+    }
+
+    public RecordResponseDTO recordSnot(SnotRecordDTO dto, List<MultipartFile> images) {
+        Pet pet = getPetOrThrow(dto.getPetId());
+
+        // 이미지 10장 제한
+        if (images.size() > 10) {
+            throw new ImageSizeLimitException(ErrorCode.IMAGE_SIZE_LIMIT_10);
+        }
+
+        // 이미지 업로드
+        List<String> imageUrls = s3Uploader.uploadMultiple(images, "snot");
+
+        Snot snotRecord = SnotRecordDTO.toEntity(dto, pet, imageUrls);
+
+        log.info("Recording snot for pet ID: {}, title: {}", pet.getId(), dto.getState());
+        snotRepository.save(snotRecord);
+        log.info("Successfully recorded snot with ID: {}", snotRecord.getId());
+
+        return RecordResponseDTO.snotToDTO(snotRecord);
     }
 }

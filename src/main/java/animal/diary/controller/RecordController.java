@@ -6,6 +6,7 @@ import animal.diary.dto.*;
 import animal.diary.dto.record.ConvulsionRecordDTO;
 import animal.diary.dto.record.RecordNumberDTO;
 import animal.diary.dto.record.SignificantRecordDTO;
+import animal.diary.dto.record.SnotRecordDTO;
 import animal.diary.dto.response.ErrorResponseDTO;
 import animal.diary.dto.response.ResponseDTO;
 import animal.diary.service.RecordService;
@@ -317,6 +318,27 @@ public class RecordController {
         log.info("Received abnormal sound record request for pet ID: {} with image: {}", dto.getPetId(), image != null);
         RecordResponseDTO result = recordService.recordSound(dto, image);
         log.info("Abnormal sound record completed for pet ID: {}", dto.getPetId());
+
+        return ResponseEntity
+                .status(SuccessCode.SUCCESS_SAVE_RECORD.getStatus().value())
+                .body(new ResponseDTO<>(SuccessCode.SUCCESS_SAVE_RECORD, result));
+    }
+
+    // ============================================================ 콧물 상태 기록
+    @Operation(summary = "콧물 상태 기록", description = """
+            콧물 상태를 기록합니다.
+            - 필수 필드: petId, state
+            - state: 콧물 상태 (CLEAR, MUCUS, BLOODY)
+            - 이미지는 단일 이미지만 업로드 가능합니다.
+            """)
+    @PostMapping(value = "/nasal-discharge", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ResponseDTO<RecordResponseDTO>> recordNasalDischarge(
+            @RequestPart SnotRecordDTO dto,
+            @RequestPart(value = "images", required = false) List<MultipartFile> images) {
+
+        log.info("Received nasal discharge record request for pet ID: {} with state: {}", dto.getPetId(), dto.getState());
+        RecordResponseDTO result = recordService.recordSnot(dto, images);
+        log.info("Nasal discharge record completed for pet ID: {}", dto.getPetId());
 
         return ResponseEntity
                 .status(SuccessCode.SUCCESS_SAVE_RECORD.getStatus().value())

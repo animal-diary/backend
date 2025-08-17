@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Builder
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -104,6 +105,14 @@ public class RecordResponseDTO {
                 .petId(sound.getPet().getId())
                 .title(sound.getTitle())
                 .createdAt(sound.getCreatedAt())
+                .build();
+    }
+
+    public static RecordResponseDTO snotToDTO(Snot snotRecord) {
+        return RecordResponseDTO.builder()
+                .petId(snotRecord.getPet().getId())
+                .state(snotRecord.getState().name())
+                .createdAt(snotRecord.getCreatedAt())
                 .build();
     }
 }
