@@ -1,5 +1,6 @@
 package animal.diary.service;
 
+import animal.diary.code.ErrorCode;
 import animal.diary.code.VitalCategory;
 import animal.diary.dto.*;
 import animal.diary.entity.pet.Pet;
@@ -118,12 +119,12 @@ public class RecordService {
     }
 
     // 특이사항 기록
-    public RecordResponseDTO recordSignificantRecord(SignificantRecordDTO dto, List<MultipartFile> images) throws IOException {
+    public RecordResponseDTO recordSignificantRecord(SignificantRecordDTO dto, List<MultipartFile> images) {
         Pet pet = getPetOrThrow(dto.getPetId());
 
         // 이미지 10장 제한
         if (images.size() > 10) {
-            throw new ImageSizeLimitException("이미지는 최대 10장까지 업로드할 수 있습니다.");
+            throw new ImageSizeLimitException(ErrorCode.IMAGE_SIZE_LIMIT_10);
         }
 
         // 이미지 업로드
@@ -139,7 +140,7 @@ public class RecordService {
     }
 
     // 경련 기록
-    public RecordResponseDTO recordConvulsionRecord(ConvulsionRecordDTO dto, MultipartFile image) throws IOException {
+    public RecordResponseDTO recordConvulsionRecord(ConvulsionRecordDTO dto, MultipartFile image) {
         Pet pet = getPetOrThrow(dto.getPetId());
 
         // 단일 이미지 업로드
