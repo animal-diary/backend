@@ -332,7 +332,7 @@ public class RecordController {
             - 이미지는 단일 이미지만 업로드 가능합니다.
             """)
     @PostMapping(value = "/snot", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ResponseDTO<RecordResponseDTO>> recordNasalDischarge(
+    public ResponseEntity<ResponseDTO<RecordResponseDTO>> recordSnot(
             @RequestPart SnotRecordDTO dto,
             @RequestPart(value = "images", required = false) List<MultipartFile> images) {
 
