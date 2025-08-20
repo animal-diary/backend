@@ -30,6 +30,9 @@ public class ResponseDateDTO {
     private String imageUrl;
     private List<String> abnormalStates;
 
+    // 콧물
+    private String memo;
+
     public static ResponseDateDTO weightToDTO(Weight weight) {
         return ResponseDateDTO.builder()
                 .diaryId(weight.getId())
@@ -94,7 +97,7 @@ public class ResponseDateDTO {
                 .createdTime(significant.getCreatedAt().toLocalTime())
                 .title(significant.getTitle())
                 .content(significant.getContent())
-                .imageUrls(imageCloudFrontUrls)
+                .imageUrls(imageCloudFrontUrls != null ? imageCloudFrontUrls : List.of())
                 .build();
     }
 
@@ -107,7 +110,7 @@ public class ResponseDateDTO {
                 .abnormalStates(convulsion.getAbnormalState().stream()
                         .map(AbnormalState::getDescription)
                         .toList())
-                .imageUrl(imageCloudFrontUrl)
+                .imageUrl(imageCloudFrontUrl != null ? imageCloudFrontUrl :"")
                 .build();
     }
 
@@ -116,7 +119,17 @@ public class ResponseDateDTO {
                 .diaryId(sound.getId())
                 .createdTime(sound.getCreatedAt().toLocalTime())
                 .title(sound.getTitle())
-                .imageUrl(imageUrl)
+                .imageUrl(imageUrl != null ? imageUrl : "")
+                .build();
+    }
+
+    public static ResponseDateDTO snotToDTO(Snot snot, List<String> imageUrls) {
+        return ResponseDateDTO.builder()
+                .diaryId(snot.getId())
+                .state(snot.getState().name())
+                .memo(snot.getMemo() != null ? snot.getMemo() : "")
+                .createdTime(snot.getCreatedAt().toLocalTime())
+                .imageUrls(imageUrls != null ? imageUrls : List.of())
                 .build();
     }
 }

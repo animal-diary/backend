@@ -36,6 +36,7 @@ public class QueryService {
     private final ConvulsionRepository convulsionRepository;
     private final CloudFrontUrlService cloudFrontUrlService;
     private final SoundRepository soundRepository;
+    private final SnotRepository snotRepository;
 
     // 몸무게 조회
     public ResponseDateListDTO getWeightsByDate(RequestDateDTO dto) {
@@ -337,6 +338,44 @@ public class QueryService {
         return new LocalDateTime[]{date.atStartOfDay(), date.atTime(LocalTime.MAX)};
     }
 
+    // ============================================================== 콧물 일별 조회
+    public ResponseDateListDTO getSnotByDate(RequestDateDTO dto) {
+        Pet pet = getPetOrThrow(dto.getPetId());
 
+        LocalDate date = dto.getDate();
+        validateDate(dto.getDate());
 
+        LocalDateTime[] range = getStartAndEndOfDay(dto.getDate());
+
+        log.info("Fetching snot records for pet ID: {} on date: {}", pet.getId(), date);
+        List<Snot> snotList = snotRepository.findAllByPetIdAndCreatedAtBetween(pet.getId(), range[0], range[1]);
+        log.info("Found {} snot records for pet ID: {} on date: {}", snotList.size(), pet.getId(), date);
+
+        if (snotList.isEmpty()) {
+            throw new EmptyListException("비어있음");
+        }
+
+        List<ResponseDateDTO> result = snotList.stream().map(
+            snot -> {
+                List<String> imageUrls = snot.getImageUrls();
+                if (imageUrls == null || imageUrls.isEmpty()) {
+                    return ResponseDateDTO.snotToDTO(snot, List.of());
+                }
+
+                // 스트림으로 변환하여 성능 향상
+                List<String> imageCloudFrontUrls = imageUrls.stream()
+                        .map(cloudFrontUrlService::generateSignedUrl)
+                        .toList();
+
+                return ResponseDateDTO.snotToDTO(snot, imageCloudFrontUrls);
+            }
+        ).toList();
+
+        return ResponseDateListDTO.builder()
+                .date(date)
+                .type(pet.getType().toString())
+                .dateDTOS(result)
+                .build();
+
+    }
 }

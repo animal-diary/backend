@@ -3,10 +3,16 @@ package animal.diary.entity.record;
 import animal.diary.entity.record.state.SnotState;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.Entity;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 import java.util.List;
 
 @Entity
+@SuperBuilder
+@NoArgsConstructor
+@Getter
 public class Snot extends Diary{
     @Schema(description = "코 분비물 상태", example = "NORMAL, ABNORMAL")
     private SnotState state;
