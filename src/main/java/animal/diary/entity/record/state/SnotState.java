@@ -14,7 +14,7 @@ public enum SnotState {
     private final String description;
 
     public static SnotState fromString(String value) {
-        return fromString(value, () -> new InvalidStateException("Invalid AbnormalState value: " + value));
+        return fromString(value, () -> new InvalidStateException("Invalid SnotState value: " + value));
     }
 
     public static SnotState fromString(String value, Supplier<? extends RuntimeException> exceptionSupplier) {
