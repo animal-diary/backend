@@ -352,7 +352,7 @@ public class QueryService {
         log.info("Found {} snot records for pet ID: {} on date: {}", snotList.size(), pet.getId(), date);
 
         if (snotList.isEmpty()) {
-            throw new EmptyListException("비어었음");
+            throw new EmptyListException("비어있음");
         }
 
         List<ResponseDateDTO> result = snotList.stream().map(
