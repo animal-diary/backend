@@ -329,7 +329,7 @@ public class RecordController {
             콧물 상태를 기록합니다.
             - 필수 필드: petId, state
             - state: 콧물 상태 (CLEAR, MUCUS, BLOODY)
-            - 이미지는 단일 이미지만 업로드 가능합니다.
+            - 이미지는 최대 10장까지 업로드 가능합니다.
             """)
     @PostMapping(value = "/snot", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ResponseDTO<RecordResponseDTO>> recordSnot(
