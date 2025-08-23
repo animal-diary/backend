@@ -4,7 +4,7 @@ import animal.diary.code.SuccessCode;
 import animal.diary.code.VitalCategory;
 import animal.diary.dto.*;
 import animal.diary.dto.record.ConvulsionRecordDTO;
-import animal.diary.dto.record.RecordNumberDTO;
+import animal.diary.dto.record.RecordWithOutImageDTO;
 import animal.diary.dto.record.SignificantRecordDTO;
 import animal.diary.dto.record.SnotRecordDTO;
 import animal.diary.dto.response.ErrorResponseDTO;
@@ -55,7 +55,7 @@ public class RecordController {
             })
     })
     @PostMapping(value = "/weight")
-    public ResponseEntity<ResponseDTO<RecordResponseDTO>> recordWeight(@Validated(WeightGroup.class) @RequestBody RecordNumberDTO dto) {
+    public ResponseEntity<ResponseDTO<RecordResponseDTO>> recordWeight(@Validated(WeightGroup.class) @RequestBody RecordWithOutImageDTO.WeightRecordDTO dto) {
         log.info("Received weight record request for pet ID: {}", dto.getPetId());
         RecordResponseDTO result = recordService.recordWeight(dto);
         log.info("Weight record completed for pet ID: {}", dto.getPetId());
@@ -87,7 +87,7 @@ public class RecordController {
             })
     })
     @PostMapping("/energy")
-    public ResponseEntity<ResponseDTO<RecordResponseDTO>> recordEnergy(@Validated(StateGroup.class)@RequestBody RecordNumberDTO dto) {
+    public ResponseEntity<ResponseDTO<RecordResponseDTO>> recordEnergy(@Validated(StateGroup.class)@RequestBody RecordWithOutImageDTO.EnergyAndAppetiteRecord dto) {
         log.info("Received energy record request for pet ID: {}", dto.getPetId());
         RecordResponseDTO result = recordService.recordEnergyAndAppetite(dto, "energy");
         log.info("Energy record completed for pet ID: {}", dto.getPetId());
@@ -119,7 +119,7 @@ public class RecordController {
             })
     })
     @PostMapping("/appetite")
-    public ResponseEntity<ResponseDTO<RecordResponseDTO>> recordAppetite(@Validated(StateGroup.class) @RequestBody RecordNumberDTO dto) {
+    public ResponseEntity<ResponseDTO<RecordResponseDTO>> recordAppetite(@Validated(StateGroup.class) @RequestBody RecordWithOutImageDTO.EnergyAndAppetiteRecord dto) {
         log.info("Received appetite record request for pet ID: {}", dto.getPetId());
         RecordResponseDTO result = recordService.recordEnergyAndAppetite(dto, "appetite");
         log.info("Appetite record completed for pet ID: {}", dto.getPetId());
@@ -151,7 +151,7 @@ public class RecordController {
             })
     })
     @PostMapping("/RR")
-    public ResponseEntity<ResponseDTO<RecordResponseDTO>> recordRR(@Validated(CountGroup.class) @RequestBody RecordNumberDTO dto) {
+    public ResponseEntity<ResponseDTO<RecordResponseDTO>> recordRR(@Validated(CountGroup.class) @RequestBody RecordWithOutImageDTO.RespiratoryRateAndHeartRateRecord dto) {
         log.info("Received respiratory rate record request for pet ID: {}", dto.getPetId());
         RecordResponseDTO result = recordService.recordRRAndHeartRate(dto, VitalCategory.RR);
         log.info("Respiratory rate record completed for pet ID: {}", dto.getPetId());
@@ -183,7 +183,7 @@ public class RecordController {
             })
     })
     @PostMapping("/heart-rate")
-    public ResponseEntity<ResponseDTO<RecordResponseDTO>> recordHeartRate(@Validated(CountGroup.class) @RequestBody RecordNumberDTO dto) {
+    public ResponseEntity<ResponseDTO<RecordResponseDTO>> recordHeartRate(@Validated(CountGroup.class) @RequestBody RecordWithOutImageDTO.RespiratoryRateAndHeartRateRecord dto) {
         log.info("Received heart rate record request for pet ID: {}", dto.getPetId());
         RecordResponseDTO result = recordService.recordRRAndHeartRate(dto, VitalCategory.HEART_RATE);
         log.info("Heart rate record completed for pet ID: {}", dto.getPetId());
@@ -215,7 +215,7 @@ public class RecordController {
             })
     })
     @PostMapping("/syncope")
-    public ResponseEntity<ResponseDTO<RecordResponseDTO>> recordSyncope(@Validated(BinaryStateGroup.class) @RequestBody RecordNumberDTO dto) {
+    public ResponseEntity<ResponseDTO<RecordResponseDTO>> recordSyncope(@Validated(BinaryStateGroup.class) @RequestBody RecordWithOutImageDTO.SyncopeRecord dto) {
         log.info("Received syncope record request for pet ID: {}", dto.getPetId());
         RecordResponseDTO result = recordService.recordSyncope(dto);
         log.info("Syncope record completed for pet ID: {}", dto.getPetId());
@@ -248,7 +248,7 @@ public class RecordController {
             })
     })
     @PostMapping("/urine")
-    public ResponseEntity<ResponseDTO<RecordResponseDTO>> recordUrine(@Validated(UrineGroup.class) @RequestBody RecordNumberDTO dto) {
+    public ResponseEntity<ResponseDTO<RecordResponseDTO>> recordUrine(@Validated(UrineGroup.class) @RequestBody RecordWithOutImageDTO.UrinaryRecord dto) {
         log.info("Received urine record request for pet ID: {}", dto.getPetId());
         RecordResponseDTO result = recordService.recordUrinary(dto);
         log.info("Urine record completed for pet ID: {}", dto.getPetId());

@@ -4,7 +4,7 @@ import animal.diary.code.ErrorCode;
 import animal.diary.code.VitalCategory;
 import animal.diary.dto.*;
 import animal.diary.dto.record.ConvulsionRecordDTO;
-import animal.diary.dto.record.RecordNumberDTO;
+import animal.diary.dto.record.RecordWithOutImageDTO;
 import animal.diary.dto.record.SignificantRecordDTO;
 import animal.diary.dto.record.SnotRecordDTO;
 import animal.diary.entity.pet.Pet;
@@ -38,10 +38,10 @@ public class RecordService {
     private final SnotRepository snotRepository;
     
     // 몸무게 기록
-    public RecordResponseDTO recordWeight(RecordNumberDTO dto) {
+    public RecordResponseDTO recordWeight(RecordWithOutImageDTO.WeightRecordDTO dto) {
         Pet pet = getPetOrThrow(dto.getPetId());
 
-        Weight weight = RecordNumberDTO.toWeightEntity(dto, pet);
+        Weight weight = RecordWithOutImageDTO.WeightRecordDTO.toWeightEntity(dto, pet);
 
         log.info("Recording weight for pet ID: {}, weight: {}", pet.getId(), dto.getWeight());
         weightRepository.save(weight);
@@ -51,11 +51,11 @@ public class RecordService {
     }
 
     // ========================================================= 기력/식욕 상태 기록
-    public RecordResponseDTO recordEnergyAndAppetite(RecordNumberDTO dto, String category) {
+    public RecordResponseDTO recordEnergyAndAppetite(RecordWithOutImageDTO.EnergyAndAppetiteRecord dto, String category) {
         Pet pet = getPetOrThrow(dto.getPetId());
 
         if (category.equals("energy")) {
-            Energy energy = RecordNumberDTO.toEnergyEntity(dto, pet);
+            Energy energy = RecordWithOutImageDTO.EnergyAndAppetiteRecord.toEnergyEntity(dto, pet);
             log.info("Recording energy for pet ID: {}, energy level: {}", pet.getId(), dto.getState());
             energyRepository.save(energy);
             log.info("Successfully recorded energy with ID: {}", energy.getId());
@@ -64,7 +64,7 @@ public class RecordService {
 
         }
         else if (category.equals("appetite")) {
-            Appetite appetite = RecordNumberDTO.toAppetiteEntity(dto, pet);
+            Appetite appetite = RecordWithOutImageDTO.EnergyAndAppetiteRecord.toAppetiteEntity(dto, pet);
             log.info("Recording appetite for pet ID: {}, appetite level: {}", pet.getId(), dto.getState());
             appetiteRepository.save(appetite);
             log.info("Successfully recorded appetite with ID: {}", appetite.getId());
@@ -76,11 +76,11 @@ public class RecordService {
     }
 
     // ==================================================== 호흡수/심박수 기록
-    public RecordResponseDTO recordRRAndHeartRate(RecordNumberDTO dto, VitalCategory category) {
+    public RecordResponseDTO recordRRAndHeartRate(RecordWithOutImageDTO.RespiratoryRateAndHeartRateRecord dto, VitalCategory category) {
         Pet pet = getPetOrThrow(dto.getPetId());
 
         if (category == VitalCategory.RR) {
-            RespiratoryRate respiratoryRate = RecordNumberDTO.toRespiratoryRateEntity(dto, pet);
+            RespiratoryRate respiratoryRate = RecordWithOutImageDTO.RespiratoryRateAndHeartRateRecord.toRespiratoryRateEntity(dto, pet);
             log.info("Recording respiratory rate for pet ID: {}, rate: {}", pet.getId(), dto.getCount());
             rrRepository.save(respiratoryRate);
             log.info("Successfully recorded respiratory rate with ID: {}", respiratoryRate.getId());
@@ -88,7 +88,7 @@ public class RecordService {
 
         }
         else if (category == VitalCategory.HEART_RATE){
-            HeartRate heartRate = RecordNumberDTO.toHeartRateEntity(dto, pet);
+            HeartRate heartRate = RecordWithOutImageDTO.RespiratoryRateAndHeartRateRecord.toHeartRateEntity(dto, pet);
             log.info("Recording heart rate for pet ID: {}, rate: {}", pet.getId(), dto.getCount());
             heartRateRepository.save(heartRate);
             log.info("Successfully recorded heart rate with ID: {}", heartRate.getId());
@@ -100,11 +100,11 @@ public class RecordService {
     }
 
     // ============================================== 기절 상태 기록
-    public RecordResponseDTO recordSyncope(RecordNumberDTO dto) {
+    public RecordResponseDTO recordSyncope(RecordWithOutImageDTO.SyncopeRecord dto) {
         Pet pet = getPetOrThrow(dto.getPetId());
 
-        Syncope syncope = RecordNumberDTO.toSyncopeEntity(dto, pet);
-        log.info("Recording syncope for pet ID: {}, frequency: {}", pet.getId(), dto.getState());
+        Syncope syncope = RecordWithOutImageDTO.SyncopeRecord.toSyncopeEntity(dto, pet);
+        log.info("Recording syncope for pet ID: {}, frequency: {}", pet.getId(), dto.getBinaryState());
         syncopeRepository.save(syncope);
         log.info("Successfully recorded syncope with ID: {}", syncope.getId());
 
@@ -112,10 +112,10 @@ public class RecordService {
     }
 
     // ======================================================= 소변 상태 기록
-    public RecordResponseDTO recordUrinary(RecordNumberDTO dto) {
+    public RecordResponseDTO recordUrinary(RecordWithOutImageDTO.UrinaryRecord dto) {
         Pet pet = getPetOrThrow(dto.getPetId());
 
-        Urinary urinary = RecordNumberDTO.toUrinaryEntity(dto, pet);
+        Urinary urinary = RecordWithOutImageDTO.UrinaryRecord.toUrinaryEntity(dto, pet);
         log.info("Recording urinary for pet ID: {}, frequency: {}", pet.getId(), dto.getUrineAmount());
         urinaryRepository.save(urinary);
         log.info("Successfully recorded urinary with ID: {}", urinary.getId());
