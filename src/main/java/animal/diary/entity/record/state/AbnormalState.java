@@ -13,7 +13,7 @@ public enum AbnormalState {
     INCONTINENCE("배변실수"),
     DROOLING("침흘림"),
     UNCONSCIOUS("의식없음"),
-    NORMAL("이상없음");
+    NORMAL("추가 증상 없음");
 
     private final String description;
 

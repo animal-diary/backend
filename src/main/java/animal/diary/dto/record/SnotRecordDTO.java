@@ -5,6 +5,7 @@ import animal.diary.entity.record.Snot;
 import animal.diary.entity.record.state.SnotState;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.Builder;
 import lombok.Data;
 import lombok.Getter;
@@ -24,6 +25,7 @@ public class SnotRecordDTO {
     private String state;
 
     @Schema(description = "메모", example = "콧물이 조금 나와요.")
+    @Size(max = 200, message = "메모는 200자 이내여야 합니다.")
     private String memo;
 
     public static Snot toEntity(SnotRecordDTO dto, Pet pet, List<String> imageUrls) {

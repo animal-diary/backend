@@ -22,4 +22,6 @@ public class Significant extends Diary{
     @Column(length = 5000)
     @Convert(converter = StringListConverter.class)
     private List<String> imageUrls;
+
+    private String videoUrl;
 }

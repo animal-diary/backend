@@ -3,10 +3,7 @@ package animal.diary.service;
 import animal.diary.code.ErrorCode;
 import animal.diary.code.VitalCategory;
 import animal.diary.dto.*;
-import animal.diary.dto.record.ConvulsionRecordDTO;
-import animal.diary.dto.record.RecordWithOutImageDTO;
-import animal.diary.dto.record.SignificantRecordDTO;
-import animal.diary.dto.record.SnotRecordDTO;
+import animal.diary.dto.record.*;
 import animal.diary.entity.pet.Pet;
 import animal.diary.entity.record.*;
 import animal.diary.exception.ImageSizeLimitException;
@@ -111,10 +108,10 @@ public class RecordService {
     }
 
     // ======================================================= 소변 상태 기록
-    public RecordResponseDTO.UrinaryResponseDTO recordUrinary(RecordWithOutImageDTO.UrinaryRecord dto) {
+    public RecordResponseDTO.UrinaryResponseDTO recordUrinary(UrinaryRecordDTO dto) {
         Pet pet = getPetOrThrow(dto.getPetId());
 
-        Urinary urinary = RecordWithOutImageDTO.UrinaryRecord.toUrinaryEntity(dto, pet);
+        Urinary urinary = UrinaryRecordDTO.toUrinaryEntity(dto, pet);
         log.info("Recording urinary for pet ID: {}, frequency: {}", pet.getId(), dto.getUrineAmount());
         urinaryRepository.save(urinary);
         log.info("Successfully recorded urinary with ID: {}", urinary.getId());
@@ -123,7 +120,7 @@ public class RecordService {
     }
 
     // ============================================== 특이사항 기록
-    public RecordResponseDTO.SignificantResponseDTO recordSignificantRecord(SignificantRecordDTO dto, List<MultipartFile> images) {
+    public RecordResponseDTO.SignificantResponseDTO recordSignificantRecord(SignificantRecordDTO dto, List<MultipartFile> images, MultipartFile video) {
         Pet pet = getPetOrThrow(dto.getPetId());
 
         // 이미지 10장 제한
@@ -134,7 +131,13 @@ public class RecordService {
         // 이미지 업로드
         List<String> imageUrls = s3Uploader.uploadMultiple(images, "significant");
 
-        Significant significantRecord = SignificantRecordDTO.toEntity(dto, pet, imageUrls);
+        // 비디오 업로드
+        String videoUrl = "";
+        if (video != null && !video.isEmpty()) {
+            videoUrl = s3Uploader.upload(video, "significant");
+        }
+
+        Significant significantRecord = SignificantRecordDTO.toEntity(dto, pet, imageUrls, videoUrl);
 
         log.info("Recording significant record for pet ID: {}, title: {}", pet.getId(), dto.getTitle());
         significantRecordRepository.save(significantRecord);
@@ -166,13 +169,15 @@ public class RecordService {
     public RecordResponseDTO.SoundResponseDTO recordSound(AbnormalSoundRecordDTO dto, MultipartFile image) {
         Pet pet = getPetOrThrow(dto.getPetId());
 
-        // 이미지 업로드
-        String imageUrl = "";
-        if (image != null && !image.isEmpty()) {
-            imageUrl = s3Uploader.upload(image, "sound");
+        // 영상 필수
+        if (image == null || image.isEmpty()) {
+            throw new IllegalArgumentException("영상 파일은 필수입니다.");
         }
 
-        Sound sound = AbnormalSoundRecordDTO.toEntity(dto, pet, imageUrl);
+        // 단일 이미지 업로드
+        String videoUrl = s3Uploader.upload(image, "sound");
+
+        Sound sound = AbnormalSoundRecordDTO.toEntity(dto, pet, videoUrl);
         log.info("Recording sound for pet ID: {}, title: {}", pet.getId(), dto.getTitle());
         soundRepository.save(sound);
         log.info("Successfully recorded sound with ID: {}", sound.getId());

@@ -4,10 +4,7 @@ import animal.diary.code.SuccessCode;
 import animal.diary.code.VitalCategory;
 import animal.diary.dto.*;
 import animal.diary.dto.api.RecordResponseApi;
-import animal.diary.dto.record.ConvulsionRecordDTO;
-import animal.diary.dto.record.RecordWithOutImageDTO;
-import animal.diary.dto.record.SignificantRecordDTO;
-import animal.diary.dto.record.SnotRecordDTO;
+import animal.diary.dto.record.*;
 import animal.diary.dto.response.ErrorResponseDTO;
 import animal.diary.dto.response.ResponseDTO;
 import animal.diary.service.RecordService;
@@ -248,7 +245,8 @@ public class RecordController {
             })
     })
     @PostMapping("/urine")
-    public ResponseEntity<ResponseDTO<RecordResponseDTO.UrinaryResponseDTO>> recordUrine(@Validated(UrineGroup.class) @RequestBody RecordWithOutImageDTO.UrinaryRecord dto) {
+    public ResponseEntity<ResponseDTO<RecordResponseDTO.UrinaryResponseDTO>> recordUrine(@Validated(UrineGroup.class) @RequestBody UrinaryRecordDTO dto,
+                                                                                         @RequestPart(value = "images", required = false) List<MultipartFile> images) {
         log.info("Received urine record request for pet ID: {}", dto.getPetId());
         RecordResponseDTO.UrinaryResponseDTO result = recordService.recordUrinary(dto);
         log.info("Urine record completed for pet ID: {}", dto.getPetId());
@@ -281,14 +279,15 @@ public class RecordController {
     @PostMapping(value = "/significant", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ResponseDTO<RecordResponseDTO.SignificantResponseDTO>> recordSignificant(
             @RequestPart SignificantRecordDTO dto,
-            @RequestPart(value = "images", required = false) List<MultipartFile> images) {
+            @RequestPart(value = "images", required = false) List<MultipartFile> images,
+            @RequestPart(value = "video", required = false) MultipartFile video) {
         
         if (images == null) {
             images = List.of(); // 빈 리스트로 초기화
         }
         
         log.info("Received significant record request for pet ID: {} with {} images", dto.getPetId(), images.size());
-        RecordResponseDTO.SignificantResponseDTO result = recordService.recordSignificantRecord(dto, images);
+        RecordResponseDTO.SignificantResponseDTO result = recordService.recordSignificantRecord(dto, images, video);
         log.info("Significant record completed for pet ID: {}", dto.getPetId());
 
         return ResponseEntity
@@ -355,10 +354,11 @@ public class RecordController {
     @PostMapping(value = "/abnormal-sound", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ResponseDTO<RecordResponseDTO.SoundResponseDTO>> recordAbnormalSound(
             @RequestPart AbnormalSoundRecordDTO dto,
-            @RequestPart(value = "image", required = false) MultipartFile image) {
+            @RequestPart(value = "video", required = true) MultipartFile video) {
 
-        log.info("Received abnormal sound record request for pet ID: {} with image: {}", dto.getPetId(), image != null);
-        RecordResponseDTO.SoundResponseDTO result = recordService.recordSound(dto, image);
+        // 영상 필수
+
+        RecordResponseDTO.SoundResponseDTO result = recordService.recordSound(dto, video);
         log.info("Abnormal sound record completed for pet ID: {}", dto.getPetId());
 
         return ResponseEntity

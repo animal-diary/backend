@@ -3,6 +3,8 @@ package animal.diary.dto;
 import animal.diary.entity.record.*;
 import animal.diary.entity.record.state.AbnormalState;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.Size;
 import lombok.Builder;
 import lombok.Data;
 import lombok.Getter;
@@ -113,10 +115,19 @@ public class RecordResponseDTO {
 
     @Builder
     @Getter
+    @Schema(description = "특이사항 응답 DTO")
     public static class SignificantResponseDTO {
+        @Schema(description = "반려동물 ID", example = "1")
         private Long petId;
+        @Schema(description = "특이사항 제목", example = "구토 증상 발생")
         private String title;
+        @Schema(description = "특이사항 내용", example = "반려동물이 구토를 했습니다. 수의사 방문 필요.")
         private String content;
+        @Schema(description = "특이사항 동영상 URL", example = "https://example.com/video.mp4")
+        private String videoUrl;
+        @Schema(description = "특이사항 이미지 URL 목록", example = "[\"https://example.com/image1.jpg\", \"https://example.com/image2.jpg\"]")
+        private List<String> imageUrls;
+        @Schema(description = "특이사항 생성 시간", example = "2023-10-01T12:00:00")
         private LocalDateTime createdAt;
 
         public static SignificantResponseDTO significantToDTO(Significant significant) {
@@ -124,6 +135,8 @@ public class RecordResponseDTO {
                     .petId(significant.getPet().getId())
                     .title(significant.getTitle())
                     .content(significant.getContent())
+                    .videoUrl(significant.getVideoUrl())
+                    .imageUrls(significant.getImageUrls())
                     .createdAt(significant.getCreatedAt())
                     .build();
         }
