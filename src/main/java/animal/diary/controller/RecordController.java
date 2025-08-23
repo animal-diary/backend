@@ -3,6 +3,7 @@ package animal.diary.controller;
 import animal.diary.code.SuccessCode;
 import animal.diary.code.VitalCategory;
 import animal.diary.dto.*;
+import animal.diary.dto.api.RecordResponseApi;
 import animal.diary.dto.record.ConvulsionRecordDTO;
 import animal.diary.dto.record.RecordWithOutImageDTO;
 import animal.diary.dto.record.SignificantRecordDTO;
@@ -43,7 +44,7 @@ public class RecordController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "몸무게 기록 성공", content = {
                     @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json",
-                            schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = RecordResponseDTO.class))
+                            schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = RecordResponseApi.WeightResponseApi.class))
             }),
             @ApiResponse(responseCode = "400", description = "잘못된 요청", content = {
                     @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json",
@@ -55,9 +56,9 @@ public class RecordController {
             })
     })
     @PostMapping(value = "/weight")
-    public ResponseEntity<ResponseDTO<RecordResponseDTO>> recordWeight(@Validated(WeightGroup.class) @RequestBody RecordWithOutImageDTO.WeightRecordDTO dto) {
+    public ResponseEntity<ResponseDTO<RecordResponseDTO.WeightResponseDTO>> recordWeight(@Validated(WeightGroup.class) @RequestBody RecordWithOutImageDTO.WeightRecordDTO dto) {
         log.info("Received weight record request for pet ID: {}", dto.getPetId());
-        RecordResponseDTO result = recordService.recordWeight(dto);
+        RecordResponseDTO.WeightResponseDTO result = recordService.recordWeight(dto);
         log.info("Weight record completed for pet ID: {}", dto.getPetId());
 
         return ResponseEntity
@@ -87,9 +88,9 @@ public class RecordController {
             })
     })
     @PostMapping("/energy")
-    public ResponseEntity<ResponseDTO<RecordResponseDTO>> recordEnergy(@Validated(StateGroup.class)@RequestBody RecordWithOutImageDTO.EnergyAndAppetiteRecord dto) {
+    public ResponseEntity<ResponseDTO<RecordResponseDTO.EnergyAndAppetiteResponseDTO>> recordEnergy(@Validated(StateGroup.class)@RequestBody RecordWithOutImageDTO.EnergyAndAppetiteRecord dto) {
         log.info("Received energy record request for pet ID: {}", dto.getPetId());
-        RecordResponseDTO result = recordService.recordEnergyAndAppetite(dto, "energy");
+        RecordResponseDTO.EnergyAndAppetiteResponseDTO result = recordService.recordEnergyAndAppetite(dto, "energy");
         log.info("Energy record completed for pet ID: {}", dto.getPetId());
 
         return ResponseEntity
@@ -119,9 +120,9 @@ public class RecordController {
             })
     })
     @PostMapping("/appetite")
-    public ResponseEntity<ResponseDTO<RecordResponseDTO>> recordAppetite(@Validated(StateGroup.class) @RequestBody RecordWithOutImageDTO.EnergyAndAppetiteRecord dto) {
+    public ResponseEntity<ResponseDTO<RecordResponseDTO.EnergyAndAppetiteResponseDTO>> recordAppetite(@Validated(StateGroup.class) @RequestBody RecordWithOutImageDTO.EnergyAndAppetiteRecord dto) {
         log.info("Received appetite record request for pet ID: {}", dto.getPetId());
-        RecordResponseDTO result = recordService.recordEnergyAndAppetite(dto, "appetite");
+        RecordResponseDTO.EnergyAndAppetiteResponseDTO result = recordService.recordEnergyAndAppetite(dto, "appetite");
         log.info("Appetite record completed for pet ID: {}", dto.getPetId());
 
         return ResponseEntity
@@ -151,9 +152,9 @@ public class RecordController {
             })
     })
     @PostMapping("/RR")
-    public ResponseEntity<ResponseDTO<RecordResponseDTO>> recordRR(@Validated(CountGroup.class) @RequestBody RecordWithOutImageDTO.RespiratoryRateAndHeartRateRecord dto) {
+    public ResponseEntity<ResponseDTO<RecordResponseDTO.RRAndHeartRateResponseDTO>> recordRR(@Validated(CountGroup.class) @RequestBody RecordWithOutImageDTO.RespiratoryRateAndHeartRateRecord dto) {
         log.info("Received respiratory rate record request for pet ID: {}", dto.getPetId());
-        RecordResponseDTO result = recordService.recordRRAndHeartRate(dto, VitalCategory.RR);
+        RecordResponseDTO.RRAndHeartRateResponseDTO result = recordService.recordRRAndHeartRate(dto, VitalCategory.RR);
         log.info("Respiratory rate record completed for pet ID: {}", dto.getPetId());
 
         return ResponseEntity
@@ -183,9 +184,9 @@ public class RecordController {
             })
     })
     @PostMapping("/heart-rate")
-    public ResponseEntity<ResponseDTO<RecordResponseDTO>> recordHeartRate(@Validated(CountGroup.class) @RequestBody RecordWithOutImageDTO.RespiratoryRateAndHeartRateRecord dto) {
+    public ResponseEntity<ResponseDTO<RecordResponseDTO.RRAndHeartRateResponseDTO>> recordHeartRate(@Validated(CountGroup.class) @RequestBody RecordWithOutImageDTO.RespiratoryRateAndHeartRateRecord dto) {
         log.info("Received heart rate record request for pet ID: {}", dto.getPetId());
-        RecordResponseDTO result = recordService.recordRRAndHeartRate(dto, VitalCategory.HEART_RATE);
+        RecordResponseDTO.RRAndHeartRateResponseDTO result = recordService.recordRRAndHeartRate(dto, VitalCategory.HEART_RATE);
         log.info("Heart rate record completed for pet ID: {}", dto.getPetId());
 
         return ResponseEntity
@@ -215,9 +216,9 @@ public class RecordController {
             })
     })
     @PostMapping("/syncope")
-    public ResponseEntity<ResponseDTO<RecordResponseDTO>> recordSyncope(@Validated(BinaryStateGroup.class) @RequestBody RecordWithOutImageDTO.SyncopeRecord dto) {
+    public ResponseEntity<ResponseDTO<RecordResponseDTO.SyncopeResponseDTO>> recordSyncope(@Validated(BinaryStateGroup.class) @RequestBody RecordWithOutImageDTO.SyncopeRecord dto) {
         log.info("Received syncope record request for pet ID: {}", dto.getPetId());
-        RecordResponseDTO result = recordService.recordSyncope(dto);
+        RecordResponseDTO.SyncopeResponseDTO result = recordService.recordSyncope(dto);
         log.info("Syncope record completed for pet ID: {}", dto.getPetId());
 
         return ResponseEntity
@@ -248,9 +249,9 @@ public class RecordController {
             })
     })
     @PostMapping("/urine")
-    public ResponseEntity<ResponseDTO<RecordResponseDTO>> recordUrine(@Validated(UrineGroup.class) @RequestBody RecordWithOutImageDTO.UrinaryRecord dto) {
+    public ResponseEntity<ResponseDTO<RecordResponseDTO.UrinaryResponseDTO>> recordUrine(@Validated(UrineGroup.class) @RequestBody RecordWithOutImageDTO.UrinaryRecord dto) {
         log.info("Received urine record request for pet ID: {}", dto.getPetId());
-        RecordResponseDTO result = recordService.recordUrinary(dto);
+        RecordResponseDTO.UrinaryResponseDTO result = recordService.recordUrinary(dto);
         log.info("Urine record completed for pet ID: {}", dto.getPetId());
 
         return ResponseEntity
@@ -265,7 +266,7 @@ public class RecordController {
             - 이미지는 최대 10장까지 업로드 가능합니다.
             """)
     @PostMapping(value = "/significant", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ResponseDTO<RecordResponseDTO>> recordSignificant(
+    public ResponseEntity<ResponseDTO<RecordResponseDTO.SignificantResponseDTO>> recordSignificant(
             @RequestPart SignificantRecordDTO dto,
             @RequestPart(value = "images", required = false) List<MultipartFile> images) {
         
@@ -274,7 +275,7 @@ public class RecordController {
         }
         
         log.info("Received significant record request for pet ID: {} with {} images", dto.getPetId(), images.size());
-        RecordResponseDTO result = recordService.recordSignificantRecord(dto, images);
+        RecordResponseDTO.SignificantResponseDTO result = recordService.recordSignificantRecord(dto, images);
         log.info("Significant record completed for pet ID: {}", dto.getPetId());
 
         return ResponseEntity
@@ -291,12 +292,12 @@ public class RecordController {
             - 이미지는 단일 이미지만 업로드 가능합니다.
             """)
     @PostMapping(value = "/convulsion", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ResponseDTO<RecordResponseDTO>> recordConvulsion(
+    public ResponseEntity<ResponseDTO<RecordResponseDTO.ConvulsionResponseDTO>> recordConvulsion(
             @RequestPart ConvulsionRecordDTO dto,
             @RequestPart(value = "image", required = false) MultipartFile image) {
         
         log.info("Received convulsion record request for pet ID: {} with image: {}", dto.getPetId(), image != null);
-        RecordResponseDTO result = recordService.recordConvulsionRecord(dto, image);
+        RecordResponseDTO.ConvulsionResponseDTO result = recordService.recordConvulsionRecord(dto, image);
         log.info("Convulsion record completed for pet ID: {}", dto.getPetId());
 
         return ResponseEntity
@@ -311,12 +312,12 @@ public class RecordController {
             - 이미지는 단일 이미지만 업로드 가능합니다.
             """)
     @PostMapping(value = "/abnormal-sound", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ResponseDTO<RecordResponseDTO>> recordAbnormalSound(
+    public ResponseEntity<ResponseDTO<RecordResponseDTO.SoundResponseDTO>> recordAbnormalSound(
             @RequestPart AbnormalSoundRecordDTO dto,
             @RequestPart(value = "image", required = false) MultipartFile image) {
 
         log.info("Received abnormal sound record request for pet ID: {} with image: {}", dto.getPetId(), image != null);
-        RecordResponseDTO result = recordService.recordSound(dto, image);
+        RecordResponseDTO.SoundResponseDTO result = recordService.recordSound(dto, image);
         log.info("Abnormal sound record completed for pet ID: {}", dto.getPetId());
 
         return ResponseEntity
@@ -332,12 +333,12 @@ public class RecordController {
             - 이미지는 최대 10장까지 업로드 가능합니다.
             """)
     @PostMapping(value = "/snot", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ResponseDTO<RecordResponseDTO>> recordSnot(
+    public ResponseEntity<ResponseDTO<RecordResponseDTO.SnotResponseDTO>> recordSnot(
             @RequestPart SnotRecordDTO dto,
             @RequestPart(value = "images", required = false) List<MultipartFile> images) {
 
         log.info("Received snot record request for pet ID: {} with state: {}", dto.getPetId(), dto.getState());
-        RecordResponseDTO result = recordService.recordSnot(dto, images);
+        RecordResponseDTO.SnotResponseDTO result = recordService.recordSnot(dto, images);
         log.info("snot record completed for pet ID: {}", dto.getPetId());
 
         return ResponseEntity

@@ -38,7 +38,7 @@ public class RecordService {
     private final SnotRepository snotRepository;
     
     // 몸무게 기록
-    public RecordResponseDTO recordWeight(RecordWithOutImageDTO.WeightRecordDTO dto) {
+    public RecordResponseDTO.WeightResponseDTO recordWeight(RecordWithOutImageDTO.WeightRecordDTO dto) {
         Pet pet = getPetOrThrow(dto.getPetId());
 
         Weight weight = RecordWithOutImageDTO.WeightRecordDTO.toWeightEntity(dto, pet);
@@ -47,11 +47,11 @@ public class RecordService {
         weightRepository.save(weight);
         log.info("Successfully recorded weight with ID: {}", weight.getId());
 
-        return RecordResponseDTO.weightToDTO(weight);
+        return RecordResponseDTO.WeightResponseDTO.weightToDTO(weight);
     }
 
     // ========================================================= 기력/식욕 상태 기록
-    public RecordResponseDTO recordEnergyAndAppetite(RecordWithOutImageDTO.EnergyAndAppetiteRecord dto, String category) {
+    public RecordResponseDTO.EnergyAndAppetiteResponseDTO recordEnergyAndAppetite(RecordWithOutImageDTO.EnergyAndAppetiteRecord dto, String category) {
         Pet pet = getPetOrThrow(dto.getPetId());
 
         if (category.equals("energy")) {
@@ -60,8 +60,7 @@ public class RecordService {
             energyRepository.save(energy);
             log.info("Successfully recorded energy with ID: {}", energy.getId());
 
-            return RecordResponseDTO.energyToDTO(energy);
-
+            return RecordResponseDTO.EnergyAndAppetiteResponseDTO.energyToDTO(energy);
         }
         else if (category.equals("appetite")) {
             Appetite appetite = RecordWithOutImageDTO.EnergyAndAppetiteRecord.toAppetiteEntity(dto, pet);
@@ -69,14 +68,14 @@ public class RecordService {
             appetiteRepository.save(appetite);
             log.info("Successfully recorded appetite with ID: {}", appetite.getId());
 
-            return RecordResponseDTO.appetiteToDTO(appetite);
+            return RecordResponseDTO.EnergyAndAppetiteResponseDTO.appetiteToDTO(appetite);
         }
 
         else {return null;}
     }
 
     // ==================================================== 호흡수/심박수 기록
-    public RecordResponseDTO recordRRAndHeartRate(RecordWithOutImageDTO.RespiratoryRateAndHeartRateRecord dto, VitalCategory category) {
+    public RecordResponseDTO.RRAndHeartRateResponseDTO recordRRAndHeartRate(RecordWithOutImageDTO.RespiratoryRateAndHeartRateRecord dto, VitalCategory category) {
         Pet pet = getPetOrThrow(dto.getPetId());
 
         if (category == VitalCategory.RR) {
@@ -84,7 +83,7 @@ public class RecordService {
             log.info("Recording respiratory rate for pet ID: {}, rate: {}", pet.getId(), dto.getCount());
             rrRepository.save(respiratoryRate);
             log.info("Successfully recorded respiratory rate with ID: {}", respiratoryRate.getId());
-            return RecordResponseDTO.respiratoryRateToDTO(respiratoryRate);
+            return RecordResponseDTO.RRAndHeartRateResponseDTO.respiratoryRateToDTO(respiratoryRate);
 
         }
         else if (category == VitalCategory.HEART_RATE){
@@ -92,7 +91,7 @@ public class RecordService {
             log.info("Recording heart rate for pet ID: {}, rate: {}", pet.getId(), dto.getCount());
             heartRateRepository.save(heartRate);
             log.info("Successfully recorded heart rate with ID: {}", heartRate.getId());
-            return RecordResponseDTO.heartRateToDTO(heartRate);
+            return RecordResponseDTO.RRAndHeartRateResponseDTO.heartRateToDTO(heartRate);
         }
         else {
             throw new IllegalArgumentException("Invalid category: " + category);
@@ -100,7 +99,7 @@ public class RecordService {
     }
 
     // ============================================== 기절 상태 기록
-    public RecordResponseDTO recordSyncope(RecordWithOutImageDTO.SyncopeRecord dto) {
+    public RecordResponseDTO.SyncopeResponseDTO recordSyncope(RecordWithOutImageDTO.SyncopeRecord dto) {
         Pet pet = getPetOrThrow(dto.getPetId());
 
         Syncope syncope = RecordWithOutImageDTO.SyncopeRecord.toSyncopeEntity(dto, pet);
@@ -108,11 +107,11 @@ public class RecordService {
         syncopeRepository.save(syncope);
         log.info("Successfully recorded syncope with ID: {}", syncope.getId());
 
-        return RecordResponseDTO.syncopeToDTO(syncope);
+        return RecordResponseDTO.SyncopeResponseDTO.syncopeToDTO(syncope);
     }
 
     // ======================================================= 소변 상태 기록
-    public RecordResponseDTO recordUrinary(RecordWithOutImageDTO.UrinaryRecord dto) {
+    public RecordResponseDTO.UrinaryResponseDTO recordUrinary(RecordWithOutImageDTO.UrinaryRecord dto) {
         Pet pet = getPetOrThrow(dto.getPetId());
 
         Urinary urinary = RecordWithOutImageDTO.UrinaryRecord.toUrinaryEntity(dto, pet);
@@ -120,11 +119,11 @@ public class RecordService {
         urinaryRepository.save(urinary);
         log.info("Successfully recorded urinary with ID: {}", urinary.getId());
 
-        return RecordResponseDTO.urinaryToDTO(urinary);
+        return RecordResponseDTO.UrinaryResponseDTO.urinaryToDTO(urinary);
     }
 
     // ============================================== 특이사항 기록
-    public RecordResponseDTO recordSignificantRecord(SignificantRecordDTO dto, List<MultipartFile> images) {
+    public RecordResponseDTO.SignificantResponseDTO recordSignificantRecord(SignificantRecordDTO dto, List<MultipartFile> images) {
         Pet pet = getPetOrThrow(dto.getPetId());
 
         // 이미지 10장 제한
@@ -141,11 +140,11 @@ public class RecordService {
         significantRecordRepository.save(significantRecord);
         log.info("Successfully recorded significant record with ID: {}", significantRecord.getId());
 
-        return RecordResponseDTO.significantToDTO(significantRecord);
+        return RecordResponseDTO.SignificantResponseDTO.significantToDTO(significantRecord);
     }
 
     // ========================================================= 경련 기록
-    public RecordResponseDTO recordConvulsionRecord(ConvulsionRecordDTO dto, MultipartFile image) {
+    public RecordResponseDTO.ConvulsionResponseDTO recordConvulsionRecord(ConvulsionRecordDTO dto, MultipartFile image) {
         Pet pet = getPetOrThrow(dto.getPetId());
 
         // 단일 이미지 업로드
@@ -160,11 +159,11 @@ public class RecordService {
         convulsionRecordRepository.save(convulsionRecord);
         log.info("Successfully recorded convulsion record with ID: {}", convulsionRecord.getId());
 
-        return RecordResponseDTO.convulsionToDTO(convulsionRecord);
+        return RecordResponseDTO.ConvulsionResponseDTO.convulsionToDTO(convulsionRecord);
     }
 
     // ======================================================== 이상 소리 기록
-    public RecordResponseDTO recordSound(AbnormalSoundRecordDTO dto, MultipartFile image) {
+    public RecordResponseDTO.SoundResponseDTO recordSound(AbnormalSoundRecordDTO dto, MultipartFile image) {
         Pet pet = getPetOrThrow(dto.getPetId());
 
         // 이미지 업로드
@@ -178,16 +177,12 @@ public class RecordService {
         soundRepository.save(sound);
         log.info("Successfully recorded sound with ID: {}", sound.getId());
 
-        return RecordResponseDTO.soundToDTO(sound);
+        return RecordResponseDTO.SoundResponseDTO.soundToDTO(sound);
     }
 
-    // 공통 유틸리티 메서드
-    private Pet getPetOrThrow(Long petId) {
-        return petRepository.findById(petId)
-                .orElseThrow(() -> new PetNotFoundException("펫 못 찾음"));
-    }
+    // ======================================================== 콧물 기록
 
-    public RecordResponseDTO recordSnot(SnotRecordDTO dto, List<MultipartFile> images) {
+    public RecordResponseDTO.SnotResponseDTO recordSnot(SnotRecordDTO dto, List<MultipartFile> images) {
         Pet pet = getPetOrThrow(dto.getPetId());
 
         // 이미지 10장 제한
@@ -204,6 +199,14 @@ public class RecordService {
         snotRepository.save(snotRecord);
         log.info("Successfully recorded snot with ID: {}", snotRecord.getId());
 
-        return RecordResponseDTO.snotToDTO(snotRecord);
+        return RecordResponseDTO.SnotResponseDTO.snotToDTO(snotRecord);
     }
+
+    // 공통 유틸리티 메서드
+    private Pet getPetOrThrow(Long petId) {
+        return petRepository.findById(petId)
+                .orElseThrow(() -> new PetNotFoundException("펫 못 찾음"));
+    }
+
+
 }
