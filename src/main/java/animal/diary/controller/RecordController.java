@@ -23,7 +23,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.util.List;
 
 @Slf4j
@@ -76,7 +75,7 @@ public class RecordController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "기력 상태 기록 성공", content = {
                     @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json",
-                            schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = RecordResponseDTO.class))
+                            schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = RecordResponseApi.EnergyAndAppetiteResponseApi.class))
             }),
             @ApiResponse(responseCode = "400", description = "잘못된 요청", content = {
                     @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json",
@@ -108,7 +107,7 @@ public class RecordController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "식욕 상태 기록 성공", content = {
                     @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json",
-                            schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = RecordResponseDTO.class))
+                            schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = RecordResponseApi.EnergyAndAppetiteResponseApi.class))
             }),
             @ApiResponse(responseCode = "400", description = "잘못된 요청", content = {
                     @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json",
@@ -140,7 +139,7 @@ public class RecordController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "호흡 수 기록 성공", content = {
                     @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json",
-                            schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = RecordResponseDTO.class))
+                            schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = RecordResponseDTO.RRAndHeartRateResponseDTO.class))
             }),
             @ApiResponse(responseCode = "400", description = "잘못된 요청", content = {
                     @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json",
@@ -172,7 +171,7 @@ public class RecordController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "심박수 기록 성공", content = {
                     @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json",
-                            schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = RecordResponseDTO.class))
+                            schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = RecordResponseDTO.RRAndHeartRateResponseDTO.class))
             }),
             @ApiResponse(responseCode = "400", description = "잘못된 요청", content = {
                     @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json",
@@ -204,7 +203,7 @@ public class RecordController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "기절 상태 기록 성공", content = {
                     @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json",
-                            schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = RecordResponseDTO.class))
+                            schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = RecordResponseDTO.SyncopeResponseDTO.class))
             }),
             @ApiResponse(responseCode = "400", description = "잘못된 요청", content = {
                     @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json",
@@ -237,7 +236,7 @@ public class RecordController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "소변 상태 기록 성공", content = {
                     @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json",
-                            schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = RecordResponseDTO.class))
+                            schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = RecordResponseDTO.UrinaryResponseDTO.class))
             }),
             @ApiResponse(responseCode = "400", description = "잘못된 요청", content = {
                     @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json",
@@ -265,6 +264,20 @@ public class RecordController {
             - 필수 필드: petId, title, content
             - 이미지는 최대 10장까지 업로드 가능합니다.
             """)
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "특이사항 기록 성공", content = {
+                    @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json",
+                            schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = RecordResponseDTO.SignificantResponseDTO.class))
+            }),
+            @ApiResponse(responseCode = "400", description = "잘못된 요청", content = {
+                    @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json",
+                            schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = ErrorResponseDTO.class))
+            }),
+            @ApiResponse(responseCode = "404", description = "반려동물 정보 없음", content = {
+                    @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json",
+                            schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = ErrorResponseDTO.class))
+            })
+    })
     @PostMapping(value = "/significant", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ResponseDTO<RecordResponseDTO.SignificantResponseDTO>> recordSignificant(
             @RequestPart SignificantRecordDTO dto,
@@ -291,6 +304,20 @@ public class RecordController {
             - abnormalState: 비정상 상태 (INCONTINENCE, DROOLING, UNCONSCIOUS, NORMAL)
             - 이미지는 단일 이미지만 업로드 가능합니다.
             """)
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "경련 상태 기록 성공", content = {
+                    @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json",
+                            schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = RecordResponseDTO.ConvulsionResponseDTO.class))
+            }),
+            @ApiResponse(responseCode = "400", description = "잘못된 요청", content = {
+                    @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json",
+                            schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = ErrorResponseDTO.class))
+            }),
+            @ApiResponse(responseCode = "404", description = "반려동물 정보 없음", content = {
+                    @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json",
+                            schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = ErrorResponseDTO.class))
+            })
+    })
     @PostMapping(value = "/convulsion", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ResponseDTO<RecordResponseDTO.ConvulsionResponseDTO>> recordConvulsion(
             @RequestPart ConvulsionRecordDTO dto,
@@ -311,6 +338,20 @@ public class RecordController {
             - 필수 필드: petId
             - 이미지는 단일 이미지만 업로드 가능합니다.
             """)
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "이상 소리 기록 성공", content = {
+                    @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json",
+                            schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = RecordResponseDTO.SoundResponseDTO.class))
+            }),
+            @ApiResponse(responseCode = "400", description = "잘못된 요청", content = {
+                    @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json",
+                            schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = ErrorResponseDTO.class))
+            }),
+            @ApiResponse(responseCode = "404", description = "반려동물 정보 없음", content = {
+                    @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json",
+                            schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = ErrorResponseDTO.class))
+            })
+    })
     @PostMapping(value = "/abnormal-sound", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ResponseDTO<RecordResponseDTO.SoundResponseDTO>> recordAbnormalSound(
             @RequestPart AbnormalSoundRecordDTO dto,
@@ -332,6 +373,20 @@ public class RecordController {
             - state: 콧물 상태 (CLEAR, MUCUS, BLOODY)
             - 이미지는 최대 10장까지 업로드 가능합니다.
             """)
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "콧물 상태 기록 성공", content = {
+                    @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json",
+                            schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = RecordResponseDTO.SnotResponseDTO.class))
+            }),
+            @ApiResponse(responseCode = "400", description = "잘못된 요청", content = {
+                    @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json",
+                            schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = ErrorResponseDTO.class))
+            }),
+            @ApiResponse(responseCode = "404", description = "반려동물 정보 없음", content = {
+                    @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json",
+                            schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = ErrorResponseDTO.class))
+            })
+    })
     @PostMapping(value = "/snot", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ResponseDTO<RecordResponseDTO.SnotResponseDTO>> recordSnot(
             @RequestPart SnotRecordDTO dto,
