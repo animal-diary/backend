@@ -269,12 +269,12 @@ public class QueryService {
 
         // 각 record별로 개별 CloudFront URL 생성 (성능 최적화)
         List<ResponseDateDTO> result = convulsionList.stream().map(convulsion -> {
-            if (convulsion.getImageUrl() == null || convulsion.getImageUrl().isEmpty()) {
+            if (convulsion.getVideoUrl() == null || convulsion.getVideoUrl().isEmpty()) {
                 return ResponseDateDTO.convulsionToDTO(convulsion, null);
             }
-            String imageUrl = convulsion.getImageUrl();
+            String videoUrl = convulsion.getVideoUrl();
 
-            String imageCloudFrontUrl = cloudFrontUrlService.generateSignedUrl(imageUrl);
+            String imageCloudFrontUrl = cloudFrontUrlService.generateSignedUrl(videoUrl);
             
             return ResponseDateDTO.convulsionToDTO(convulsion, imageCloudFrontUrl);
         }).toList();

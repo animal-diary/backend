@@ -1,5 +1,6 @@
 package animal.diary.controller;
 
+import animal.diary.code.ErrorCode;
 import animal.diary.code.SuccessCode;
 import animal.diary.code.VitalCategory;
 import animal.diary.dto.*;
@@ -7,8 +8,12 @@ import animal.diary.dto.api.RecordResponseApi;
 import animal.diary.dto.record.*;
 import animal.diary.dto.response.ErrorResponseDTO;
 import animal.diary.dto.response.ResponseDTO;
+import animal.diary.exception.ImageSizeLimitException;
 import animal.diary.service.RecordService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -225,30 +230,58 @@ public class RecordController {
     // 소변 상태
     @Operation(summary = "소변 상태 기록", description = """
             특정 반려동물의 소변 상태를 기록합니다.
-            - 필수 필드: petId, urineState, urineAmount
+            - 필수 필드: petId, urineAmount
             
-            - 소변 상태(urineState)는 BLOODY, LIGHT, DARK, NORMAL 중 하나로 설정할 수 있습니다.
-            - 소변량(urineAmount)은 NONE, LOW, NORMAL, HIGH 중 하나로 설정할 수 있습니다.
+            - 소변량(urineAmount)이 NONE(무뇨)가 아닌 경우:
+              - 소변 상태(urineState): 필수 - BLOODY, LIGHT, DARK, NORMAL, ETC 중 하나
+              - 소변 악취 상태(binaryState): 필수 - O(있음), X(없음) 중 하나
+              - 메모(memo): 선택사항 - 200자 이내
+              - 사진: 선택사항 - 최대 10장
+            
+            - 소변량(urineAmount)이 NONE(무뇨)인 경우:
+              - 소변 상태, 소변 악취 상태, 메모, 사진 업로드 모두 입력 불가
             """)
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "소변 상태 기록 성공", content = {
-                    @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json",
-                            schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = RecordResponseDTO.UrinaryResponseDTO.class))
+            @ApiResponse(responseCode = "201", description = "소변 상태 기록 성공", content = {
+                    @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = RecordResponseDTO.UrinaryResponseDTO.class))
+
             }),
-            @ApiResponse(responseCode = "400", description = "잘못된 요청", content = {
-                    @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json",
-                            schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = ErrorResponseDTO.class))
+            @ApiResponse(responseCode = "400", description = "잘못된 요청 (드롭다운 확인하세요)", content = {
+                    @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponseDTO.class),
+                            examples = {
+                            @ExampleObject(name = "소변량이 NONE인 경우 사진 업로드 불가"),
+                            @ExampleObject(name = "소변량이 NONE인 경우 소변 상태 입력 불가"),
+                            @ExampleObject(name = "소변량이 NONE인 경우 소변 악취 상태 입력 불가"),
+                            @ExampleObject(name = "소변량이 NONE인 경우 메모 입력 불가"),
+                            @ExampleObject(name = "사진 개수 제한 초과 (최대 10장)")
+                    })
             }),
             @ApiResponse(responseCode = "404", description = "반려동물 정보 없음", content = {
-                    @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json",
-                            schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = ErrorResponseDTO.class))
+                    @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponseDTO.class))
             })
     })
-    @PostMapping("/urine")
-    public ResponseEntity<ResponseDTO<RecordResponseDTO.UrinaryResponseDTO>> recordUrine(@Validated(UrineGroup.class) @RequestBody UrinaryRecordDTO dto,
+    @PostMapping(value ="/urine", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ResponseDTO<RecordResponseDTO.UrinaryResponseDTO>> recordUrine(@Validated(UrineGroup.class) @RequestPart UrinaryRecordDTO dto,
                                                                                          @RequestPart(value = "images", required = false) List<MultipartFile> images) {
         log.info("Received urine record request for pet ID: {}", dto.getPetId());
-        RecordResponseDTO.UrinaryResponseDTO result = recordService.recordUrinary(dto);
+        
+        // 사진 업로드 검증
+        if (images != null && !images.isEmpty()) {
+            // 사진 개수 제한 체크 (최대 10장)
+            if (images.size() > 10) {
+                throw new ImageSizeLimitException(ErrorCode.IMAGE_SIZE_LIMIT_10);
+            }
+            
+            // 소변량이 NONE인 경우 사진 업로드 불가
+            if (dto.getUrineAmount() != null && "NONE".equalsIgnoreCase(dto.getUrineAmount().trim())) {
+                throw new IllegalArgumentException("무뇨일 때는 사진을 업로드할 수 없습니다.");
+            }
+        }
+        
+        RecordResponseDTO.UrinaryResponseDTO result = recordService.recordUrinary(dto, images);
         log.info("Urine record completed for pet ID: {}", dto.getPetId());
 
         return ResponseEntity

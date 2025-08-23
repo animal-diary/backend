@@ -16,6 +16,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Builder
 @Getter
 @AllArgsConstructor
@@ -80,7 +82,7 @@ public class UrinaryRecordDTO {
         return true;
     }
 
-    public static Urinary toUrinaryEntity(UrinaryRecordDTO dto, Pet pet) {
+    public static Urinary toUrinaryEntity(UrinaryRecordDTO dto, Pet pet, List<String> imageUrls) {
         UrineState urineState = null;
         BinaryState urinaryBinaryState = null;
         String memo = null;
@@ -101,6 +103,7 @@ public class UrinaryRecordDTO {
                 .state(urineState)
                 .output(LevelState.fromString(dto.getUrineAmount(), () -> new InvalidStateException("소변량 상태가 올바르지 않습니다.")))
                 .binaryState(urinaryBinaryState)
+                .imageUrls(imageUrls)
                 .memo(memo)
                 .pet(pet)
                 .build();

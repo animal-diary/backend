@@ -3,6 +3,7 @@ package animal.diary.dto;
 import animal.diary.entity.record.*;
 import animal.diary.entity.record.state.AbnormalState;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Size;
 import lombok.Builder;
