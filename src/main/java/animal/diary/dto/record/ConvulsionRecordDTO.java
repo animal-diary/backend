@@ -5,6 +5,7 @@ import animal.diary.entity.record.Convulsion;
 import animal.diary.entity.record.state.AbnormalState;
 import animal.diary.entity.record.state.BinaryState;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Getter;
@@ -25,20 +26,39 @@ public class ConvulsionRecordDTO {
     private String state;
 
     // 경련 상태
-    @Schema(description = "상태 값 - INCONTINENCE(배변실수), DROOLING(침흘림), UNCONSCIOUS(의식없음), NORMAL(이상없음)", example = "[\"INCONTINENCE\", \"DROOLING\"]")
-    @NotNull(message = "비정상 상태는 필수입니다.")
+    @Schema(description = "상태 값 - INCONTINENCE(배변실수), DROOLING(침흘림), UNCONSCIOUS(의식없음), NORMAL(추가 증상 없음)", example = "[\"INCONTINENCE\", \"DROOLING\"]")
     private List<String> abnormalState;
 
-    public static Convulsion toEntity(ConvulsionRecordDTO dto, Pet pet, String imageUrl) {
+
+    @AssertTrue(message = "경련이 있을 때는 비정상 상태가 필수입니다.")
+    private boolean isAbnormalStateValidWhenConvulsionExists() {
+        if (state != null && "O".equalsIgnoreCase(state.trim())) {
+            return abnormalState != null && !abnormalState.isEmpty();
+        }
+        return true;
+    }
+
+    @AssertTrue(message = "경련이 없으면 비정상 상태를 입력할 수 없습니다.")
+    private boolean isAbnormalStateEmptyWhenNoConvulsion() {
+        if (state != null && "X".equalsIgnoreCase(state.trim())) {
+            return abnormalState == null || abnormalState.isEmpty();
+        }
+        return true;
+    }
+
+    public static Convulsion toEntity(ConvulsionRecordDTO dto, Pet pet, String videoUrl) {
+        List<AbnormalState> abnormalStates = null;
+        if (dto.getAbnormalState() != null && !dto.getAbnormalState().isEmpty()) {
+            abnormalStates = dto.getAbnormalState().stream()
+                    .map(AbnormalState::fromString)
+                    .toList();
+        }
+
         return Convulsion.builder()
                 .state(BinaryState.fromString(dto.getState()))
-                .abnormalState(dto.getAbnormalState() != null ?
-                    dto.getAbnormalState().stream()
-                        .map(AbnormalState::fromString)
-                        .toList()
-                        : List.of())
+                .abnormalState(abnormalStates)
                 .pet(pet)
-                .imageUrl(imageUrl)
+                .videoUrl(videoUrl)
                 .build();
     }
 }

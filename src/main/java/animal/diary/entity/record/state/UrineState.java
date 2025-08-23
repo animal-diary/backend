@@ -11,7 +11,8 @@ public enum UrineState {
     BLOODY("혈뇨"),
     LIGHT("연함"),
     DARK("진함"),
-    NORMAL("보통");
+    NORMAL("보통"),
+    ETC("기타");
 
     private final String description;
     UrineState(String description) {

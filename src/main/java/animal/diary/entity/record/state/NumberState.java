@@ -15,4 +15,17 @@ public enum NumberState {
         this.value = value;
     }
 
+    public static NumberState fromString(String state) {
+        try {
+            int intValue = Integer.parseInt(state.trim());
+            for (NumberState numberState : NumberState.values()) {
+                if (numberState.getValue() == intValue) {
+                    return numberState;
+                }
+            }
+            throw new IllegalArgumentException("Invalid NumberState value: " + state);
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException("Invalid NumberState value: " + state, e);
+        }
+    }
 }

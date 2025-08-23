@@ -21,11 +21,11 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Convulsion extends Diary{
-    private BinaryState state;
+    private BinaryState state; // 경련 여부
 
     @Enumerated(EnumType.STRING)
     @Convert(converter = AbnormalStateConverter.class)
-    private List<AbnormalState> abnormalState;
+    private List<AbnormalState> abnormalState; // 경련 시 증상
 
-    private String imageUrl;
+    private String videoUrl; // 비디오
 }
