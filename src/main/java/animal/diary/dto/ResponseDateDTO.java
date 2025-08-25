@@ -4,7 +4,6 @@ import animal.diary.entity.record.*;
 import animal.diary.entity.record.state.AbnormalState;
 import animal.diary.entity.record.state.BinaryState;
 import animal.diary.entity.record.state.LevelState;
-import com.fasterxml.jackson.annotation.JsonInclude;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Getter;
@@ -116,7 +115,7 @@ public class ResponseDateDTO {
         private String memo;
         @Schema(description = "이미지 URL 목록", example = "[\"https://example.com/image1.jpg\", \"https://example.com/image2.jpg\"]")
         private List<String> imageUrls;
-        @Schema(description = "기록 시간", example = "14:30:00")
+        @Schema(description = "기록 시간", example = "14:30")
         private LocalTime createdTime;
 
         public static UrinaryResponse urinaryToDTO(Urinary urinary, List<String> imageUrls) {
