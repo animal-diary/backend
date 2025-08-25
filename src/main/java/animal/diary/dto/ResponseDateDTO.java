@@ -55,7 +55,9 @@ public class ResponseDateDTO {
     @Builder
     @Getter
     public static class StateResponse {
+        @Schema(description = "일기 ID", example = "1")
         private Long diaryId;
+        @Schema(description = "상태", example = "HIGH")
         private String state;
         @Schema(type = "string", example = "14:30", description = "기록 시간 (HH:mm)")
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm")
@@ -89,7 +91,11 @@ public class ResponseDateDTO {
     @Builder
     @Getter
     public static class CountResponse {
+        @Schema(description = "일기 ID", example = "1")
         private Long diaryId;
+        @Schema(description = "제목", example = "20회/60초")
+        private String title;
+        @Schema(description = "호흡수/심박수", example = "20")
         private Integer count;
         @Schema(type = "string", example = "14:30", description = "기록 시간 (HH:mm)")
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm")
@@ -98,6 +104,7 @@ public class ResponseDateDTO {
         public static CountResponse respiratoryRateToDTO(RespiratoryRate respiratoryRate) {
             return CountResponse.builder()
                     .diaryId(respiratoryRate.getId())
+                    .title(respiratoryRate.getCount() + "회/60초")
                     .count(respiratoryRate.getCount())
                     .createdTime(respiratoryRate.getCreatedAt().toLocalTime())
                     .build();
