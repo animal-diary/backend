@@ -1,7 +1,6 @@
 package animal.diary.service;
 
 import animal.diary.code.VitalCategory;
-import animal.diary.dto.DiaryDateResponse;
 import animal.diary.dto.RequestDateDTO;
 import animal.diary.dto.ResponseDateDTO;
 import animal.diary.dto.ResponseDateListDTO;
@@ -19,7 +18,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -41,7 +39,7 @@ public class QueryService {
     private final SnotRepository snotRepository;
 
     // 몸무게 조회
-    public ResponseDateListDTO getWeightsByDate(RequestDateDTO dto) {
+    public ResponseDateListDTO<ResponseDateDTO.WeightResponse> getWeightsByDate(RequestDateDTO dto) {
         Pet pet = getPetOrThrow(dto.getPetId());
 
         LocalDate date = dto.getDate();
@@ -57,12 +55,11 @@ public class QueryService {
             throw new EmptyListException("비어었음");
         }
 
-        List<DiaryDateResponse> result = weights.stream()
+        List<ResponseDateDTO.WeightResponse> result = weights.stream()
                 .map(ResponseDateDTO.WeightResponse::weightToDTO)
-                .map(weightResponseDTO -> (DiaryDateResponse) weightResponseDTO) // 업캐스트
                 .toList();
 
-        return ResponseDateListDTO.builder()
+        return ResponseDateListDTO.<ResponseDateDTO.WeightResponse>builder()
                 .date(date)
                 .type(pet.getType().toString())
                 .dateDTOS(result)
@@ -70,14 +67,14 @@ public class QueryService {
     }
 
     // 기력/식욕 상태 조회
-    public ResponseDateListDTO getEnergyOrAppetiteByDate(RequestDateDTO dto, String category) {
+    public ResponseDateListDTO<ResponseDateDTO.StateResponse> getEnergyOrAppetiteByDate(RequestDateDTO dto, String category) {
         Pet pet = getPetOrThrow(dto.getPetId());
 
         LocalDate date = dto.getDate();
         validateDate(dto.getDate());
 
         LocalDateTime[] range = getStartAndEndOfDay(dto.getDate());
-        List<DiaryDateResponse> result = null;
+        List<ResponseDateDTO.StateResponse> result = null;
 
         if (category.equals("energy")) {
             log.info("Fetching energy records for pet ID: {} on date: {}", pet.getId(), date);
@@ -90,7 +87,6 @@ public class QueryService {
 
             result = energyList.stream()
                     .map(ResponseDateDTO.StateResponse::energyToDTO)
-                    .map(stateResponse -> (DiaryDateResponse) stateResponse) // 업캐스트
                     .toList();
         }
         else if (category.equals("appetite")){
@@ -104,11 +100,10 @@ public class QueryService {
 
             result = appetites.stream()
                     .map(ResponseDateDTO.StateResponse::appetiteToDTO)
-                    .map(stateResponse -> (DiaryDateResponse) stateResponse) // 업캐스트
                     .toList();
         }
 
-        return ResponseDateListDTO.builder()
+        return ResponseDateListDTO.<ResponseDateDTO.StateResponse>builder()
                 .date(date)
                 .type(pet.getType().toString())
                 .dateDTOS(result)
@@ -116,7 +111,7 @@ public class QueryService {
     }
 
     // 호흡수/심박수 조회
-    public ResponseDateListDTO getRROrHeartRateByDate(RequestDateDTO dto, VitalCategory category) {
+    public ResponseDateListDTO<ResponseDateDTO.CountResponse> getRROrHeartRateByDate(RequestDateDTO dto, VitalCategory category) {
         Pet pet = getPetOrThrow(dto.getPetId());
         validateDate(dto.getDate());
 
@@ -132,12 +127,11 @@ public class QueryService {
                 throw new EmptyListException("호흡 수 기록이 없습니다.");
             }
 
-            List<DiaryDateResponse> result = respiratoryRateList.stream()
+            List<ResponseDateDTO.CountResponse> result = respiratoryRateList.stream()
                     .map(ResponseDateDTO.CountResponse::respiratoryRateToDTO)
-                    .map(element -> (DiaryDateResponse) element) // 업캐스트
                     .toList();
 
-            return ResponseDateListDTO.builder()
+            return ResponseDateListDTO.<ResponseDateDTO.CountResponse>builder()
                     .date(dto.getDate())
                     .type(pet.getType().toString())
                     .dateDTOS(result)
@@ -154,12 +148,11 @@ public class QueryService {
                 throw new EmptyListException("심박수 기록이 없습니다.");
             }
 
-            List<DiaryDateResponse> result = heartRateList.stream()
+            List<ResponseDateDTO.CountResponse> result = heartRateList.stream()
                     .map(ResponseDateDTO.CountResponse::heartRateToDTO)
-                    .map(heartRateDTO -> (DiaryDateResponse) heartRateDTO) // 업캐스트
                     .toList();
 
-            return ResponseDateListDTO.builder()
+            return ResponseDateListDTO.<ResponseDateDTO.CountResponse>builder()
                     .date(dto.getDate())
                     .type(pet.getType().toString())
                     .dateDTOS(result)
@@ -172,7 +165,7 @@ public class QueryService {
     }
 
     // 기절 상태 조회
-    public ResponseDateListDTO getSyncopeByDate(RequestDateDTO dto) {
+    public ResponseDateListDTO<ResponseDateDTO.StateResponse> getSyncopeByDate(RequestDateDTO dto) {
         Pet pet = getPetOrThrow(dto.getPetId());
 
         LocalDate date = dto.getDate();
@@ -188,12 +181,11 @@ public class QueryService {
             throw new EmptyListException("비어었음");
         }
 
-        List<DiaryDateResponse> result = syncopeList.stream()
+        List<ResponseDateDTO.StateResponse> result = syncopeList.stream()
                 .map(ResponseDateDTO.StateResponse::syncopeToDTO)
-                .map(element -> (DiaryDateResponse) element) // 업캐스트
                 .toList();
 
-        return ResponseDateListDTO.builder()
+        return ResponseDateListDTO.<ResponseDateDTO.StateResponse>builder()
                 .date(date)
                 .type(pet.getType().toString())
                 .dateDTOS(result)
@@ -201,7 +193,7 @@ public class QueryService {
     }
 
     // 소변 상태 조회
-    public ResponseDateListDTO getUrinaryByDate(RequestDateDTO dto) {
+    public ResponseDateListDTO<ResponseDateDTO.UrinaryResponse> getUrinaryByDate(RequestDateDTO dto) {
         Pet pet = getPetOrThrow(dto.getPetId());
 
         LocalDate date = dto.getDate();
@@ -217,26 +209,33 @@ public class QueryService {
             throw new EmptyListException("비어었음");
         }
 
-        List<DiaryDateResponse> result = urinaryList.stream()
+        // 각 record별로 개별 CloudFront URL 생성 (성능 최적화) 컬렉션 전달
+        List<ResponseDateDTO.UrinaryResponse> result = urinaryList.stream()
                 .map(urinary -> {
-                    return ResponseDateDTO.UrinaryResponse.urinaryToDTO(urinary,
-                            urinary.getImageUrls() == null ? List.of() :
-                                    urinary.getImageUrls().stream()
-                                            .map(cloudFrontUrlService::generateSignedUrl)
-                                            .collect(Collectors.toList())
-                    );})
-                .map(element -> (DiaryDateResponse) element) // 업캐스트
+                    List<String> imageUrls = urinary.getImageUrls();
+
+                    if (imageUrls == null || imageUrls.isEmpty()) {
+                        return ResponseDateDTO.UrinaryResponse.urinaryToDTO(urinary, List.of());
+                    }
+
+                    List<String> imageCloudFrontUrls = imageUrls.stream()
+                            .map(cloudFrontUrlService::generateSignedUrl)
+                            .toList();
+
+                    return ResponseDateDTO.UrinaryResponse.urinaryToDTO(urinary, imageCloudFrontUrls);
+                })
                 .toList();
 
-        return ResponseDateListDTO.builder()
+
+        return ResponseDateListDTO.<ResponseDateDTO.UrinaryResponse>builder()
                 .date(date)
                 .type(pet.getType().toString())
-                .dateDTOS(result)
+                .dateDTOS(result)   // 여기서 result는 List<ResponseDateDTO.UrinaryResponse>
                 .build();
     }
 
     // =========================================================== 특이 사항 일별 조회
-    public ResponseDateListDTO getSignificantByDate(RequestDateDTO dto) {
+    public ResponseDateListDTO<ResponseDateDTO.SignificantResponse> getSignificantByDate(RequestDateDTO dto) {
         Pet pet = getPetOrThrow(dto.getPetId());
 
         LocalDate date = dto.getDate();
@@ -253,7 +252,7 @@ public class QueryService {
         }
 
         // 각 record별로 개별 CloudFront URL 생성 (성능 최적화)
-        List<DiaryDateResponse> result = significantList.stream()
+        List<ResponseDateDTO.SignificantResponse> result = significantList.stream()
                 .map(significant -> {
                     List<String> imageUrls = significant.getImageUrls();
 
@@ -269,10 +268,9 @@ public class QueryService {
 
                     return ResponseDateDTO.SignificantResponse.significantToDTO(significant, imageCloudFrontUrls, videoUrl);
                 })
-                .map(elementDTO -> (DiaryDateResponse) elementDTO) // 업캐스트
                 .toList();
 
-        return ResponseDateListDTO.builder()
+        return ResponseDateListDTO.<ResponseDateDTO.SignificantResponse>builder()
                 .date(date)
                 .type(pet.getType().toString())
                 .dateDTOS(result)
@@ -280,7 +278,7 @@ public class QueryService {
     }
 
     // =========================================================== 경련 상태 일별 조회
-    public ResponseDateListDTO getConvulsionByDate(RequestDateDTO dto) {
+    public ResponseDateListDTO<ResponseDateDTO.ConvulsionResponse> getConvulsionByDate(RequestDateDTO dto) {
         Pet pet = getPetOrThrow(dto.getPetId());
 
         LocalDate date = dto.getDate();
@@ -297,7 +295,7 @@ public class QueryService {
         }
 
         // 각 record별로 개별 CloudFront URL 생성 (성능 최적화)
-        List<DiaryDateResponse> result = convulsionList.stream().map(convulsion -> {
+        List<ResponseDateDTO.ConvulsionResponse> result = convulsionList.stream().map(convulsion -> {
             if (convulsion.getVideoUrl() == null || convulsion.getVideoUrl().isEmpty()) {
                 return ResponseDateDTO.ConvulsionResponse.convulsionToDTO(convulsion, null);
             }
@@ -306,10 +304,9 @@ public class QueryService {
             String imageCloudFrontUrl = cloudFrontUrlService.generateSignedUrl(videoUrl);
             
             return ResponseDateDTO.ConvulsionResponse.convulsionToDTO(convulsion, imageCloudFrontUrl);
-        }).map(elementDTO -> (DiaryDateResponse) elementDTO) // 업캐스트
-        .toList();
+        }).toList();
 
-        return ResponseDateListDTO.builder()
+        return ResponseDateListDTO.<ResponseDateDTO.ConvulsionResponse>builder()
                 .date(date)
                 .type(pet.getType().toString())
                 .dateDTOS(result)
@@ -317,7 +314,7 @@ public class QueryService {
     }
 
     // =========================================================== 이상 소리 일별 조회
-    public ResponseDateListDTO getSoundByDate(RequestDateDTO dto) {
+    public ResponseDateListDTO<ResponseDateDTO.SoundResponse> getSoundByDate(RequestDateDTO dto) {
         Pet pet = getPetOrThrow(dto.getPetId());
 
         LocalDate date = dto.getDate();
@@ -334,7 +331,7 @@ public class QueryService {
         }
 
         // 각 record별로 개별 CloudFront URL 생성 (성능 최적화)
-        List<DiaryDateResponse> result = soundList.stream().map(sound -> {
+        List<ResponseDateDTO.SoundResponse> result = soundList.stream().map(sound -> {
             if (sound.getImageUrl() == null || sound.getImageUrl().isEmpty()) {
                 return ResponseDateDTO.SoundResponse.soundToDTO(sound, null);
             }
@@ -343,11 +340,9 @@ public class QueryService {
             String imageCloudFrontUrl = cloudFrontUrlService.generateSignedUrl(imageUrl);
 
             return ResponseDateDTO.SoundResponse.soundToDTO(sound, imageCloudFrontUrl);
-        })
-                .map(elementDTO -> (DiaryDateResponse) elementDTO)
-                .toList();
+        }).toList();
 
-        return ResponseDateListDTO.builder()
+        return ResponseDateListDTO.<ResponseDateDTO.SoundResponse>builder()
                 .date(date)
                 .type(pet.getType().toString())
                 .dateDTOS(result)
@@ -355,7 +350,7 @@ public class QueryService {
     }
 
     // ============================================================== 콧물 일별 조회
-    public ResponseDateListDTO getSnotByDate(RequestDateDTO dto) {
+    public ResponseDateListDTO<ResponseDateDTO.SnotResponse> getSnotByDate(RequestDateDTO dto) {
         Pet pet = getPetOrThrow(dto.getPetId());
 
         LocalDate date = dto.getDate();
@@ -371,7 +366,7 @@ public class QueryService {
             throw new EmptyListException("비어있음");
         }
 
-        List<DiaryDateResponse> result = snotList.stream().map(
+        List<ResponseDateDTO.SnotResponse> result = snotList.stream().map(
                         snot -> {
                             List<String> imageUrls = snot.getImageUrls();
                             if (imageUrls == null || imageUrls.isEmpty()) {
@@ -385,11 +380,9 @@ public class QueryService {
 
                             return ResponseDateDTO.SnotResponse.snotToDTO(snot, imageCloudFrontUrls);
                         }
-                )
-                .map(elementDTO -> (DiaryDateResponse) elementDTO)
-                .toList();
+                ).toList();
 
-        return ResponseDateListDTO.builder()
+        return ResponseDateListDTO.<ResponseDateDTO.SnotResponse>builder()
                 .date(date)
                 .type(pet.getType().toString())
                 .dateDTOS(result)

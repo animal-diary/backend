@@ -4,7 +4,8 @@ import animal.diary.entity.record.*;
 import animal.diary.entity.record.state.AbnormalState;
 import animal.diary.entity.record.state.BinaryState;
 import animal.diary.entity.record.state.LevelState;
-import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -12,21 +13,40 @@ import java.time.LocalTime;
 import java.util.List;
 
 @Builder
-@JsonInclude(JsonInclude.Include.NON_NULL)
 @Getter
 public class ResponseDateDTO {
 
     @Builder
     @Getter
-    public static class WeightResponse implements DiaryDateResponse {
+    public static class WeightResponse {
+        @Schema(description = "일기 ID", example = "1")
         private Long diaryId;
-        private Float weight;
+        @Schema(description = "제목", example = "5.0kg")
+        private String title;
+        @Schema(description = "몸무게", example = "5.0")
+        private String weight;
+        @Schema(type = "string", example = "14:30", description = "기록 시간 (HH:mm)")
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm")
         private LocalTime createdTime;
 
         public static WeightResponse weightToDTO(Weight weight) {
+            String title;
+            Float weightValue = weight.getWeight();
+            
+            String formattedWeight;
+            // 정수인 경우 소수점 한자리(.0), 아니면 원래 값 그대로
+            if (weightValue.floatValue() == weightValue.intValue()) {
+                title = String.format("%.1f", weightValue) + "kg";
+                formattedWeight = String.format("%.1f", weightValue);
+            } else {
+                title = weightValue + "kg";
+                formattedWeight = weightValue.toString();
+            }
+            
             return WeightResponse.builder()
                     .diaryId(weight.getId())
-                    .weight(weight.getWeight())
+                    .title(title)
+                    .weight(formattedWeight)
                     .createdTime(weight.getCreatedAt().toLocalTime())
                     .build();
         }
@@ -34,9 +54,11 @@ public class ResponseDateDTO {
 
     @Builder
     @Getter
-    public static class StateResponse implements DiaryDateResponse {
+    public static class StateResponse {
         private Long diaryId;
         private String state;
+        @Schema(type = "string", example = "14:30", description = "기록 시간 (HH:mm)")
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm")
         private LocalTime createdTime;
 
         public static StateResponse energyToDTO(Energy energy) {
@@ -66,9 +88,11 @@ public class ResponseDateDTO {
 
     @Builder
     @Getter
-    public static class CountResponse implements DiaryDateResponse{
+    public static class CountResponse {
         private Long diaryId;
         private Integer count;
+        @Schema(type = "string", example = "14:30", description = "기록 시간 (HH:mm)")
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm")
         private LocalTime createdTime;
 
         public static CountResponse respiratoryRateToDTO(RespiratoryRate respiratoryRate) {
@@ -90,13 +114,22 @@ public class ResponseDateDTO {
 
     @Builder
     @Getter
-    public static class UrinaryResponse implements DiaryDateResponse {
+    @Schema(description = "소변 기록 응답 DTO")
+    public static class UrinaryResponse {
+        @Schema(description = "일기 ID", example = "1")
         private Long diaryId;
+        @Schema(description = "제목", example = "보통·보통·악취 없음")
         private String title;
+        @Schema(description = "소변 상태 (BLOODY, LIGHT, DARK, NORMAL, ETC)", example = "NORMAL")
         private String urineState;
+        @Schema(description = "소변량 (NONE, LOW, NORMAL, HIGH)", example = "NORMAL")
         private String urineAmount;
+        @Schema(description = "메모", example = "소변이 자주 보임")
         private String memo;
+        @Schema(description = "이미지 URL 목록", example = "[\"https://example.com/image1.jpg\", \"https://example.com/image2.jpg\"]")
         private List<String> imageUrls;
+        @Schema(type = "string", example = "14:30", description = "기록 시간 (HH:mm)")
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm")
         private LocalTime createdTime;
 
         public static UrinaryResponse urinaryToDTO(Urinary urinary, List<String> imageUrls) {
@@ -119,12 +152,14 @@ public class ResponseDateDTO {
 
     @Builder
     @Getter
-    public static class SignificantResponse implements DiaryDateResponse{
+    public static class SignificantResponse {
         private Long diaryId;
         private String title;
         private String content;
         private List<String> imageUrls;
         private String videoUrl;
+        @Schema(type = "string", example = "14:30", description = "기록 시간 (HH:mm)")
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm")
         private LocalTime createdTime;
 
         public static SignificantResponse significantToDTO(Significant significant, List<String> imageCloudFrontUrls, String videoUrl) {
@@ -141,12 +176,14 @@ public class ResponseDateDTO {
 
     @Builder
     @Getter
-    public static class ConvulsionResponse implements DiaryDateResponse{
+    public static class ConvulsionResponse {
         private Long diaryId;
         private String title;
         private String state;
         private List<String> abnormalStates;
         private String videoUrl;
+        @Schema(type = "string", example = "14:30", description = "기록 시간 (HH:mm)")
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm")
         private LocalTime createdTime;
 
         public static ConvulsionResponse convulsionToDTO(Convulsion convulsion, String videoUrl) {
@@ -166,10 +203,12 @@ public class ResponseDateDTO {
 
     @Builder
     @Getter
-    public static class SoundResponse implements DiaryDateResponse{
+    public static class SoundResponse{
         private Long diaryId;
         private String title;
         private String soundUrl;
+        @Schema(type = "string", example = "14:30", description = "기록 시간 (HH:mm)")
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm")
         private LocalTime createdTime;
 
         public static SoundResponse soundToDTO(Sound sound, String soundUrl) {
@@ -184,11 +223,13 @@ public class ResponseDateDTO {
 
     @Builder
     @Getter
-    public static class SnotResponse implements DiaryDateResponse{
+    public static class SnotResponse {
         private Long diaryId;
         private String state;
         private String memo;
         private List<String> imageUrls;
+        @Schema(type = "string", example = "14:30", description = "기록 시간 (HH:mm)")
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm")
         private LocalTime createdTime;
 
         public static SnotResponse snotToDTO(Snot snot, List<String> imageUrls) {
