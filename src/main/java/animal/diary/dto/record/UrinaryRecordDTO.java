@@ -16,6 +16,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Builder
 @Getter
 @AllArgsConstructor
@@ -27,13 +29,13 @@ public class UrinaryRecordDTO {
     private Long petId;
 
     @NotNull(groups = UrineGroup.class, message = "소변량은 필수입니다.")
-    @Schema(description = "소변량 (NONE(무뇨), LOW(적음), NORMAL(보통), HIGH(많음))", example = "NORMAL")
+    @Schema(description = "소변량 (NONE(무뇨), LOW(적음), NORMAL(보통), HIGH(많음))", allowableValues = "NONE, LOW, NORMAL, HIGH", example = "NORMAL")
     private String urineAmount;
 
-    @Schema(description = "소변 상태 (BLOODY(혈뇨), LIGHT(연함), DARK(진함), NORMAL(보통), ETC(기타))", example = "NORMAL")
+    @Schema(description = "소변 상태 (BLOODY(혈뇨), LIGHT(연함), DARK(진함), NORMAL(보통), ETC(기타))", allowableValues = "BLOODY, LIGHT, DARK, NORMAL, ETC", example = "NORMAL")
     private String urineState;
 
-    @Schema(description = "소변 악취 상태 (O: 있음, X: 없음)", example = "X")
+    @Schema(description = "소변 악취 상태 (O: 있음, X: 없음)", allowableValues = "O, X",example = "X")
     private String binaryState;
 
     @Schema(description = "메모", example = "소변이 자주 보임")
@@ -80,7 +82,7 @@ public class UrinaryRecordDTO {
         return true;
     }
 
-    public static Urinary toUrinaryEntity(UrinaryRecordDTO dto, Pet pet) {
+    public static Urinary toUrinaryEntity(UrinaryRecordDTO dto, Pet pet, List<String> imageUrls) {
         UrineState urineState = null;
         BinaryState urinaryBinaryState = null;
         String memo = null;
@@ -101,6 +103,7 @@ public class UrinaryRecordDTO {
                 .state(urineState)
                 .output(LevelState.fromString(dto.getUrineAmount(), () -> new InvalidStateException("소변량 상태가 올바르지 않습니다.")))
                 .binaryState(urinaryBinaryState)
+                .imageUrls(imageUrls != null ? imageUrls : List.of())
                 .memo(memo)
                 .pet(pet)
                 .build();

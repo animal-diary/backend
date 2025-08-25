@@ -3,6 +3,7 @@ package animal.diary.dto;
 import animal.diary.entity.record.*;
 import animal.diary.entity.record.state.AbnormalState;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Size;
 import lombok.Builder;
@@ -105,7 +106,7 @@ public class RecordResponseDTO {
         public static UrinaryResponseDTO urinaryToDTO(Urinary urinary) {
             return UrinaryResponseDTO.builder()
                     .petId(urinary.getPet().getId())
-                    .binaryState(urinary.getBinaryState().name())
+                    .binaryState(urinary.getBinaryState() != null ? urinary.getBinaryState().name() : null)
                     .urineState(urinary.getState() != null ? urinary.getState().name() : null)
                     .urineAmount(urinary.getOutput() != null ? urinary.getOutput().name() : null)
                     .createdAt(urinary.getCreatedAt())

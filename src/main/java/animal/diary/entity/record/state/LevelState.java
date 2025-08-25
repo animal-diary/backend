@@ -20,4 +20,19 @@ public enum LevelState {
                 .findFirst()
                 .orElseThrow(exceptionSupplier);
     }
+
+    // 소변의 경우 NONE(무뇨), LOW(적음), NORMAL(보통), HIGH(많음)로 전달해야 함.
+    public static String toUrineString(LevelState state) {
+        if (state == NONE) {
+            return "무뇨";
+        } else if (state == LOW) {
+            return "적음";
+        } else if (state == NORMAL) {
+            return "보통";
+        } else if (state == HIGH) {
+            return "많음";
+        } else {
+            throw new InvalidHealthException("Invalid LevelState value: " + state);
+        }
+    }
 }

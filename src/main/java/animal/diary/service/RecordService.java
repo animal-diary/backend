@@ -108,10 +108,16 @@ public class RecordService {
     }
 
     // ======================================================= 소변 상태 기록
-    public RecordResponseDTO.UrinaryResponseDTO recordUrinary(UrinaryRecordDTO dto) {
+    public RecordResponseDTO.UrinaryResponseDTO recordUrinary(UrinaryRecordDTO dto, List<MultipartFile> images) {
         Pet pet = getPetOrThrow(dto.getPetId());
 
-        Urinary urinary = UrinaryRecordDTO.toUrinaryEntity(dto, pet);
+        List<String> imageUrls = List.of();
+        // 이미지 업로드, 이미지가 있을 때만
+        if (images != null && !images.isEmpty()) {
+             imageUrls = s3Uploader.uploadMultiple(images, "urinary");
+        }
+
+        Urinary urinary = UrinaryRecordDTO.toUrinaryEntity(dto, pet, imageUrls);
         log.info("Recording urinary for pet ID: {}, frequency: {}", pet.getId(), dto.getUrineAmount());
         urinaryRepository.save(urinary);
         log.info("Successfully recorded urinary with ID: {}", urinary.getId());
