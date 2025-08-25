@@ -3,7 +3,9 @@ package animal.diary.controller;
 import animal.diary.code.SuccessCode;
 import animal.diary.code.VitalCategory;
 import animal.diary.dto.RequestDateDTO;
+import animal.diary.dto.ResponseDateDTO;
 import animal.diary.dto.ResponseDateListDTO;
+import animal.diary.dto.api.ResponseDateApi;
 import animal.diary.dto.response.ErrorResponseDTO;
 import animal.diary.dto.response.ResponseDTO;
 import animal.diary.service.QueryService;
@@ -36,7 +38,7 @@ public class QueryController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "몸무게 날짜별 조회 성공", content = {
                     @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json",
-                            schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = ResponseDateListDTO.class))
+                            schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = ResponseDateApi.WeightDateResponseApi.class))
             }),
             @ApiResponse(responseCode = "400", description = "잘못된 요청", content = {
                     @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json",
@@ -48,9 +50,9 @@ public class QueryController {
             })
     })
     @GetMapping("/weight/date")
-    public ResponseEntity<ResponseDTO<ResponseDateListDTO>> getWeightsByDate(@Valid @ModelAttribute RequestDateDTO dto) {
+    public ResponseEntity<ResponseDTO<ResponseDateListDTO<ResponseDateDTO.WeightResponse>>> getWeightsByDate(@Valid @ModelAttribute RequestDateDTO dto) {
         log.info("Received request to get weights by date for pet ID: {} on date: {}", dto.getPetId(), dto.getDate());
-        ResponseDateListDTO result = queryService.getWeightsByDate(dto);
+        ResponseDateListDTO<ResponseDateDTO.WeightResponse> result = queryService.getWeightsByDate(dto);
         log.info("Successfully retrieved weights for pet ID: {} on date: {}", dto.getPetId(), dto.getDate());
 
         return ResponseEntity
@@ -68,7 +70,7 @@ public class QueryController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "기력 상태 날짜별 조회 성공", content = {
                     @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json",
-                            schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = ResponseDateListDTO.class))
+                            schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = ResponseDateApi.EnergyAndAppetiteAndSyncopeDateResponseApi.class))
             }),
             @ApiResponse(responseCode = "400", description = "잘못된 요청", content = {
                     @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json",
@@ -80,9 +82,9 @@ public class QueryController {
             })
     })
     @GetMapping("/energy/date")
-    public ResponseEntity<ResponseDTO<ResponseDateListDTO>> getEnergyByDate(@Valid @ModelAttribute RequestDateDTO dto) {
+    public ResponseEntity<ResponseDTO<ResponseDateListDTO<ResponseDateDTO.StateResponse>>> getEnergyByDate(@Valid @ModelAttribute RequestDateDTO dto) {
         log.info("Received request to get energy by date for pet ID: {} on date: {}", dto.getPetId(), dto.getDate());
-        ResponseDateListDTO result = queryService.getEnergyOrAppetiteByDate(dto, "energy");
+        ResponseDateListDTO<ResponseDateDTO.StateResponse> result = queryService.getEnergyOrAppetiteByDate(dto, "energy");
         log.info("Successfully retrieved energy records for pet ID: {} on date: {}", dto.getPetId(), dto.getDate());
 
         return ResponseEntity
@@ -100,7 +102,7 @@ public class QueryController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "식욕 상태 날짜별 조회 성공", content = {
                     @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json",
-                            schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = ResponseDateListDTO.class))
+                            schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = ResponseDateApi.EnergyAndAppetiteAndSyncopeDateResponseApi.class))
             }),
             @ApiResponse(responseCode = "400", description = "잘못된 요청", content = {
                     @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json",
@@ -112,9 +114,9 @@ public class QueryController {
             })
     })
     @GetMapping("/appetite/date")
-    public ResponseEntity<ResponseDTO<ResponseDateListDTO>> getAppetiteByDate(@Valid @ModelAttribute RequestDateDTO dto) {
+    public ResponseEntity<ResponseDTO<ResponseDateListDTO<ResponseDateDTO.StateResponse>>> getAppetiteByDate(@Valid @ModelAttribute RequestDateDTO dto) {
         log.info("Received request to get appetite by date for pet ID: {} on date: {}", dto.getPetId(), dto.getDate());
-        ResponseDateListDTO result = queryService.getEnergyOrAppetiteByDate(dto, "appetite");
+        ResponseDateListDTO<ResponseDateDTO.StateResponse> result = queryService.getEnergyOrAppetiteByDate(dto, "appetite");
         log.info("Successfully retrieved appetite records for pet ID: {} on date: {}", dto.getPetId(), dto.getDate());
 
         return ResponseEntity
@@ -132,7 +134,7 @@ public class QueryController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "호흡 수 날짜별 조회 성공", content = {
                     @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json",
-                            schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = ResponseDateListDTO.class))
+                            schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = ResponseDateApi.RRAndHeartRateDateResponseApi.class))
             }),
             @ApiResponse(responseCode = "400", description = "잘못된 요청", content = {
                     @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json",
@@ -144,9 +146,9 @@ public class QueryController {
             })
     })
     @GetMapping("/RR/date")
-    public ResponseEntity<ResponseDTO<ResponseDateListDTO>> getRRByDate(@Valid @ModelAttribute RequestDateDTO dto) {
+    public ResponseEntity<ResponseDTO<ResponseDateListDTO<ResponseDateDTO.CountResponse>>> getRRByDate(@Valid @ModelAttribute RequestDateDTO dto) {
         log.info("Received request to get respiratory rate by date for pet ID: {} on date: {}", dto.getPetId(), dto.getDate());
-        ResponseDateListDTO result = queryService.getRROrHeartRateByDate(dto, VitalCategory.RR);
+        ResponseDateListDTO<ResponseDateDTO.CountResponse> result = queryService.getRROrHeartRateByDate(dto, VitalCategory.RR);
         log.info("Successfully retrieved respiratory rate records for pet ID: {} on date: {}", dto.getPetId(), dto.getDate());
 
         return ResponseEntity
@@ -164,7 +166,7 @@ public class QueryController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "심박수 날짜별 조회 성공", content = {
                     @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json",
-                            schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = ResponseDateListDTO.class))
+                            schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = ResponseDateApi.RRAndHeartRateDateResponseApi.class))
             }),
             @ApiResponse(responseCode = "400", description = "잘못된 요청", content = {
                     @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json",
@@ -176,9 +178,9 @@ public class QueryController {
             })
     })
     @GetMapping("/heart-rate/date")
-    public ResponseEntity<ResponseDTO<ResponseDateListDTO>> getHeartRateByDate(@Valid @ModelAttribute RequestDateDTO dto) {
+    public ResponseEntity<ResponseDTO<ResponseDateListDTO<ResponseDateDTO.CountResponse>>> getHeartRateByDate(@Valid @ModelAttribute RequestDateDTO dto) {
         log.info("Received request to get heart rate by date for pet ID: {} on date: {}", dto.getPetId(), dto.getDate());
-        ResponseDateListDTO result = queryService.getRROrHeartRateByDate(dto, VitalCategory.HEART_RATE);
+        ResponseDateListDTO<ResponseDateDTO.CountResponse> result = queryService.getRROrHeartRateByDate(dto, VitalCategory.HEART_RATE);
         log.info("Successfully retrieved heart rate records for pet ID: {} on date: {}", dto.getPetId(), dto.getDate());
 
         return ResponseEntity
@@ -196,7 +198,7 @@ public class QueryController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "기절 상태 날짜별 조회 성공", content = {
                     @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json",
-                            schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = ResponseDateListDTO.class))
+                            schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = ResponseDateApi.EnergyAndAppetiteAndSyncopeDateResponseApi.class))
             }),
             @ApiResponse(responseCode = "400", description = "잘못된 요청", content = {
                     @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json",
@@ -208,9 +210,9 @@ public class QueryController {
             })
     })
     @GetMapping("/syncope/date")
-    public ResponseEntity<ResponseDTO<ResponseDateListDTO>> getSyncopeByDate(@Valid @ModelAttribute RequestDateDTO dto) {
+    public ResponseEntity<ResponseDTO<ResponseDateListDTO<ResponseDateDTO.StateResponse>>> getSyncopeByDate(@Valid @ModelAttribute RequestDateDTO dto) {
         log.info("Received request to get syncope by date for pet ID: {} on date: {}", dto.getPetId(), dto.getDate());
-        ResponseDateListDTO result = queryService.getSyncopeByDate(dto);
+        ResponseDateListDTO<ResponseDateDTO.StateResponse> result = queryService.getSyncopeByDate(dto);
         log.info("Successfully retrieved syncope records for pet ID: {} on date: {}", dto.getPetId(), dto.getDate());
 
         return ResponseEntity
@@ -222,13 +224,13 @@ public class QueryController {
     @Operation(summary = "소변 상태 날짜별 조회", description = """
             특정 날짜의 소변 상태 기록을 조회합니다.
             - 필수 필드: petId, date
-            - date: 조회할 날짜 (yyyy-MM-dd)
+            - date: 조회할 날짜 (yyyy-MM-DD)
             - 해당 날짜의 모든 소변 상태 기록을 시간순으로 반환합니다.
             """)
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "소변 상태 날짜별 조회 성공", content = {
                     @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json",
-                            schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = ResponseDateListDTO.class))
+                            schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = ResponseDateApi.UrinaryDateResponseApi.class))
             }),
             @ApiResponse(responseCode = "400", description = "잘못된 요청", content = {
                     @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json",
@@ -240,9 +242,9 @@ public class QueryController {
             })
     })
     @GetMapping("/urine/date")
-    public ResponseEntity<ResponseDTO<ResponseDateListDTO>> getUrineByDate(@Valid @ModelAttribute RequestDateDTO dto) {
+    public ResponseEntity<ResponseDTO<ResponseDateListDTO<ResponseDateDTO.UrinaryResponse>>> getUrineByDate(@Valid @ModelAttribute RequestDateDTO dto) {
         log.info("Received request to get urine by date for pet ID: {} on date: {}", dto.getPetId(), dto.getDate());
-        ResponseDateListDTO result = queryService.getUrinaryByDate(dto);
+        ResponseDateListDTO<ResponseDateDTO.UrinaryResponse> result = queryService.getUrinaryByDate(dto);
         log.info("Successfully retrieved urine records for pet ID: {} on date: {}", dto.getPetId(), dto.getDate());
 
         return ResponseEntity
@@ -260,7 +262,7 @@ public class QueryController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "특이 사항 날짜별 조회 성공", content = {
                     @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json",
-                            schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = ResponseDateListDTO.class))
+                            schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = ResponseDateApi.SignificantDateResponseApi.class))
             }),
             @ApiResponse(responseCode = "400", description = "잘못된 요청", content = {
                     @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json",
@@ -272,9 +274,9 @@ public class QueryController {
             })
     })
     @GetMapping("/significant/date")
-    public ResponseEntity<ResponseDTO<ResponseDateListDTO>> getSignificantByDate(@Valid @ModelAttribute RequestDateDTO dto) {
+    public ResponseEntity<ResponseDTO<ResponseDateListDTO<ResponseDateDTO.SignificantResponse>>> getSignificantByDate(@Valid @ModelAttribute RequestDateDTO dto) {
         log.info("Received request to get significant records by date for pet ID: {} on date: {}", dto.getPetId(), dto.getDate());
-        ResponseDateListDTO result = queryService.getSignificantByDate(dto);
+        ResponseDateListDTO<ResponseDateDTO.SignificantResponse> result = queryService.getSignificantByDate(dto);
         log.info("Successfully retrieved significant records for pet ID: {} on date: {}", dto.getPetId(), dto.getDate());
 
         return ResponseEntity
@@ -292,7 +294,7 @@ public class QueryController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "경련 상태 날짜별 조회 성공", content = {
                     @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json",
-                            schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = ResponseDateListDTO.class))
+                            schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = ResponseDateApi.ConvulsionDateResponseApi.class))
             }),
             @ApiResponse(responseCode = "400", description = "잘못된 요청", content = {
                     @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json",
@@ -304,9 +306,9 @@ public class QueryController {
             })
     })
     @GetMapping("/convulsion/date")
-    public ResponseEntity<ResponseDTO<ResponseDateListDTO>> getConvulsionByDate(@Valid @ModelAttribute RequestDateDTO dto) {
+    public ResponseEntity<ResponseDTO<ResponseDateListDTO<ResponseDateDTO.ConvulsionResponse>>> getConvulsionByDate(@Valid @ModelAttribute RequestDateDTO dto) {
         log.info("Received request to get convulsion records by date for pet ID: {} on date: {}", dto.getPetId(), dto.getDate());
-        ResponseDateListDTO result = queryService.getConvulsionByDate(dto);
+        ResponseDateListDTO<ResponseDateDTO.ConvulsionResponse> result = queryService.getConvulsionByDate(dto);
         log.info("Successfully retrieved convulsion records for pet ID: {} on date: {}", dto.getPetId(), dto.getDate());
 
         return ResponseEntity
@@ -324,7 +326,7 @@ public class QueryController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "이상한 소리 날짜별 조회 성공", content = {
                     @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json",
-                            schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = ResponseDateListDTO.class))
+                            schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = ResponseDateApi.SoundDateResponseApi.class))
             }),
             @ApiResponse(responseCode = "400", description = "잘못된 요청", content = {
                     @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json",
@@ -336,9 +338,9 @@ public class QueryController {
             })
     })
     @GetMapping("/sound/date")
-    public ResponseEntity<ResponseDTO<ResponseDateListDTO>> getSoundByDate(@Valid @ModelAttribute RequestDateDTO dto) {
+    public ResponseEntity<ResponseDTO<ResponseDateListDTO<ResponseDateDTO.SoundResponse>>> getSoundByDate(@Valid @ModelAttribute RequestDateDTO dto) {
         log.info("Received request to get sound records by date for pet ID: {} on date: {}", dto.getPetId(), dto.getDate());
-        ResponseDateListDTO result = queryService.getSoundByDate(dto);
+        ResponseDateListDTO<ResponseDateDTO.SoundResponse> result = queryService.getSoundByDate(dto);
         log.info("Successfully retrieved sound records for pet ID: {} on date: {}", dto.getPetId(), dto.getDate());
 
         return ResponseEntity
@@ -357,7 +359,7 @@ public class QueryController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "콧물 날짜별 조회 성공", content = {
                     @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json",
-                            schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = ResponseDateListDTO.class))
+                            schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = ResponseDateApi.SnotDateResponseApi.class))
             }),
             @ApiResponse(responseCode = "400", description = "잘못된 요청", content = {
                     @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json",
@@ -369,9 +371,9 @@ public class QueryController {
             })
     })
     @GetMapping("/snot/date")
-    public ResponseEntity<ResponseDTO<ResponseDateListDTO>> getSnotByDate(@Valid @ModelAttribute RequestDateDTO dto) {
+    public ResponseEntity<ResponseDTO<ResponseDateListDTO<ResponseDateDTO.SnotResponse>>> getSnotByDate(@Valid @ModelAttribute RequestDateDTO dto) {
         log.info("Received request to get snot records by date for pet ID: {} on date: {}", dto.getPetId(), dto.getDate());
-        ResponseDateListDTO result = queryService.getSnotByDate(dto);
+        ResponseDateListDTO<ResponseDateDTO.SnotResponse> result = queryService.getSnotByDate(dto);
         log.info("Successfully retrieved snot records for pet ID: {} on date: {}", dto.getPetId(), dto.getDate());
 
         return ResponseEntity

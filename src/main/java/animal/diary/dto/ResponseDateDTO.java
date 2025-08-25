@@ -5,6 +5,7 @@ import animal.diary.entity.record.state.AbnormalState;
 import animal.diary.entity.record.state.BinaryState;
 import animal.diary.entity.record.state.LevelState;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -12,20 +13,31 @@ import java.time.LocalTime;
 import java.util.List;
 
 @Builder
-@JsonInclude(JsonInclude.Include.NON_NULL)
 @Getter
 public class ResponseDateDTO {
 
     @Builder
     @Getter
-    public static class WeightResponse implements DiaryDateResponse {
+    public static class WeightResponse {
         private Long diaryId;
+        private String title;
         private Float weight;
         private LocalTime createdTime;
 
         public static WeightResponse weightToDTO(Weight weight) {
+            String title;
+            Float weightValue = weight.getWeight();
+            
+            // 정수인 경우 소수점 한자리(.0), 아니면 원래 값 그대로
+            if (weightValue.floatValue() == weightValue.intValue()) {
+                title = String.format("%.1f", weightValue) + "kg";
+            } else {
+                title = weightValue + "kg";
+            }
+            
             return WeightResponse.builder()
                     .diaryId(weight.getId())
+                    .title(title)
                     .weight(weight.getWeight())
                     .createdTime(weight.getCreatedAt().toLocalTime())
                     .build();
@@ -34,7 +46,7 @@ public class ResponseDateDTO {
 
     @Builder
     @Getter
-    public static class StateResponse implements DiaryDateResponse {
+    public static class StateResponse {
         private Long diaryId;
         private String state;
         private LocalTime createdTime;
@@ -66,7 +78,7 @@ public class ResponseDateDTO {
 
     @Builder
     @Getter
-    public static class CountResponse implements DiaryDateResponse{
+    public static class CountResponse {
         private Long diaryId;
         private Integer count;
         private LocalTime createdTime;
@@ -90,13 +102,21 @@ public class ResponseDateDTO {
 
     @Builder
     @Getter
-    public static class UrinaryResponse implements DiaryDateResponse {
+    @Schema(description = "소변 기록 응답 DTO")
+    public static class UrinaryResponse {
+        @Schema(description = "일기 ID", example = "1")
         private Long diaryId;
+        @Schema(description = "제목", example = "보통·보통·악취 없음")
         private String title;
+        @Schema(description = "소변 상태 (BLOODY, LIGHT, DARK, NORMAL, ETC)", example = "NORMAL")
         private String urineState;
+        @Schema(description = "소변량 (NONE, LOW, NORMAL, HIGH)", example = "NORMAL")
         private String urineAmount;
+        @Schema(description = "메모", example = "소변이 자주 보임")
         private String memo;
+        @Schema(description = "이미지 URL 목록", example = "[\"https://example.com/image1.jpg\", \"https://example.com/image2.jpg\"]")
         private List<String> imageUrls;
+        @Schema(description = "기록 시간", example = "14:30:00")
         private LocalTime createdTime;
 
         public static UrinaryResponse urinaryToDTO(Urinary urinary, List<String> imageUrls) {
@@ -119,7 +139,7 @@ public class ResponseDateDTO {
 
     @Builder
     @Getter
-    public static class SignificantResponse implements DiaryDateResponse{
+    public static class SignificantResponse {
         private Long diaryId;
         private String title;
         private String content;
@@ -141,7 +161,7 @@ public class ResponseDateDTO {
 
     @Builder
     @Getter
-    public static class ConvulsionResponse implements DiaryDateResponse{
+    public static class ConvulsionResponse {
         private Long diaryId;
         private String title;
         private String state;
@@ -166,7 +186,7 @@ public class ResponseDateDTO {
 
     @Builder
     @Getter
-    public static class SoundResponse implements DiaryDateResponse{
+    public static class SoundResponse{
         private Long diaryId;
         private String title;
         private String soundUrl;
@@ -184,7 +204,7 @@ public class ResponseDateDTO {
 
     @Builder
     @Getter
-    public static class SnotResponse implements DiaryDateResponse{
+    public static class SnotResponse {
         private Long diaryId;
         private String state;
         private String memo;

@@ -97,10 +97,15 @@ public class RecordResponseDTO {
     @Builder
     @Getter
     public static class UrinaryResponseDTO {
+        @Schema(description = "반려동물 ID", example = "1")
         private Long petId;
+        @Schema(description = "소변 상태 - 배뇨 여부", example = "O")
         private String binaryState;
+        @Schema(description = "소변 상태 - 소변 상태", example = "NORMAL")
         private String urineState;
+        @Schema(description = "소변 상태 - 소변 양", example = "LOW")
         private String urineAmount;
+        @Schema(description = "소변 기록 생성 시간", example = "2023-10-01T12:00:00")
         private LocalDateTime createdAt;
 
         public static UrinaryResponseDTO urinaryToDTO(Urinary urinary) {

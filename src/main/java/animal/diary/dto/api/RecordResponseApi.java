@@ -35,8 +35,8 @@ public class RecordResponseApi extends ResponseDTO<RecordResponseDTO> {
         }
     }
 
-    public static class UrinaryResponseApi extends ResponseDTO<RecordResponseDTO.UrinaryResponseDTO> {
-        public UrinaryResponseApi(SuccessCode successCode, RecordResponseDTO.UrinaryResponseDTO data) {
+    public static class UrinaryRecordResponseApi extends ResponseDTO<RecordResponseDTO.UrinaryResponseDTO> {
+        public UrinaryRecordResponseApi(SuccessCode successCode, RecordResponseDTO.UrinaryResponseDTO data) {
             super(successCode, data);
         }
     }

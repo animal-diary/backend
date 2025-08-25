@@ -43,7 +43,7 @@ public class RecordController {
             - 몸무게는 반려동물의 체중을 나타냅니다.
             """)
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "몸무게 기록 성공", content = {
+            @ApiResponse(responseCode = "201", description = "몸무게 기록 성공", content = {
                     @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json",
                             schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = RecordResponseApi.WeightResponseApi.class))
             }),
@@ -230,7 +230,7 @@ public class RecordController {
     // 소변 상태
     @Operation(summary = "소변 상태 기록", description = """
             특정 반려동물의 소변 상태를 기록합니다.
-            - 필수 필드: petId, urineAmount
+            - 필드: petId, urineAmount(소변량)(NONE, LOW, NORMAL, HIGH), urineState(소변 상태)(BLOODY, LIGHT, DARK, NORMAL, ETC), binaryState(소변 악취 상태)(O, X), memo(메모), images(사진)
             
             - 소변량(urineAmount)이 NONE(무뇨)가 아닌 경우:
               - 소변 상태(urineState): 필수 - BLOODY, LIGHT, DARK, NORMAL, ETC 중 하나
@@ -244,7 +244,7 @@ public class RecordController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "소변 상태 기록 성공", content = {
                     @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = RecordResponseDTO.UrinaryResponseDTO.class))
+                            schema = @Schema(implementation = RecordResponseApi.UrinaryRecordResponseApi.class))
 
             }),
             @ApiResponse(responseCode = "400", description = "잘못된 요청 (드롭다운 확인하세요)", content = {
