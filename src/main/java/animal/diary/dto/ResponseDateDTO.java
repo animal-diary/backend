@@ -113,6 +113,7 @@ public class ResponseDateDTO {
         public static CountResponse heartRateToDTO(HeartRate heartRate) {
             return CountResponse.builder()
                     .diaryId(heartRate.getId())
+                    .title(heartRate.getCount() + "회/60초")
                     .count(heartRate.getCount())
                     .createdTime(heartRate.getCreatedAt().toLocalTime())
                     .build();

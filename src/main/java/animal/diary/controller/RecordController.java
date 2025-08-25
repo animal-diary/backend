@@ -75,7 +75,7 @@ public class RecordController {
             - 기력 상태는 반려동물의 에너지 수준을 나타냅니다.
             """)
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "기력 상태 기록 성공", content = {
+            @ApiResponse(responseCode = "201", description = "기력 상태 기록 성공", content = {
                     @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json",
                             schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = RecordResponseApi.EnergyAndAppetiteResponseApi.class))
             }),
@@ -107,7 +107,7 @@ public class RecordController {
             - 식욕 상태는 반려동물의 식욕 수준을 나타냅니다.
             """)
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "식욕 상태 기록 성공", content = {
+            @ApiResponse(responseCode = "201", description = "식욕 상태 기록 성공", content = {
                     @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json",
                             schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = RecordResponseApi.EnergyAndAppetiteResponseApi.class))
             }),
@@ -139,7 +139,7 @@ public class RecordController {
             - 호흡 수는 반려동물의 호흡 횟수를 나타냅니다.
             """)
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "호흡 수 기록 성공", content = {
+            @ApiResponse(responseCode = "201", description = "호흡 수 기록 성공", content = {
                     @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json",
                             schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = RecordResponseDTO.RRAndHeartRateResponseDTO.class))
             }),
@@ -171,7 +171,7 @@ public class RecordController {
             - 심박수는 반려동물의 심장 박동 수를 나타냅니다.
             """)
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "심박수 기록 성공", content = {
+            @ApiResponse(responseCode = "201", description = "심박수 기록 성공", content = {
                     @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json",
                             schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = RecordResponseDTO.RRAndHeartRateResponseDTO.class))
             }),
@@ -203,7 +203,7 @@ public class RecordController {
             - 기절 상태는 반려동물이 기절했는지 여부를 나타냅니다.
             """)
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "기절 상태 기록 성공", content = {
+            @ApiResponse(responseCode = "201", description = "기절 상태 기록 성공", content = {
                     @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json",
                             schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = RecordResponseDTO.SyncopeResponseDTO.class))
             }),
@@ -296,7 +296,7 @@ public class RecordController {
             - 이미지는 최대 10장까지 업로드 가능합니다.
             """)
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "특이사항 기록 성공", content = {
+            @ApiResponse(responseCode = "201", description = "특이사항 기록 성공", content = {
                     @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json",
                             schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = RecordResponseDTO.SignificantResponseDTO.class))
             }),
@@ -337,7 +337,7 @@ public class RecordController {
             - 이미지는 단일 이미지만 업로드 가능합니다.
             """)
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "경련 상태 기록 성공", content = {
+            @ApiResponse(responseCode = "201", description = "경련 상태 기록 성공", content = {
                     @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json",
                             schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = RecordResponseDTO.ConvulsionResponseDTO.class))
             }),
@@ -371,7 +371,7 @@ public class RecordController {
             - 이미지는 단일 이미지만 업로드 가능합니다.
             """)
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "이상 소리 기록 성공", content = {
+            @ApiResponse(responseCode = "201", description = "이상 소리 기록 성공", content = {
                     @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json",
                             schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = RecordResponseDTO.SoundResponseDTO.class))
             }),
@@ -407,7 +407,7 @@ public class RecordController {
             - 이미지는 최대 10장까지 업로드 가능합니다.
             """)
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "콧물 상태 기록 성공", content = {
+            @ApiResponse(responseCode = "201", description = "콧물 상태 기록 성공", content = {
                     @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json",
                             schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = RecordResponseDTO.SnotResponseDTO.class))
             }),
