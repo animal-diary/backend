@@ -9,7 +9,7 @@ import java.util.function.Supplier;
 @Getter
 public enum UrineState {
     BLOODY("혈뇨"),
-    LIGHT("연함"),
+    LIGHT("소변 색 연함"),
     DARK("진함"),
     NORMAL("보통"),
     ETC("기타");

@@ -106,7 +106,7 @@ public class RecordResponseDTO {
         public static UrinaryResponseDTO urinaryToDTO(Urinary urinary) {
             return UrinaryResponseDTO.builder()
                     .petId(urinary.getPet().getId())
-                    .binaryState(urinary.getBinaryState().name())
+                    .binaryState(urinary.getBinaryState() != null ? urinary.getBinaryState().name() : null)
                     .urineState(urinary.getState() != null ? urinary.getState().name() : null)
                     .urineAmount(urinary.getOutput() != null ? urinary.getOutput().name() : null)
                     .createdAt(urinary.getCreatedAt())

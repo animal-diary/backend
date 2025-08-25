@@ -2,6 +2,8 @@ package animal.diary.dto;
 
 import animal.diary.entity.record.*;
 import animal.diary.entity.record.state.AbnormalState;
+import animal.diary.entity.record.state.BinaryState;
+import animal.diary.entity.record.state.LevelState;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Builder;
 import lombok.Getter;
@@ -90,6 +92,7 @@ public class ResponseDateDTO {
     @Getter
     public static class UrinaryResponse implements DiaryDateResponse {
         private Long diaryId;
+        private String title;
         private String urineState;
         private String urineAmount;
         private String memo;
@@ -99,10 +102,16 @@ public class ResponseDateDTO {
         public static UrinaryResponse urinaryToDTO(Urinary urinary, List<String> imageUrls) {
             return UrinaryResponse.builder()
                     .diaryId(urinary.getId())
+                    // 제목 1. 소변량이 NONE이라면 "무뇨"만 내보냄
+                    // 제목 2. 소변량이 NONE이 아니라면 "{소변상태}·악취 있음(없음)·{소변량}" 형태로 내보냄ㅉ
+                    .title(urinary.getOutput() == LevelState.NONE ? "무뇨" :
+                            urinary.getState().getDescription()  + "·" +
+                                    LevelState.toUrineString(urinary.getOutput()) + "·" +
+                                    (urinary.getBinaryState() == BinaryState.O ? "악취 있음" : "악취 없음"))
                     .urineState(urinary.getState() != null ? urinary.getState().name() : null)
-                    .urineAmount(urinary.getOutput().name())
-                    .memo(urinary.getMemo())
-                    .imageUrls(imageUrls)
+                    .urineAmount(urinary.getOutput() != null ? urinary.getOutput().name() : null)
+                    .memo(urinary.getMemo() != null ? urinary.getMemo() : null)
+                    .imageUrls(imageUrls != null ? imageUrls : List.of())
                     .createdTime(urinary.getCreatedAt().toLocalTime())
                     .build();
         }
