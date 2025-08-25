@@ -19,8 +19,11 @@ public class RecordResponseDTO {
     @Builder
     @Getter
     public static class WeightResponseDTO {
+        @Schema(description = "반려동물 ID", example = "1")
         private Long petId;
+        @Schema(description = "몸무게", example = "5.5")
         private Float weight;
+        @Schema(description = "몸무게 기록 생성 시간", example = "2023-10-01T12:00:00")
         private LocalDateTime createdAt;
 
         public static WeightResponseDTO weightToDTO(Weight weight) {
@@ -34,8 +37,11 @@ public class RecordResponseDTO {
     @Builder
     @Getter
     public static class EnergyAndAppetiteResponseDTO {
+        @Schema(description = "반려동물 ID", example = "1")
         private Long petId;
+        @Schema(description = "에너지/식욕 상태", example = "HIGH")
         private String state;
+        @Schema(description = "에너지/식욕 기록 생성 시간", example = "2023-10-01T12:00:00")
         private LocalDateTime createdAt;
 
         public static EnergyAndAppetiteResponseDTO energyToDTO(Energy energy) {
@@ -58,8 +64,11 @@ public class RecordResponseDTO {
     @Builder
     @Getter
     public static class RRAndHeartRateResponseDTO {
+        @Schema(description = "반려동물 ID", example = "1")
         private Long petId;
+        @Schema(description = "호흡수/심박수", example = "20")
         private Integer count;
+        @Schema(description = "호흡수/심박수 기록 생성 시간", example = "2023-10-01T12:00:00")
         private LocalDateTime createdAt;
 
         public static RRAndHeartRateResponseDTO respiratoryRateToDTO(RespiratoryRate respiratoryRate) {
@@ -82,8 +91,11 @@ public class RecordResponseDTO {
     @Builder
     @Getter
     public static class SyncopeResponseDTO {
+        @Schema(description = "반려동물 ID", example = "1")
         private Long petId;
+        @Schema(description = "실신 상태", example = "O")
         private String state;
+        @Schema(description = "실신 기록 생성 시간", example = "2023-10-01T12:00:00")
         private LocalDateTime createdAt;
 
         public static SyncopeResponseDTO syncopeToDTO(Syncope syncope) {
@@ -151,9 +163,17 @@ public class RecordResponseDTO {
     @Builder
     @Getter
     public static class ConvulsionResponseDTO {
+        @Schema(description = "반려동물 ID", example = "1")
         private Long petId;
+        @Schema(description = "경련 상태 O, X", example = "O")
         private String state;
+        //    INCONTINENCE("배변실수"),
+        //    DROOLING("침흘림"),
+        //    UNCONSCIOUS("의식없음"),
+        //    NORMAL("추가 증상 없음");
+        @Schema(description = "경련 시 이상 상태 목록 INCONTINENCE(\"배변실수\"), DROOLING(\"침흘림\"), UNCONSCIOUS(\"의식없음\"), NORMAL(\"추가 증상 없음\")", example = "[\"INCONTINENCE\", \"DROOLING\"]")
         private List<String> abnormalState;
+        @Schema(description = "경련 기록 생성 시간", example = "2023-10-01T12:00:00")
         private LocalDateTime createdAt;
 
         public static ConvulsionResponseDTO convulsionToDTO(Convulsion convulsion) {
@@ -171,8 +191,11 @@ public class RecordResponseDTO {
     @Builder
     @Getter
     public static class SoundResponseDTO {
+        @Schema(description = "반려동물 ID", example = "1")
         private Long petId;
+        @Schema(description = "소리 제목", example = "기침 소리")
         private String title;
+        @Schema(description = "소리 기록 생성 시간", example = "2023-10-01T12:00:00")
         private LocalDateTime createdAt;
 
         public static SoundResponseDTO soundToDTO(Sound sound) {
@@ -187,8 +210,12 @@ public class RecordResponseDTO {
     @Builder
     @Getter
     public static class SnotResponseDTO {
+        @Schema(description = "반려동물 ID", example = "1")
         private Long petId;
+        //CLEAR("맑음"), MUCUS("탁함"), BLOODY("피섞임");
+        @Schema(description = "콧물 상태 CLEAR(\"맑음\"), MUCUS(\"탁함\"), BLOODY(\"피섞임\")", example = "CLEAR")
         private String state;
+        @Schema(description = "콧물 기록 생성 시간", example = "2023-10-01T12:00:00")
         private LocalDateTime createdAt;
 
         public static SnotResponseDTO snotToDTO(Snot snot) {
