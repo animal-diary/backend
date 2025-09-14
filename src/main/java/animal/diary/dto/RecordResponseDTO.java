@@ -251,7 +251,7 @@ public class RecordResponseDTO {
 
     @Builder
     @Getter
-    public class WalkingResponseDTO {
+    public static class WalkingResponseDTO {
         @Schema(description = "반려동물 ID", example = "1")
         private Long petId;
         @Schema(description = "걷는 모습 제목", example = "첫 번째 산책")
@@ -273,7 +273,7 @@ public class RecordResponseDTO {
 
     @Builder
     @Getter
-    public class WaterResponseDTO {
+    public static class WaterResponseDTO {
         @Schema(description = "반려동물 ID", example = "1")
         private Long petId;
         // NORMAL = 보통, LOW = 적음, HIGH = 많음
@@ -306,7 +306,7 @@ public class RecordResponseDTO {
 
     @Builder
     @Getter
-    public class SkinResponseDTO {
+    public static class SkinResponseDTO {
         @Schema(description = "반려동물 ID", example = "1")
         private Long petId;
         // numberState
@@ -326,7 +326,7 @@ public class RecordResponseDTO {
 
     @Builder
     @Getter
-    public class DefecationResponseDTO {
+    public static class DefecationResponseDTO {
         @Schema(description = "반려동물 ID", example = "1")
         private Long petId;
         @Schema(description = "배변량 상태", example = "NORMAL")

@@ -326,7 +326,7 @@ public class ResponseDateDTO {
 
     @Builder
     @Getter
-    public class WaterResponse {
+    public static class WaterResponse {
         @Schema(description = "일기 ID", example = "1")
         private Long diaryId;
         // LOW(적음), NORMAL(보통), HIGH(많음)
@@ -357,7 +357,7 @@ public class ResponseDateDTO {
 
     @Builder
     @Getter
-    public class SkinResponse {
+    public static class SkinResponse {
         @Schema(description = "일기 ID", example = "1")
         private Long diaryId;
         // 0단계, 1단계, 2단계, 3단계
@@ -388,7 +388,7 @@ public class ResponseDateDTO {
 
     @Builder
     @Getter
-    public class DefecationResponse {
+    public static class DefecationResponse {
         @Schema(description = "일기 ID", example = "1")
         private Long diaryId;
         @Schema(description = "제목", example = "보통")

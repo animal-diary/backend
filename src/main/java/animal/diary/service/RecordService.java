@@ -378,8 +378,8 @@ public class RecordService {
         Convulsion convulsion = convulsionRecordRepository.findById(recordId)
                 .orElseThrow(() -> new DiaryNotFoundException("경련 기록을 찾을 수 없습니다. ID: " + recordId));
 
-        if (convulsion.getImageUrl() != null && !convulsion.getImageUrl().isEmpty()) {
-            s3Uploader.deleteFile(convulsion.getImageUrl());
+        if (convulsion.getVideoUrl() != null && !convulsion.getVideoUrl().isEmpty()) {
+            s3Uploader.deleteFile(convulsion.getVideoUrl());
         }
 
         convulsionRecordRepository.deleteById(recordId);
