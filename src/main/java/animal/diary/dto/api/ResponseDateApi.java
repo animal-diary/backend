@@ -83,4 +83,10 @@ public class ResponseDateApi extends ResponseDTO<ResponseDateListDTO<?>> {
             super(successCode, data);
         }
     }
+
+    public static class DefecationDateResponseApi extends ResponseDTO<ResponseDateListDTO<ResponseDateDTO.DefecationResponse>> {
+        public DefecationDateResponseApi(SuccessCode successCode, ResponseDateListDTO<ResponseDateDTO.DefecationResponse> data) {
+            super(successCode, data);
+        }
+    }
 }

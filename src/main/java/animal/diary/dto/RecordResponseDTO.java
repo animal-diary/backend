@@ -323,4 +323,32 @@ public class RecordResponseDTO {
                     .build();
         }
     }
+
+    @Builder
+    @Getter
+    public class DefecationResponseDTO {
+        @Schema(description = "반려동물 ID", example = "1")
+        private Long petId;
+        @Schema(description = "배변량 상태", example = "NORMAL")
+        private String level;
+        @Schema(description = "대변 상태", example = "NORMAL")
+        private String state;
+        @Schema(description = "메모", example = "평소보다 단단한 편")
+        private String memo;
+        @Schema(description = "이미지 URL 목록", example = "[\"https://example.com/image1.jpg\", \"https://example.com/image2.jpg\"]")
+        private List<String> imageUrls;
+        @Schema(description = "배변 기록 생성 시간", example = "2023-10-01T12:00:00")
+        private LocalDateTime createdAt;
+
+        public static DefecationResponseDTO defecationToDTO(Defecation defecation) {
+            return DefecationResponseDTO.builder()
+                    .petId(defecation.getPet().getId())
+                    .level(defecation.getLevel().name())
+                    .state(defecation.getState() != null ? defecation.getState().name() : null)
+                    .memo(defecation.getMemo())
+                    .imageUrls(defecation.getImageUrls())
+                    .createdAt(defecation.getCreatedAt())
+                    .build();
+        }
+    }
 }

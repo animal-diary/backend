@@ -385,4 +385,43 @@ public class ResponseDateDTO {
                     .build();
         }
     }
+
+    @Builder
+    @Getter
+    public class DefecationResponse {
+        @Schema(description = "일기 ID", example = "1")
+        private Long diaryId;
+        @Schema(description = "제목", example = "보통")
+        private String title;
+        @Schema(description = "배변량 상태 (NONE, LOW, NORMAL, HIGH)", example = "NORMAL")
+        private String level;
+        @Schema(description = "대변 상태 (NORMAL, DIARRHEA, BLACK, BLOODY, ETC)", example = "NORMAL")
+        private String state;
+        @Schema(description = "메모", example = "평소보다 단단한 편")
+        private String memo;
+        @Schema(description = "이미지 URL 목록", example = "[\"https://example.com/image1.jpg\", \"https://example.com/image2.jpg\"]")
+        private List<String> imageUrls;
+        @Schema(type = "string", example = "14:30", description = "기록 시간 (HH:mm)")
+        private LocalTime createdTime;
+
+        public static DefecationResponse defecationToDTO(Defecation defecation, List<String> imageUrls) {
+            // 배변량에 따른 제목 설정
+            String title = switch (defecation.getLevel()) {
+                case NONE -> "없음";
+                case LOW -> "적음";
+                case NORMAL -> "보통";
+                case HIGH -> "많음";
+            };
+
+            return DefecationResponse.builder()
+                    .diaryId(defecation.getId())
+                    .title(title)
+                    .level(defecation.getLevel().name())
+                    .state(defecation.getState() != null ? defecation.getState().name() : null)
+                    .memo(defecation.getMemo())
+                    .imageUrls(imageUrls != null ? imageUrls : List.of())
+                    .createdTime(defecation.getCreatedAt().toLocalTime())
+                    .build();
+        }
+    }
 }
