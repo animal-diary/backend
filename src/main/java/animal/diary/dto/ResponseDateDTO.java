@@ -354,4 +354,35 @@ public class ResponseDateDTO {
                     .build();
         }
     }
+
+    @Builder
+    @Getter
+    public class SkinResponse {
+        @Schema(description = "일기 ID", example = "1")
+        private Long diaryId;
+        // 0단계, 1단계, 2단계, 3단계
+        @Schema(description = "제목", example = "1단계")
+        private String title;
+        @Schema(description = "피부 상태 (0,1,2,3)", example = "1")
+        private String state;
+        @Schema(description = "메모", example = "털이 많이 빠지고 있음")
+        private String memo;
+        @Schema(description = "이미지 URL 목록", example = "[\"https://example.com/image1.jpg\", \"https://example.com/image2.jpg\"]")
+        private List<String> imageUrls;
+        @Schema(type = "string", example = "14:30", description = "기록 시간 (HH:mm)")
+        private LocalTime createdTime;
+
+        public static SkinResponse skinToDTO(Skin skin, List<String> imageUrls) {
+            String title = skin.getState() + "단계";
+
+            return SkinResponse.builder()
+                    .diaryId(skin.getId())
+                    .title(title)
+                    .state(skin.getState().name())
+                    .memo(skin.getMemo() != null ? skin.getMemo() : null)
+                    .imageUrls(imageUrls != null ? imageUrls : List.of())
+                    .createdTime(skin.getCreatedAt().toLocalTime())
+                    .build();
+        }
+    }
 }

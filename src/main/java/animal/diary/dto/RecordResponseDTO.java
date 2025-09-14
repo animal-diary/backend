@@ -303,4 +303,24 @@ public class RecordResponseDTO {
                     .build();
         }
     }
+
+    @Builder
+    @Getter
+    public class SkinResponseDTO {
+        @Schema(description = "반려동물 ID", example = "1")
+        private Long petId;
+        // numberState
+        @Schema(description = "피부 상태", example = "0")
+        private String state;
+        @Schema(description = "피부 상태 기록 생성 시간", example = "2023-10-01T12:00:00")
+        private LocalDateTime createdAt;
+
+        public static SkinResponseDTO skinToDTO(Skin skin) {
+            return SkinResponseDTO.builder()
+                    .petId(skin.getPet().getId())
+                    .state(skin.getState().name())
+                    .createdAt(skin.getCreatedAt())
+                    .build();
+        }
+    }
 }

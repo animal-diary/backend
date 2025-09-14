@@ -40,6 +40,7 @@ public class QueryService {
     private final VomitingRepository vomitingRepository;
     private final WalkingRepository walkingRepository;
     private final WaterRepository waterRepository;
+    private final SkinRepository skinRepository;
 
     // 2.3몸무게 조회
     public ResponseDateListDTO<ResponseDateDTO.WeightResponse> getWeightsByDate(RequestDateDTO dto) {
@@ -510,6 +511,45 @@ public class QueryService {
                 .toList();
 
         return ResponseDateListDTO.<ResponseDateDTO.WaterResponse>builder()
+                .date(date)
+                .type(pet.getType().toString())
+                .dateDTOS(result)
+                .build();
+    }
+
+    public ResponseDateListDTO<ResponseDateDTO.SkinResponse> getSkinByDate(RequestDateDTO dto) {
+        Pet pet = getPetOrThrow(dto.getPetId());
+
+        LocalDate date = dto.getDate();
+        validateDate(dto.getDate());
+
+        LocalDateTime[] range = getStartAndEndOfDay(dto.getDate());
+
+        log.info("Fetching skin records for pet ID: {} on date: {}", pet.getId(), date);
+        List<Skin> skinList = skinRepository.findAllByPetIdAndCreatedAtBetween(pet.getId(), range[0], range[1]);
+        log.info("Found {} skin records for pet ID: {} on date: {}", skinList.size(), pet.getId(), date);
+
+        if (skinList.isEmpty()) {
+            throw new EmptyListException("비어었음");
+        }
+
+        List<ResponseDateDTO.SkinResponse> result = skinList.stream().map(
+                skin -> {
+                    List<String> imageUrls = skin.getImageUrls();
+                    if (imageUrls == null || imageUrls.isEmpty()) {
+                        return ResponseDateDTO.SkinResponse.skinToDTO(skin, List.of());
+                    }
+
+                    // 스트림으로 변환하여 성능 향상
+                    List<String> imageCloudFrontUrls = imageUrls.stream()
+                            .map(cloudFrontUrlService::generateSignedUrl)
+                            .toList();
+
+                    return ResponseDateDTO.SkinResponse.skinToDTO(skin, imageCloudFrontUrls);
+                }
+        ).toList();
+
+        return ResponseDateListDTO.<ResponseDateDTO.SkinResponse>builder()
                 .date(date)
                 .type(pet.getType().toString())
                 .dateDTOS(result)
