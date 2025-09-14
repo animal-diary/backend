@@ -248,4 +248,26 @@ public class RecordResponseDTO {
                     .build();
         }
     }
+
+    @Builder
+    @Getter
+    public class WalkingResponseDTO {
+        @Schema(description = "반려동물 ID", example = "1")
+        private Long petId;
+        @Schema(description = "걷는 모습 제목", example = "첫 번째 산책")
+        private String title;
+        @Schema(description = "걷는 모습 동영상 URL", example = "https://example.com/walking_video.mp4")
+        private String videoUrl;
+        @Schema(description = "걷는 모습 기록 생성 시간", example = "2023-10-01T12:00:00")
+        private LocalDateTime createdAt;
+
+        public static WalkingResponseDTO walkingToDTO(Walking walking) {
+            return WalkingResponseDTO.builder()
+                    .petId(walking.getPet().getId())
+                    .title(walking.getTitle())
+                    .videoUrl(walking.getImageUrl())
+                    .createdAt(walking.getCreatedAt())
+                    .build();
+        }
+    }
 }

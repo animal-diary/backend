@@ -284,7 +284,7 @@ public class QueryController {
                 .body(new ResponseDTO<>(SuccessCode.SUCCESS_GET_RECORD_LIST, result));
     }
 
-    // ==================================== 경련 상태 일별 조회
+    // 2.10=================================== 경련 상태 일별 조회
     @Operation(summary = "경련 상태 날짜별 조회", description = """
             특정 날짜의 경련 상태 기록을 조회합니다.
             - 필수 필드: petId, date
@@ -316,7 +316,7 @@ public class QueryController {
                 .body(new ResponseDTO<>(SuccessCode.SUCCESS_GET_RECORD_LIST, result));
     }
 
-    // ==================================== 이상한 소리 일별 조회
+    // 2.8==================================== 이상한 소리 일별 조회
     @Operation(summary = "이상한 소리 날짜별 조회", description = """
             특정 날짜의 이상한 소리 기록을 조회합니다.
             - 필수 필드: petId, date
@@ -349,7 +349,7 @@ public class QueryController {
     }
 
 
-    // ==================================== 콧물 일별 조회
+    // 2.9==================================== 콧물 일별 조회
     @Operation(summary = "콧물 날짜별 조회", description = """
             특정 날짜의 콧물 기록을 조회합니다.
             - 필수 필드: petId, date
@@ -381,7 +381,7 @@ public class QueryController {
                 .body(new ResponseDTO<>(SuccessCode.SUCCESS_GET_RECORD_LIST, result));
     }
 
-    // ==================================== 구토 일별 조회
+    // 2.11==================================== 구토 일별 조회
     @Operation(summary = "구토 날짜별 조회", description = """
             특정 날짜의 구토 기록을 조회합니다.
             - 필수 필드: petId, date
@@ -407,6 +407,38 @@ public class QueryController {
         log.info("Received request to get vomiting records by date for pet ID: {} on date: {}", dto.getPetId(), dto.getDate());
         ResponseDateListDTO<ResponseDateDTO.VomitingResponse> result = queryService.getVomitingByDate(dto);
         log.info("Successfully retrieved vomiting records for pet ID: {} on date: {}", dto.getPetId(), dto.getDate());
+
+        return ResponseEntity
+                .status(SuccessCode.SUCCESS_GET_RECORD_LIST.getStatus().value())
+                .body(new ResponseDTO<>(SuccessCode.SUCCESS_GET_RECORD_LIST, result));
+    }
+
+    // =========================================================== 걷는 모습 조회
+    @Operation(summary = "걷는 모습 날짜별 조회", description = """
+            특정 날짜의 걷는 모습 기록을 조회합니다.
+            - 필수 필드: petId, date
+            - date: 조회할 날짜 (yyyy-MM-dd)
+            - 해당 날짜의 모든 걷는 모습 기록을 시간순으로 반환합니다.
+            """)
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "걷는 모습 날짜별 조회 성공", content = {
+                    @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json",
+                            schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = ResponseDateApi.WalkingDateResponseApi.class))
+            }),
+            @ApiResponse(responseCode = "400", description = "잘못된 요청", content = {
+                    @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json",
+                            schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = ErrorResponseDTO.class))
+            }),
+            @ApiResponse(responseCode = "404", description = "반려동물 정보 없음", content = {
+                    @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json",
+                            schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = ErrorResponseDTO.class))
+            })
+    })
+    @GetMapping("/walking/date")
+    public ResponseEntity<ResponseDTO<ResponseDateListDTO<ResponseDateDTO.WalkingResponse>>> getWalkingByDate(@Valid @ModelAttribute RequestDateDTO dto) {
+        log.info("Received request to get walking records by date for pet ID: {} on date: {}", dto.getPetId(), dto.getDate());
+        ResponseDateListDTO<ResponseDateDTO.WalkingResponse> result = queryService.getWalkingByDate(dto);
+        log.info("Successfully retrieved walking records for pet ID: {} on date: {}", dto.getPetId(), dto.getDate());
 
         return ResponseEntity
                 .status(SuccessCode.SUCCESS_GET_RECORD_LIST.getStatus().value())

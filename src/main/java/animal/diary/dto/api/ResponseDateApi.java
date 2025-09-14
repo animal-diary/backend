@@ -65,4 +65,10 @@ public class ResponseDateApi extends ResponseDTO<ResponseDateListDTO<?>> {
             super(successCode, data);
         }
     }
+
+    public class WalkingDateResponseApi extends ResponseDTO<ResponseDateListDTO<RecordResponseDTO.WalkingResponseDTO>> {
+        public WalkingDateResponseApi(SuccessCode successCode, ResponseDateListDTO<RecordResponseDTO.WalkingResponseDTO> data) {
+            super(successCode, data);
+        }
+    }
 }

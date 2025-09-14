@@ -298,4 +298,29 @@ public class ResponseDateDTO {
                     .build();
         }
     }
+
+    @Builder
+    @Getter
+    public static class WalkingResponse {
+        @Schema(description = "일기 ID", example = "1")
+        private Long diaryId;
+        @Schema(description = "제목", example = "제목1")
+        private String title;
+        @Schema(description = "걷는 영상 URL", example = "https://example.com/walking.mp4")
+        private String videoUrl;
+        @Schema(type = "string", example = "14:30", description = "기록 시간 (HH:mm)")
+        private LocalTime createdTime;
+
+        public static WalkingResponse walkingToDTO(Walking walking, String videoUrl) {
+            return WalkingResponse.builder()
+                    .diaryId(walking.getId())
+                    .title(walking.getTitle())
+                    .videoUrl(videoUrl)
+                    .createdTime(walking.getCreatedAt().toLocalTime())
+                    .build();
+        }
+
+        // Walking to DTO
+
+    }
 }

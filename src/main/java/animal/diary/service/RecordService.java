@@ -34,6 +34,7 @@ public class RecordService {
     private final SoundRepository soundRepository;
     private final SnotRepository snotRepository;
     private final VomitingRepository vomitingRepository;
+    private final WalkingRepository walkingRepository;
     
     // 몸무게 기록
     public RecordResponseDTO.WeightResponseDTO recordWeight(RecordWithOutImageDTO.WeightRecordDTO dto) {
@@ -236,11 +237,32 @@ public class RecordService {
         return RecordResponseDTO.VomitingResponseDTO.vomitingToDTO(record);
     }
 
+    // ======================================================== 걷는 모습 기록
+    public RecordResponseDTO.WalkingResponseDTO recordWalking(WalkingRecordDTO dto, MultipartFile video) {
+        Pet pet = getPetOrThrow(dto.getPetId());
+
+        // 영상 필수
+        if (video == null || video.isEmpty()) {
+            throw new IllegalArgumentException("영상 파일은 필수입니다.");
+        }
+
+        // 단일 이미지 업로드
+        String videoUrl = s3Uploader.upload(video, "walking");
+
+        Walking walking = WalkingRecordDTO.toEntity(dto, pet, videoUrl);
+        log.info("Recording walking for pet ID: {}, title: {}", pet.getId(), dto.getTitle());
+        walkingRepository.save(walking);
+        log.info("Successfully recorded walking with ID: {}", walking.getId());
+
+        return RecordResponseDTO.WalkingResponseDTO.walkingToDTO(walking);
+    }
+
     // 공통 유틸리티 메서드
     private Pet getPetOrThrow(Long petId) {
         return petRepository.findById(petId)
                 .orElseThrow(() -> new PetNotFoundException("펫 못 찾음"));
     }
+
 
 
 }
