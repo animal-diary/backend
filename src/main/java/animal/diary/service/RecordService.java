@@ -6,11 +6,13 @@ import animal.diary.dto.*;
 import animal.diary.dto.record.*;
 import animal.diary.entity.pet.Pet;
 import animal.diary.entity.record.*;
+import animal.diary.exception.DiaryNotFoundException;
 import animal.diary.exception.ImageSizeLimitException;
 import animal.diary.exception.PetNotFoundException;
 import animal.diary.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -316,6 +318,157 @@ public class RecordService {
         log.info("Successfully recorded defecation with ID: {}", defecation.getId());
 
         return RecordResponseDTO.DefecationResponseDTO.defecationToDTO(defecation);
+    }
+
+    // ======================================================== 기록 삭제 메서드들 (제네릭 방식)
+
+    public void deleteWeight(Long recordId) {
+        deleteRecord(weightRepository, recordId, "몸무게");
+    }
+
+    public void deleteEnergy(Long recordId) {
+        deleteRecord(energyRepository, recordId, "기력");
+    }
+
+    public void deleteAppetite(Long recordId) {
+        deleteRecord(appetiteRepository, recordId, "식욕");
+    }
+
+    public void deleteRR(Long recordId) {
+        deleteRecord(rrRepository, recordId, "호흡수");
+    }
+
+    public void deleteHeartRate(Long recordId) {
+        deleteRecord(heartRateRepository, recordId, "심박수");
+    }
+
+    public void deleteSyncope(Long recordId) {
+        deleteRecord(syncopeRepository, recordId, "실신");
+    }
+
+    public void deleteUrinary(Long recordId) {
+        Urinary urinary = urinaryRepository.findById(recordId)
+                .orElseThrow(() -> new DiaryNotFoundException("소변 기록을 찾을 수 없습니다. ID: " + recordId));
+
+        if (urinary.getImageUrls() != null && !urinary.getImageUrls().isEmpty()) {
+            urinary.getImageUrls().forEach(s3Uploader::deleteFile);
+        }
+
+        urinaryRepository.deleteById(recordId);
+        log.info("Successfully deleted 소변 record with ID: {}", recordId);
+    }
+
+    public void deleteSignificant(Long recordId) {
+        Significant significant = significantRecordRepository.findById(recordId)
+                .orElseThrow(() -> new DiaryNotFoundException("특이사항 기록을 찾을 수 없습니다. ID: " + recordId));
+
+        if (significant.getImageUrls() != null && !significant.getImageUrls().isEmpty()) {
+            significant.getImageUrls().forEach(s3Uploader::deleteFile);
+        }
+
+        if (significant.getVideoUrl() != null && !significant.getVideoUrl().isEmpty()) {
+            s3Uploader.deleteFile(significant.getVideoUrl());
+        }
+
+        significantRecordRepository.deleteById(recordId);
+        log.info("Successfully deleted 특이사항 record with ID: {}", recordId);
+    }
+
+    public void deleteConvulsion(Long recordId) {
+        Convulsion convulsion = convulsionRecordRepository.findById(recordId)
+                .orElseThrow(() -> new DiaryNotFoundException("경련 기록을 찾을 수 없습니다. ID: " + recordId));
+
+        if (convulsion.getImageUrl() != null && !convulsion.getImageUrl().isEmpty()) {
+            s3Uploader.deleteFile(convulsion.getImageUrl());
+        }
+
+        convulsionRecordRepository.deleteById(recordId);
+        log.info("Successfully deleted 경련 record with ID: {}", recordId);
+    }
+
+    public void deleteSound(Long recordId) {
+        Sound sound = soundRepository.findById(recordId)
+                .orElseThrow(() -> new DiaryNotFoundException("이상 소리 기록을 찾을 수 없습니다. ID: " + recordId));
+
+        if (sound.getImageUrl() != null && !sound.getImageUrl().isEmpty()) {
+            s3Uploader.deleteFile(sound.getImageUrl());
+        }
+
+        soundRepository.deleteById(recordId);
+        log.info("Successfully deleted 이상 소리 record with ID: {}", recordId);
+    }
+
+    public void deleteSnot(Long recordId) {
+        Snot snot = snotRepository.findById(recordId)
+                .orElseThrow(() -> new DiaryNotFoundException("콧물 기록을 찾을 수 없습니다. ID: " + recordId));
+
+        if (snot.getImageUrls() != null && !snot.getImageUrls().isEmpty()) {
+            snot.getImageUrls().forEach(s3Uploader::deleteFile);
+        }
+
+        snotRepository.deleteById(recordId);
+        log.info("Successfully deleted 콧물 record with ID: {}", recordId);
+    }
+
+    public void deleteVomiting(Long recordId) {
+        Vomiting vomiting = vomitingRepository.findById(recordId)
+                .orElseThrow(() -> new DiaryNotFoundException("구토 기록을 찾을 수 없습니다. ID: " + recordId));
+
+        if (vomiting.getImageUrls() != null && !vomiting.getImageUrls().isEmpty()) {
+            vomiting.getImageUrls().forEach(s3Uploader::deleteFile);
+        }
+
+        vomitingRepository.deleteById(recordId);
+        log.info("Successfully deleted 구토 record with ID: {}", recordId);
+    }
+
+    public void deleteWalking(Long recordId) {
+        Walking walking = walkingRepository.findById(recordId)
+                .orElseThrow(() -> new DiaryNotFoundException("걷는 모습 기록을 찾을 수 없습니다. ID: " + recordId));
+
+        if (walking.getImageUrl() != null && !walking.getImageUrl().isEmpty()) {
+            s3Uploader.deleteFile(walking.getImageUrl());
+        }
+
+        walkingRepository.deleteById(recordId);
+        log.info("Successfully deleted 걷는 모습 record with ID: {}", recordId);
+    }
+
+    public void deleteWater(Long recordId) {
+        deleteRecord(waterRepository, recordId, "음수량");
+    }
+
+    public void deleteSkin(Long recordId) {
+        Skin skin = skinRepository.findById(recordId)
+                .orElseThrow(() -> new DiaryNotFoundException("피부 상태 기록을 찾을 수 없습니다. ID: " + recordId));
+
+        if (skin.getImageUrls() != null && !skin.getImageUrls().isEmpty()) {
+            skin.getImageUrls().forEach(s3Uploader::deleteFile);
+        }
+
+        skinRepository.deleteById(recordId);
+        log.info("Successfully deleted 피부 상태 record with ID: {}", recordId);
+    }
+
+    public void deleteDefecation(Long recordId) {
+        Defecation defecation = defecationRepository.findById(recordId)
+                .orElseThrow(() -> new DiaryNotFoundException("배변 기록을 찾을 수 없습니다. ID: " + recordId));
+
+        if (defecation.getImageUrls() != null && !defecation.getImageUrls().isEmpty()) {
+            defecation.getImageUrls().forEach(s3Uploader::deleteFile);
+        }
+
+        defecationRepository.deleteById(recordId);
+        log.info("Successfully deleted 배변 record with ID: {}", recordId);
+    }
+
+    // 제네릭 삭제 메서드
+    private <T> void deleteRecord(JpaRepository<T, Long> repository, Long recordId, String recordType) {
+        if (!repository.existsById(recordId)) {
+            throw new DiaryNotFoundException(recordType + " 기록을 찾을 수 없습니다. ID: " + recordId);
+        }
+        repository.deleteById(recordId);
+        log.info("Successfully deleted {} record with ID: {}", recordType, recordId);
     }
 
     // 공통 유틸리티 메서드

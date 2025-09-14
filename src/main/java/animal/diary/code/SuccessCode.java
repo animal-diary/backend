@@ -31,7 +31,7 @@ public enum SuccessCode {
      * */
     SUCCESS_SAVE_RECORD(HttpStatus.CREATED, "기록을 성공적으로 저장했습니다."),
     SUCCESS_GET_RECORD_LIST(HttpStatus.OK, "기록 리스트를 성공적으로 불러왔습니다."),
-
+    SUCCESS_DELETE_RECORD(HttpStatus.OK, "기록을 성공적으로 삭제했습니다."),
     SUCCESS_BUT_EMPTY(HttpStatus.OK, "조회에 성공했으나, 리스트가 비어있습니다."),
     ;
     private final HttpStatus status;
