@@ -33,6 +33,7 @@ public class RecordService {
     private final ConvulsionRepository convulsionRecordRepository;
     private final SoundRepository soundRepository;
     private final SnotRepository snotRepository;
+    private final VomitingRepository vomitingRepository;
     
     // 몸무게 기록
     public RecordResponseDTO.WeightResponseDTO recordWeight(RecordWithOutImageDTO.WeightRecordDTO dto) {
@@ -211,6 +212,28 @@ public class RecordService {
         log.info("Successfully recorded snot with ID: {}", snotRecord.getId());
 
         return RecordResponseDTO.SnotResponseDTO.snotToDTO(snotRecord);
+    }
+
+    // ======================================================== 구토 기록
+
+    public RecordResponseDTO.VomitingResponseDTO recordVomiting(VomitingRecordDTO dto, List<MultipartFile> images) {
+        Pet pet = getPetOrThrow(dto.getPetId());
+
+        // 이미지 10장 제한
+        if (images.size() > 10) {
+            throw new ImageSizeLimitException(ErrorCode.IMAGE_SIZE_LIMIT_10);
+        }
+
+        // 이미지 업로드
+        List<String> imageUrls = s3Uploader.uploadMultiple(images, "vomiting");
+
+        Vomiting record = VomitingRecordDTO.toEntity(dto, pet, imageUrls);
+
+        log.info("Recording snot for pet ID: {}, title: {}", pet.getId(), dto.getState());
+        vomitingRepository.save(record);
+        log.info("Successfully recorded snot with ID: {}", record.getId());
+
+        return RecordResponseDTO.VomitingResponseDTO.vomitingToDTO(record);
     }
 
     // 공통 유틸리티 메서드

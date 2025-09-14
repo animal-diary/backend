@@ -226,4 +226,26 @@ public class RecordResponseDTO {
                     .build();
         }
     }
+
+    @Builder
+    @Getter
+    public static class VomitingResponseDTO {
+        @Schema(description = "반려동물 ID", example = "1")
+        private Long petId;
+        @Schema(description = "구토 상태 O, X", example = "O")
+        private String state;
+        @Schema(description = "구토 이미지 URL 목록", example = "[\"https://example.com/vomiting1.jpg\", \"https://example.com/vomiting2.jpg\"]")
+        private List<String> imageUrls;
+        @Schema(description = "구토 기록 생성 시간", example = "2023-10-01T12:00:00")
+        private LocalDateTime createdAt;
+
+        public static VomitingResponseDTO vomitingToDTO(Vomiting vomiting) {
+            return VomitingResponseDTO.builder()
+                    .petId(vomiting.getPet().getId())
+                    .state(vomiting.getState().name())
+                    .imageUrls(vomiting.getImageUrls())
+                    .createdAt(vomiting.getCreatedAt())
+                    .build();
+        }
+    }
 }

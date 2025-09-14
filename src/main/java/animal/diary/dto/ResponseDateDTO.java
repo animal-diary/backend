@@ -161,10 +161,15 @@ public class ResponseDateDTO {
     @Builder
     @Getter
     public static class SignificantResponse {
+        @Schema(description = "일기 ID", example = "1")
         private Long diaryId;
+        @Schema(description = "제목", example = "산책 중 강아지를 만남")
         private String title;
+        @Schema(description = "내용", example = "오늘 산책 중에 다른 강아지를 만났어요. 매우 즐거워했답니다.")
         private String content;
+        @Schema(description = "이미지 URL 목록", example = "[\"https://example.com/image1.jpg\", \"https://example.com/image2.jpg\"]")
         private List<String> imageUrls;
+        @Schema(description = "비디오 URL", example = "https://example.com/video.mp4")
         private String videoUrl;
         @Schema(type = "string", example = "14:30", description = "기록 시간 (HH:mm)")
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm")
@@ -185,10 +190,16 @@ public class ResponseDateDTO {
     @Builder
     @Getter
     public static class ConvulsionResponse {
+        @Schema(description = "일기 ID", example = "1")
         private Long diaryId;
+        @Schema(description = "제목", example = "경련 O")
         private String title;
+        @Schema(description = "경련 상태 (O, X)", example = "O")
         private String state;
+        // 배변실수, 침흘림, 의식없음, 추가 증상 없음
+        @Schema(description = "이상 행동 상태 목록", example = "[\"침흘림\", \"배변실수\", \"의식없음\", \"추가 증상 없음\"]")
         private List<String> abnormalStates;
+        @Schema(description = "비디오 URL", example = "https://example.com/video.mp4")
         private String videoUrl;
         @Schema(type = "string", example = "14:30", description = "기록 시간 (HH:mm)")
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm")
@@ -197,7 +208,7 @@ public class ResponseDateDTO {
         public static ConvulsionResponse convulsionToDTO(Convulsion convulsion, String videoUrl) {
             return ConvulsionResponse.builder()
                     .diaryId(convulsion.getId())
-                    .title("경련 " + convulsion.getState().name())
+                    .title(convulsion.getState() == BinaryState.O ? "경련 O" : "경련 X")
                     .state(convulsion.getState().name())
                     .abnormalStates(convulsion.getAbnormalState() != null ? 
                             convulsion.getAbnormalState().stream()
@@ -212,8 +223,11 @@ public class ResponseDateDTO {
     @Builder
     @Getter
     public static class SoundResponse{
+        @Schema(description = "일기 ID", example = "1")
         private Long diaryId;
+        @Schema(description = "제목", example = "제목1")
         private String title;
+        @Schema(description = "소리 파일 URL", example = "https://example.com/sound.mp4")
         private String soundUrl;
         @Schema(type = "string", example = "14:30", description = "기록 시간 (HH:mm)")
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm")
@@ -232,9 +246,16 @@ public class ResponseDateDTO {
     @Builder
     @Getter
     public static class SnotResponse {
+        @Schema(description = "일기 ID", example = "1")
         private Long diaryId;
+        // 맑음, 탁함, 피섞임
+        @Schema(description = "제목", example = "탁함")
+        private String title;
+        @Schema(description = "콧물 상태 (CLEAR, CLOUDY, BLOODY)", example = "CLOUDY")
         private String state;
+        @Schema(description = "메모", example = "아침부터 콧물이 심해요")
         private String memo;
+        @Schema(description = "이미지 URL 목록", example = "[\"https://example.com/image1.jpg\", \"https://example.com/image2.jpg\"]")
         private List<String> imageUrls;
         @Schema(type = "string", example = "14:30", description = "기록 시간 (HH:mm)")
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm")
@@ -243,10 +264,37 @@ public class ResponseDateDTO {
         public static SnotResponse snotToDTO(Snot snot, List<String> imageUrls) {
             return SnotResponse.builder()
                     .diaryId(snot.getId())
+                    .title(snot.getState().name())
                     .state(snot.getState().name())
                     .memo(snot.getMemo())
                     .imageUrls(imageUrls != null ? imageUrls : List.of())
                     .createdTime(snot.getCreatedAt().toLocalTime())
+                    .build();
+        }
+    }
+
+    @Builder
+    @Getter
+    public static class VomitingResponse {
+        @Schema(description = "일기 ID", example = "1")
+        private Long diaryId;
+        @Schema(description = "제목", example = "구토 O")
+        private String title;
+        @Schema(description = "구토 상태 (O, X)", example = "O")
+        private String state;
+        @Schema(description = "이미지 URL 목록", example = "[\"https://example.com/image1.jpg\", \"https://example.com/image2.jpg\"]")
+        private List<String> imageUrls;
+        @Schema(type = "string", example = "14:30", description = "기록 시간 (HH:mm)")
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm")
+        private LocalTime createdTime;
+
+        public static VomitingResponse vomitingToDTO(Vomiting vomiting, List<String> imageUrls) {
+            return VomitingResponse.builder()
+                    .diaryId(vomiting.getId())
+                    .title(vomiting.getState() == BinaryState.O ? "구토 O" : "구토 X")
+                    .state(vomiting.getState().name())
+                    .imageUrls(imageUrls != null ? imageUrls : List.of())
+                    .createdTime(vomiting.getCreatedAt().toLocalTime())
                     .build();
         }
     }

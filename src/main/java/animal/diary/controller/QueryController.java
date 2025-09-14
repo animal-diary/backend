@@ -380,4 +380,36 @@ public class QueryController {
                 .status(SuccessCode.SUCCESS_GET_RECORD_LIST.getStatus().value())
                 .body(new ResponseDTO<>(SuccessCode.SUCCESS_GET_RECORD_LIST, result));
     }
+
+    // ==================================== 구토 일별 조회
+    @Operation(summary = "구토 날짜별 조회", description = """
+            특정 날짜의 구토 기록을 조회합니다.
+            - 필수 필드: petId, date
+            - date: 조회할 날짜 (yyyy-MM-dd)
+            - 해당 날짜의 모든 구토 기록을 시간순으로 반환합니다.
+            """)
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "구토 날짜별 조회 성공", content = {
+                    @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json",
+                            schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = ResponseDateApi.VomitingDateResponseApi.class))
+            }),
+            @ApiResponse(responseCode = "400", description = "잘못된 요청", content = {
+                    @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json",
+                            schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = ErrorResponseDTO.class))
+            }),
+            @ApiResponse(responseCode = "404", description = "반려동물 정보 없음", content = {
+                    @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json",
+                            schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = ErrorResponseDTO.class))
+            })
+    })
+    @GetMapping("/vomiting/date")
+    public ResponseEntity<ResponseDTO<ResponseDateListDTO<ResponseDateDTO.VomitingResponse>>> getVomitingByDate(@Valid @ModelAttribute RequestDateDTO dto) {
+        log.info("Received request to get vomiting records by date for pet ID: {} on date: {}", dto.getPetId(), dto.getDate());
+        ResponseDateListDTO<ResponseDateDTO.VomitingResponse> result = queryService.getVomitingByDate(dto);
+        log.info("Successfully retrieved vomiting records for pet ID: {} on date: {}", dto.getPetId(), dto.getDate());
+
+        return ResponseEntity
+                .status(SuccessCode.SUCCESS_GET_RECORD_LIST.getStatus().value())
+                .body(new ResponseDTO<>(SuccessCode.SUCCESS_GET_RECORD_LIST, result));
+    }
 }
