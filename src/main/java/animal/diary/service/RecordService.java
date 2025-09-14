@@ -35,6 +35,7 @@ public class RecordService {
     private final SnotRepository snotRepository;
     private final VomitingRepository vomitingRepository;
     private final WalkingRepository walkingRepository;
+    private final WaterRepository waterRepository;
     
     // 몸무게 기록
     public RecordResponseDTO.WeightResponseDTO recordWeight(RecordWithOutImageDTO.WeightRecordDTO dto) {
@@ -264,5 +265,14 @@ public class RecordService {
     }
 
 
+    public RecordResponseDTO.WaterResponseDTO recordWater(RecordWithOutImageDTO.WaterRecord dto) {
+        Pet pet = getPetOrThrow(dto.getPetId());
 
+        Water water = RecordWithOutImageDTO.WaterRecord.toWaterEntity(dto, pet);
+        log.info("Recording water intake for pet ID: {}, level: {}", pet.getId(), dto.getState());
+        waterRepository.save(water);
+        log.info("Successfully recorded water intake with ID: {}", water.getId());
+
+        return RecordResponseDTO.WaterResponseDTO.waterToDTO(water);
+    }
 }

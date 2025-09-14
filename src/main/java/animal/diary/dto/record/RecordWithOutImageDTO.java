@@ -67,6 +67,26 @@ public class RecordWithOutImageDTO {
 
     @Builder
     @Getter
+    public static class WaterRecord {
+        @NotNull(message = "펫 ID는 필수입니다.")
+        @Schema(description = "펫 ID", example = "1")
+        private Long petId;
+
+        // level
+        @NotNull(groups = StateGroup.class, message = "물 섭취량은 필수입니다.")
+        @Schema(description = "가능한 값: LOW, NORMAL, HIGH", example = "NORMAL")
+        private String state;
+
+        public static Water toWaterEntity(WaterRecord dto, Pet pet) {
+            return Water.builder()
+                    .state(LevelState.fromString(dto.getState(), () -> new InvalidStateException("물 섭취량 상태가 올바르지 않습니다.")))
+                    .pet(pet)
+                    .build();
+        }
+    }
+
+    @Builder
+    @Getter
     public static class RespiratoryRateAndHeartRateRecord {
         @NotNull(message = "펫 ID는 필수입니다.")
         @Schema(description = "펫 ID", example = "1")

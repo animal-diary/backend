@@ -8,6 +8,7 @@ import animal.diary.dto.api.RecordResponseApi;
 import animal.diary.dto.record.*;
 import animal.diary.dto.response.ErrorResponseDTO;
 import animal.diary.dto.response.ResponseDTO;
+import animal.diary.entity.record.state.LevelState;
 import animal.diary.exception.ImageSizeLimitException;
 import animal.diary.service.RecordService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -34,7 +35,7 @@ import java.util.List;
 @Tag(name = "Record Controller", description = "기록 생성 관련 API")
 public class RecordController {
     private final RecordService recordService;
-    // (2.3, 2.4, 2.5, 2.6, 2.7,2.8,2.9,2.10,2.11,2.13,2.14,2.15,2.16)
+    // (2.3, 2.4, 2.5, 2.6, 2.7,2.8,2.9,2.10,2.11,2.13,2.14,2.15,2.16, 2.17)
     // ====================================================== 몸무게 기록
     @Operation(summary = "몸무게 기록", description = """
             몸무게를 기록합니다.
@@ -502,4 +503,37 @@ public class RecordController {
                 .status(SuccessCode.SUCCESS_SAVE_RECORD.getStatus().value())
                 .body(new ResponseDTO<>(SuccessCode.SUCCESS_SAVE_RECORD, result));
     }
+
+    // ============================================================ 음수량 기록
+    @Operation(summary = "음수량 기록", description = """
+            음수량을 기록합니다.
+            - 필수 필드: petId, state
+            - state: 음수량 (LOW, NORMAL, HIGH)
+            - 음수량은 반려동물이 하루 동안 마신 물의 양을 나타냅니다.
+            """)
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "음수량 기록 성공", content = {
+                    @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json",
+                            schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = RecordResponseDTO.WaterResponseDTO.class))
+            }),
+            @ApiResponse(responseCode = "400", description = "잘못된 요청", content = {
+                    @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json",
+                            schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = ErrorResponseDTO.class))
+            }),
+            @ApiResponse(responseCode = "404", description = "반려동물 정보 없음", content = {
+                    @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json",
+                            schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = ErrorResponseDTO.class))
+            })
+    })
+    @PostMapping(value = "/water")
+    public ResponseEntity<ResponseDTO<RecordResponseDTO.WaterResponseDTO>> recordWaterIntake(@Validated(LevelState.class) @RequestBody RecordWithOutImageDTO.WaterRecord dto) {
+        log.info("Received water intake record request for pet ID: {}", dto.getPetId());
+        RecordResponseDTO.WaterResponseDTO result = recordService.recordWater(dto);
+        log.info("Water intake record completed for pet ID: {}", dto.getPetId());
+
+        return ResponseEntity
+                .status(SuccessCode.SUCCESS_SAVE_RECORD.getStatus().value())
+                .body(new ResponseDTO<>(SuccessCode.SUCCESS_SAVE_RECORD, result));
+    }
+
 }
