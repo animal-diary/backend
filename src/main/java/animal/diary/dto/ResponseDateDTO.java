@@ -323,4 +323,35 @@ public class ResponseDateDTO {
         // Walking to DTO
 
     }
+
+    @Builder
+    @Getter
+    public class WaterResponse {
+        @Schema(description = "일기 ID", example = "1")
+        private Long diaryId;
+        // LOW(적음), NORMAL(보통), HIGH(많음)
+        @Schema(description = "제목", example = "적음")
+        private String title;
+        @Schema(description = "물 섭취량 상태 (LOW, NORMAL, HIGH)", example = "NORMAL")
+        private String state;
+        @Schema(type = "string", example = "14:30", description = "기록 시간 (HH:mm)")
+        private LocalTime createdTime;
+
+        public static WaterResponse waterToDTO(Water water) {
+            // LOW(적음), NORMAL(보통), HIGH(많음)
+            String title = switch (water.getState()) {
+                case LOW -> "적음";
+                case NORMAL -> "보통";
+                case HIGH -> "많음";
+                default -> "";
+            };
+
+            return WaterResponse.builder()
+                    .diaryId(water.getId())
+                    .title(title)
+                    .state(water.getState().name())
+                    .createdTime(water.getCreatedAt().toLocalTime())
+                    .build();
+        }
+    }
 }
