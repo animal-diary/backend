@@ -444,4 +444,6 @@ public class QueryController {
                 .status(SuccessCode.SUCCESS_GET_RECORD_LIST.getStatus().value())
                 .body(new ResponseDTO<>(SuccessCode.SUCCESS_GET_RECORD_LIST, result));
     }
+
+    // =========================================================== 음수량 기록 조회
 }

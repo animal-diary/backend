@@ -270,4 +270,37 @@ public class RecordResponseDTO {
                     .build();
         }
     }
+
+    @Builder
+    @Getter
+    public class WaterResponseDTO {
+        @Schema(description = "반려동물 ID", example = "1")
+        private Long petId;
+        // NORMAL = 보통, LOW = 적음, HIGH = 많음
+        @Schema(description = "물 섭취량 제목", example = "적음")
+        private String title;
+        @Schema(description = "물 섭취량 상태", example = "NORMAL")
+        private String state;
+        @Schema(description = "물 섭취량 기록 생성 시간", example = "2023-10-01T12:00:00")
+        private LocalDateTime createdAt;
+
+        public static WaterResponseDTO waterToDTO(Water water) {
+            // NORMAL = 보통, LOW = 적음, HIGH = 많음 -> title
+            // NONE은 존재하지 않음
+
+            String title = switch (water.getState()) {
+                case NORMAL -> "보통";
+                case LOW -> "적음";
+                case HIGH -> "많음";
+                default -> null;
+            };
+
+            return WaterResponseDTO.builder()
+                    .petId(water.getPet().getId())
+                    .title(title)
+                    .state(water.getState().name())
+                    .createdAt(water.getCreatedAt())
+                    .build();
+        }
+    }
 }
