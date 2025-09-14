@@ -468,4 +468,38 @@ public class RecordController {
                 .status(SuccessCode.SUCCESS_SAVE_RECORD.getStatus().value())
                 .body(new ResponseDTO<>(SuccessCode.SUCCESS_SAVE_RECORD, result));
     }
+
+    // ============================================================ 걷는 모습 기록
+    @Operation(summary = "걷는 모습 기록", description = """
+            걷는 모습을 기록합니다.
+            - 필수 필드: petId
+            - video: 걷는 모습 영상 (필수, 최대 50MB)
+            """)
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "걷는 모습 기록 성공", content = {
+                    @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json",
+                            schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = RecordResponseDTO.WalkingResponseDTO.class))
+            }),
+            @ApiResponse(responseCode = "400", description = "잘못된 요청", content = {
+                    @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json",
+                            schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = ErrorResponseDTO.class))
+            }),
+            @ApiResponse(responseCode = "404", description = "반려동물 정보 없음", content = {
+                    @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json",
+                            schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = ErrorResponseDTO.class))
+            })
+    })
+    @PostMapping(value = "/walking", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ResponseDTO<RecordResponseDTO.WalkingResponseDTO>> recordWalkingAppearance(
+            @RequestPart WalkingRecordDTO dto,
+            @RequestPart(value = "video", required = true) MultipartFile video) {
+
+        log.info("Received walking appearance record request for pet ID: {}", dto.getPetId());
+        RecordResponseDTO.WalkingResponseDTO result = recordService.recordWalking(dto, video);
+        log.info("Walking appearance record completed for pet ID: {}", dto.getPetId());
+
+        return ResponseEntity
+                .status(SuccessCode.SUCCESS_SAVE_RECORD.getStatus().value())
+                .body(new ResponseDTO<>(SuccessCode.SUCCESS_SAVE_RECORD, result));
+    }
 }

@@ -284,7 +284,7 @@ public class QueryController {
                 .body(new ResponseDTO<>(SuccessCode.SUCCESS_GET_RECORD_LIST, result));
     }
 
-    // ==================================== 경련 상태 일별 조회
+    // 2.10=================================== 경련 상태 일별 조회
     @Operation(summary = "경련 상태 날짜별 조회", description = """
             특정 날짜의 경련 상태 기록을 조회합니다.
             - 필수 필드: petId, date
@@ -316,7 +316,7 @@ public class QueryController {
                 .body(new ResponseDTO<>(SuccessCode.SUCCESS_GET_RECORD_LIST, result));
     }
 
-    // ==================================== 이상한 소리 일별 조회
+    // 2.8==================================== 이상한 소리 일별 조회
     @Operation(summary = "이상한 소리 날짜별 조회", description = """
             특정 날짜의 이상한 소리 기록을 조회합니다.
             - 필수 필드: petId, date
@@ -349,7 +349,7 @@ public class QueryController {
     }
 
 
-    // ==================================== 콧물 일별 조회
+    // 2.9==================================== 콧물 일별 조회
     @Operation(summary = "콧물 날짜별 조회", description = """
             특정 날짜의 콧물 기록을 조회합니다.
             - 필수 필드: petId, date
@@ -381,7 +381,7 @@ public class QueryController {
                 .body(new ResponseDTO<>(SuccessCode.SUCCESS_GET_RECORD_LIST, result));
     }
 
-    // ==================================== 구토 일별 조회
+    // 2.11==================================== 구토 일별 조회
     @Operation(summary = "구토 날짜별 조회", description = """
             특정 날짜의 구토 기록을 조회합니다.
             - 필수 필드: petId, date
