@@ -45,6 +45,15 @@ public class GlobalExceptionHandler {
                 .body(new ErrorResponseDTO(errorCode));
     }
 
+    // 커스텀 예외 처리
+    @ExceptionHandler(DiaryNotFoundException.class)
+    protected ResponseEntity<ErrorResponseDTO> handleDiaryNotFound(final DiaryNotFoundException e) {
+        log.warn("Diary not found exception: {}", e.getMessage());
+        return ResponseEntity
+                .status(ErrorCode.DIARY_NOT_FOUND.getStatus().value())
+                .body(new ErrorResponseDTO(ErrorCode.DIARY_NOT_FOUND));
+    }
+
     @ExceptionHandler(DiseaseInvalidException.class)
     protected ResponseEntity<ErrorResponseDTO> handleDiseaseInvalid(final DiseaseInvalidException e) {
         log.warn("Invalid disease exception: {}", e.getMessage());

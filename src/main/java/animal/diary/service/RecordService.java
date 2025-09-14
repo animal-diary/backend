@@ -6,11 +6,13 @@ import animal.diary.dto.*;
 import animal.diary.dto.record.*;
 import animal.diary.entity.pet.Pet;
 import animal.diary.entity.record.*;
+import animal.diary.exception.DiaryNotFoundException;
 import animal.diary.exception.ImageSizeLimitException;
 import animal.diary.exception.PetNotFoundException;
 import animal.diary.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -316,6 +318,81 @@ public class RecordService {
         log.info("Successfully recorded defecation with ID: {}", defecation.getId());
 
         return RecordResponseDTO.DefecationResponseDTO.defecationToDTO(defecation);
+    }
+
+    // ======================================================== 기록 삭제 메서드들 (제네릭 방식)
+
+    public void deleteWeight(Long recordId) {
+        deleteRecord(weightRepository, recordId, "몸무게");
+    }
+
+    public void deleteEnergy(Long recordId) {
+        deleteRecord(energyRepository, recordId, "기력");
+    }
+
+    public void deleteAppetite(Long recordId) {
+        deleteRecord(appetiteRepository, recordId, "식욕");
+    }
+
+    public void deleteRR(Long recordId) {
+        deleteRecord(rrRepository, recordId, "호흡수");
+    }
+
+    public void deleteHeartRate(Long recordId) {
+        deleteRecord(heartRateRepository, recordId, "심박수");
+    }
+
+    public void deleteSyncope(Long recordId) {
+        deleteRecord(syncopeRepository, recordId, "실신");
+    }
+
+    public void deleteUrinary(Long recordId) {
+        deleteRecord(urinaryRepository, recordId, "소변");
+    }
+
+    public void deleteSignificant(Long recordId) {
+        deleteRecord(significantRecordRepository, recordId, "특이사항");
+    }
+
+    public void deleteConvulsion(Long recordId) {
+        deleteRecord(convulsionRecordRepository, recordId, "경련");
+    }
+
+    public void deleteSound(Long recordId) {
+        deleteRecord(soundRepository, recordId, "이상 소리");
+    }
+
+    public void deleteSnot(Long recordId) {
+        deleteRecord(snotRepository, recordId, "콧물");
+    }
+
+    public void deleteVomiting(Long recordId) {
+        deleteRecord(vomitingRepository, recordId, "구토");
+    }
+
+    public void deleteWalking(Long recordId) {
+        deleteRecord(walkingRepository, recordId, "걷는 모습");
+    }
+
+    public void deleteWater(Long recordId) {
+        deleteRecord(waterRepository, recordId, "음수량");
+    }
+
+    public void deleteSkin(Long recordId) {
+        deleteRecord(skinRepository, recordId, "피부 상태");
+    }
+
+    public void deleteDefecation(Long recordId) {
+        deleteRecord(defecationRepository, recordId, "배변");
+    }
+
+    // 제네릭 삭제 메서드
+    private <T> void deleteRecord(JpaRepository<T, Long> repository, Long recordId, String recordType) {
+        if (!repository.existsById(recordId)) {
+            throw new DiaryNotFoundException(recordType + " 기록을 찾을 수 없습니다. ID: " + recordId);
+        }
+        repository.deleteById(recordId);
+        log.info("Successfully deleted {} record with ID: {}", recordType, recordId);
     }
 
     // 공통 유틸리티 메서드
