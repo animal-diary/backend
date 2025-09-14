@@ -34,7 +34,7 @@ import java.util.List;
 @Tag(name = "Record Controller", description = "기록 생성 관련 API")
 public class RecordController {
     private final RecordService recordService;
-
+    // (2.3, 2.4, 2.5, 2.6, 2.7,2.8,2.9,2.10,2.11,2.13,2.14,2.15,2.16)
     // ====================================================== 몸무게 기록
     @Operation(summary = "몸무게 기록", description = """
             몸무게를 기록합니다.

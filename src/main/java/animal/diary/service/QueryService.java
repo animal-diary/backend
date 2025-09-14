@@ -38,6 +38,7 @@ public class QueryService {
     private final SoundRepository soundRepository;
     private final SnotRepository snotRepository;
     private final VomitingRepository vomitingRepository;
+    private final WalkingRepository walkingRepository;
 
     // 2.3몸무게 조회
     public ResponseDateListDTO<ResponseDateDTO.WeightResponse> getWeightsByDate(RequestDateDTO dto) {
@@ -431,6 +432,44 @@ public class QueryService {
                 .build();
     }
 
+    // 2.16 ============================================================== 걷는 모습 일별 조회
+    public ResponseDateListDTO<ResponseDateDTO.WalkingResponse> getWalkingByDate(RequestDateDTO dto) {
+        Pet pet = getPetOrThrow(dto.getPetId());
+
+        LocalDate date = dto.getDate();
+        validateDate(dto.getDate());
+
+        LocalDateTime[] range = getStartAndEndOfDay(dto.getDate());
+
+        log.info("Fetching walking records for pet ID: {} on date: {}", pet.getId(), date);
+        List<Walking> walkingList = walkingRepository.findAllByPetIdAndCreatedAtBetween(pet.getId(), range[0], range[1]);
+        log.info("Found {} walking records for pet ID: {} on date: {}", walkingList.size(), pet.getId(), date);
+
+        if (walkingList.isEmpty()) {
+            throw new EmptyListException("비어있음");
+        }
+
+        List<ResponseDateDTO.WalkingResponse> result = walkingList.stream().map(
+                walking -> {
+                    String videoUrl = walking.getImageUrl();
+                    if (videoUrl == null || videoUrl.isEmpty()) {
+                        return ResponseDateDTO.WalkingResponse.walkingToDTO(walking, null);
+                    }
+
+                    String videoCloudFrontUrl = cloudFrontUrlService.generateSignedUrl(videoUrl);
+
+                    return ResponseDateDTO.WalkingResponse.walkingToDTO(walking, videoCloudFrontUrl);
+                }
+        ).toList();
+
+        return ResponseDateListDTO.<ResponseDateDTO.WalkingResponse>builder()
+                .date(date)
+                .type(pet.getType().toString())
+                .dateDTOS(result)
+                .build();
+
+    }
+
 
     // 공통 유틸리티 메서드들
     private Pet getPetOrThrow(Long petId) {
@@ -447,6 +486,7 @@ public class QueryService {
     private LocalDateTime[] getStartAndEndOfDay(LocalDate date) {
         return new LocalDateTime[]{date.atStartOfDay(), date.atTime(LocalTime.MAX)};
     }
+
 
 
 }
