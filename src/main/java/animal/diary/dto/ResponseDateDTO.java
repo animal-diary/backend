@@ -250,4 +250,24 @@ public class ResponseDateDTO {
                     .build();
         }
     }
+
+    @Builder
+    @Getter
+    public static class VomitingResponse {
+        private Long diaryId;
+        private String state;
+        private List<String> imageUrls;
+        @Schema(type = "string", example = "14:30", description = "기록 시간 (HH:mm)")
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm")
+        private LocalTime createdTime;
+
+        public static VomitingResponse vomitingToDTO(Vomiting vomiting, List<String> imageUrls) {
+            return VomitingResponse.builder()
+                    .diaryId(vomiting.getId())
+                    .state(vomiting.getState().name())
+                    .imageUrls(imageUrls != null ? imageUrls : List.of())
+                    .createdTime(vomiting.getCreatedAt().toLocalTime())
+                    .build();
+        }
+    }
 }

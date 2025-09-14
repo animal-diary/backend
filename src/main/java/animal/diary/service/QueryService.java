@@ -37,6 +37,7 @@ public class QueryService {
     private final CloudFrontUrlService cloudFrontUrlService;
     private final SoundRepository soundRepository;
     private final SnotRepository snotRepository;
+    private final VomitingRepository vomitingRepository;
 
     // 몸무게 조회
     public ResponseDateListDTO<ResponseDateDTO.WeightResponse> getWeightsByDate(RequestDateDTO dto) {
@@ -388,6 +389,46 @@ public class QueryService {
                 .dateDTOS(result)
                 .build();
 
+    }
+
+    // ============================================================== 구토 일별 조회
+    public ResponseDateListDTO<ResponseDateDTO.VomitingResponse> getVomitingByDate(RequestDateDTO dto) {
+        Pet pet = getPetOrThrow(dto.getPetId());
+
+        LocalDate date = dto.getDate();
+        validateDate(dto.getDate());
+
+        LocalDateTime[] range = getStartAndEndOfDay(dto.getDate());
+
+        log.info("Fetching vomiting records for pet ID: {} on date: {}", pet.getId(), date);
+        List<Vomiting> vomitingList = vomitingRepository.findAllByPetIdAndCreatedAtBetween(pet.getId(), range[0], range[1]);
+        log.info("Found {} vomiting records for pet ID: {} on date: {}", vomitingList.size(), pet.getId(), date);
+
+        if (vomitingList.isEmpty()) {
+            throw new EmptyListException("비어있음");
+        }
+
+        List<ResponseDateDTO.VomitingResponse> result = vomitingList.stream().map(
+                vomiting -> {
+                    List<String> imageUrls = vomiting.getImageUrls();
+                    if (imageUrls == null || imageUrls.isEmpty()) {
+                        return ResponseDateDTO.VomitingResponse.vomitingToDTO(vomiting, List.of());
+                    }
+
+                    // 스트림으로 변환하여 성능 향상
+                    List<String> imageCloudFrontUrls = imageUrls.stream()
+                            .map(cloudFrontUrlService::generateSignedUrl)
+                            .toList();
+
+                    return ResponseDateDTO.VomitingResponse.vomitingToDTO(vomiting, imageCloudFrontUrls);
+                }
+        ).toList();
+
+        return ResponseDateListDTO.<ResponseDateDTO.VomitingResponse>builder()
+                .date(date)
+                .type(pet.getType().toString())
+                .dateDTOS(result)
+                .build();
     }
 
 
