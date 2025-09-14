@@ -39,7 +39,7 @@ public class QueryService {
     private final SnotRepository snotRepository;
     private final VomitingRepository vomitingRepository;
 
-    // 몸무게 조회
+    // 2.3몸무게 조회
     public ResponseDateListDTO<ResponseDateDTO.WeightResponse> getWeightsByDate(RequestDateDTO dto) {
         Pet pet = getPetOrThrow(dto.getPetId());
 
@@ -67,7 +67,7 @@ public class QueryService {
                 .build();
     }
 
-    // 기력/식욕 상태 조회
+    // 2.4, 2.5기력/식욕 상태 조회
     public ResponseDateListDTO<ResponseDateDTO.StateResponse> getEnergyOrAppetiteByDate(RequestDateDTO dto, String category) {
         Pet pet = getPetOrThrow(dto.getPetId());
 
@@ -111,7 +111,7 @@ public class QueryService {
                 .build();
     }
 
-    // 호흡수/심박수 조회
+    // 2.7, 호흡수/심박수 조회
     public ResponseDateListDTO<ResponseDateDTO.CountResponse> getRROrHeartRateByDate(RequestDateDTO dto, VitalCategory category) {
         Pet pet = getPetOrThrow(dto.getPetId());
         validateDate(dto.getDate());
@@ -235,7 +235,7 @@ public class QueryService {
                 .build();
     }
 
-    // =========================================================== 특이 사항 일별 조회
+    // 2.6=========================================================== 특이 사항 일별 조회
     public ResponseDateListDTO<ResponseDateDTO.SignificantResponse> getSignificantByDate(RequestDateDTO dto) {
         Pet pet = getPetOrThrow(dto.getPetId());
 
@@ -278,7 +278,7 @@ public class QueryService {
                 .build();
     }
 
-    // =========================================================== 경련 상태 일별 조회
+    // 2.10=========================================================== 경련 상태 일별 조회
     public ResponseDateListDTO<ResponseDateDTO.ConvulsionResponse> getConvulsionByDate(RequestDateDTO dto) {
         Pet pet = getPetOrThrow(dto.getPetId());
 
@@ -314,7 +314,7 @@ public class QueryService {
                 .build();
     }
 
-    // =========================================================== 이상 소리 일별 조회
+    // 2.8=========================================================== 이상 소리 일별 조회
     public ResponseDateListDTO<ResponseDateDTO.SoundResponse> getSoundByDate(RequestDateDTO dto) {
         Pet pet = getPetOrThrow(dto.getPetId());
 
@@ -350,7 +350,7 @@ public class QueryService {
                 .build();
     }
 
-    // ============================================================== 콧물 일별 조회
+    // 2.9============================================================== 콧물 일별 조회
     public ResponseDateListDTO<ResponseDateDTO.SnotResponse> getSnotByDate(RequestDateDTO dto) {
         Pet pet = getPetOrThrow(dto.getPetId());
 
@@ -391,7 +391,7 @@ public class QueryService {
 
     }
 
-    // ============================================================== 구토 일별 조회
+    // 2.11============================================================== 구토 일별 조회
     public ResponseDateListDTO<ResponseDateDTO.VomitingResponse> getVomitingByDate(RequestDateDTO dto) {
         Pet pet = getPetOrThrow(dto.getPetId());
 
