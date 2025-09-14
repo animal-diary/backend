@@ -36,6 +36,7 @@ public class RecordService {
     private final VomitingRepository vomitingRepository;
     private final WalkingRepository walkingRepository;
     private final WaterRepository waterRepository;
+    private final SkinRepository skinRepository;
     
     // 몸무게 기록
     public RecordResponseDTO.WeightResponseDTO recordWeight(RecordWithOutImageDTO.WeightRecordDTO dto) {
@@ -258,13 +259,7 @@ public class RecordService {
         return RecordResponseDTO.WalkingResponseDTO.walkingToDTO(walking);
     }
 
-    // 공통 유틸리티 메서드
-    private Pet getPetOrThrow(Long petId) {
-        return petRepository.findById(petId)
-                .orElseThrow(() -> new PetNotFoundException("펫 못 찾음"));
-    }
-
-
+    // ======================================================== 물 섭취 기록
     public RecordResponseDTO.WaterResponseDTO recordWater(RecordWithOutImageDTO.WaterRecord dto) {
         Pet pet = getPetOrThrow(dto.getPetId());
 
@@ -275,4 +270,35 @@ public class RecordService {
 
         return RecordResponseDTO.WaterResponseDTO.waterToDTO(water);
     }
+
+    // ======================================================== 피부/털 상태 기록
+    public RecordResponseDTO.SkinResponseDTO recordSkin(SkinRecordDTO dto, List<MultipartFile> images) {
+        Pet pet = getPetOrThrow(dto.getPetId());
+
+        // 이미지 10장 제한
+        if (images.size() > 10) {
+            throw new ImageSizeLimitException(ErrorCode.IMAGE_SIZE_LIMIT_10);
+        }
+
+        // 이미지 업로드
+        List<String> imageUrls = s3Uploader.uploadMultiple(images, "skin");
+
+        Skin skin = SkinRecordDTO.toEntity(dto, pet, imageUrls);
+
+        log.info("Recording skin for pet ID: {}, title: {}", pet.getId(), dto.getState());
+        skinRepository.save(skin);
+        log.info("Successfully recorded skin with ID: {}", skin.getId());
+
+        return RecordResponseDTO.SkinResponseDTO.skinToDTO(skin);
+
+    }
+
+    // 공통 유틸리티 메서드
+    private Pet getPetOrThrow(Long petId) {
+        return petRepository.findById(petId)
+                .orElseThrow(() -> new PetNotFoundException("펫 못 찾음"));
+    }
+
+
+
 }

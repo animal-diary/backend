@@ -536,4 +536,39 @@ public class RecordController {
                 .body(new ResponseDTO<>(SuccessCode.SUCCESS_SAVE_RECORD, result));
     }
 
+    // =========================================================== 피부 상태 기록
+    @Operation(summary = "피부 상태 기록", description = """
+            피부 상태를 기록합니다.
+            - 필수 필드: petId, state
+            - state: 피부 상태 (0, 1, 2, 3)
+            - 이미지는 최대 10장까지 업로드 가능합니다.
+            """)
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "피부 상태 기록 성공", content = {
+                    @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json",
+                            schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = RecordResponseDTO.SkinResponseDTO.class))
+            }),
+            @ApiResponse(responseCode = "400", description = "잘못된 요청", content = {
+                    @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json",
+                            schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = ErrorResponseDTO.class))
+            }),
+            @ApiResponse(responseCode = "404", description = "반려동물 정보 없음", content = {
+                    @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json",
+                            schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = ErrorResponseDTO.class))
+            })
+    })
+    @PostMapping(value = "/skin", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ResponseDTO<RecordResponseDTO.SkinResponseDTO>> recordSkin(
+            @RequestPart SkinRecordDTO dto,
+            @RequestPart(value = "images", required = false) List<MultipartFile> images) {
+
+        log.info("Received skin record request for pet ID: {} with state: {}", dto.getPetId(), dto.getState());
+        RecordResponseDTO.SkinResponseDTO result = recordService.recordSkin(dto, images);
+        log.info("Skin record completed for pet ID: {}", dto.getPetId());
+
+        return ResponseEntity
+                .status(SuccessCode.SUCCESS_SAVE_RECORD.getStatus().value())
+                .body(new ResponseDTO<>(SuccessCode.SUCCESS_SAVE_RECORD, result));
+    }
+
 }
