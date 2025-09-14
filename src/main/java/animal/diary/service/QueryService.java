@@ -41,6 +41,7 @@ public class QueryService {
     private final WalkingRepository walkingRepository;
     private final WaterRepository waterRepository;
     private final SkinRepository skinRepository;
+    private final DefecationRepository defecationRepository;
 
     // 2.3몸무게 조회
     public ResponseDateListDTO<ResponseDateDTO.WeightResponse> getWeightsByDate(RequestDateDTO dto) {
@@ -550,6 +551,46 @@ public class QueryService {
         ).toList();
 
         return ResponseDateListDTO.<ResponseDateDTO.SkinResponse>builder()
+                .date(date)
+                .type(pet.getType().toString())
+                .dateDTOS(result)
+                .build();
+    }
+
+    // 2.18============================================================== 배변 일별 조회
+    public ResponseDateListDTO<ResponseDateDTO.DefecationResponse> getDefecationByDate(RequestDateDTO dto) {
+        Pet pet = getPetOrThrow(dto.getPetId());
+
+        LocalDate date = dto.getDate();
+        validateDate(dto.getDate());
+
+        LocalDateTime[] range = getStartAndEndOfDay(dto.getDate());
+
+        log.info("Fetching defecation records for pet ID: {} on date: {}", pet.getId(), date);
+        List<Defecation> defecationList = defecationRepository.findAllByPetIdAndCreatedAtBetween(pet.getId(), range[0], range[1]);
+        log.info("Found {} defecation records for pet ID: {} on date: {}", defecationList.size(), pet.getId(), date);
+
+        if (defecationList.isEmpty()) {
+            throw new EmptyListException("비어있음");
+        }
+
+        List<ResponseDateDTO.DefecationResponse> result = defecationList.stream().map(
+                defecation -> {
+                    List<String> imageUrls = defecation.getImageUrls();
+                    if (imageUrls == null || imageUrls.isEmpty()) {
+                        return ResponseDateDTO.DefecationResponse.defecationToDTO(defecation, List.of());
+                    }
+
+                    // 스트림으로 변환하여 성능 향상
+                    List<String> imageCloudFrontUrls = imageUrls.stream()
+                            .map(cloudFrontUrlService::generateSignedUrl)
+                            .toList();
+
+                    return ResponseDateDTO.DefecationResponse.defecationToDTO(defecation, imageCloudFrontUrls);
+                }
+        ).toList();
+
+        return ResponseDateListDTO.<ResponseDateDTO.DefecationResponse>builder()
                 .date(date)
                 .type(pet.getType().toString())
                 .dateDTOS(result)

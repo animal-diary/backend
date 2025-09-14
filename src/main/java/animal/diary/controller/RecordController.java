@@ -18,6 +18,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
@@ -565,6 +566,43 @@ public class RecordController {
         log.info("Received skin record request for pet ID: {} with state: {}", dto.getPetId(), dto.getState());
         RecordResponseDTO.SkinResponseDTO result = recordService.recordSkin(dto, images);
         log.info("Skin record completed for pet ID: {}", dto.getPetId());
+
+        return ResponseEntity
+                .status(SuccessCode.SUCCESS_SAVE_RECORD.getStatus().value())
+                .body(new ResponseDTO<>(SuccessCode.SUCCESS_SAVE_RECORD, result));
+    }
+
+    // =========================================================== 배변 상태 기록
+    @Operation(summary = "배변 상태 기록", description = """
+            배변 상태를 기록합니다.
+            - 필수 필드: petId, level
+            - level: 배변량 (NONE, LOW, NORMAL, HIGH)
+            - state: 대변 상태 (NORMAL, DIARRHEA, BLACK, BLOODY, ETC) - level이 NONE이 아닐 때 필수
+            - memo: 메모 - level이 NONE이 아닐 때만 입력 가능
+            - 이미지는 최대 10장까지 업로드 가능합니다.
+            """)
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "배변 상태 기록 성공", content = {
+                    @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json",
+                            schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = RecordResponseDTO.DefecationResponseDTO.class))
+            }),
+            @ApiResponse(responseCode = "400", description = "잘못된 요청", content = {
+                    @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json",
+                            schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = ErrorResponseDTO.class))
+            }),
+            @ApiResponse(responseCode = "404", description = "반려동물 정보 없음", content = {
+                    @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json",
+                            schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = ErrorResponseDTO.class))
+            })
+    })
+    @PostMapping(value = "/defecation", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ResponseDTO<RecordResponseDTO.DefecationResponseDTO>> recordDefecation(
+            @Valid @RequestPart DefecationRecordDTO dto,
+            @RequestPart(value = "images", required = false) List<MultipartFile> images) {
+
+        log.info("Received defecation record request for pet ID: {} with level: {} and state: {}", dto.getPetId(), dto.getLevel(), dto.getState());
+        RecordResponseDTO.DefecationResponseDTO result = recordService.recordDefecation(dto, images);
+        log.info("Defecation record completed for pet ID: {}", dto.getPetId());
 
         return ResponseEntity
                 .status(SuccessCode.SUCCESS_SAVE_RECORD.getStatus().value())

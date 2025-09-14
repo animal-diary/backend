@@ -37,6 +37,7 @@ public class RecordService {
     private final WalkingRepository walkingRepository;
     private final WaterRepository waterRepository;
     private final SkinRepository skinRepository;
+    private final DefecationRepository defecationRepository;
     
     // 몸무게 기록
     public RecordResponseDTO.WeightResponseDTO recordWeight(RecordWithOutImageDTO.WeightRecordDTO dto) {
@@ -291,6 +292,30 @@ public class RecordService {
 
         return RecordResponseDTO.SkinResponseDTO.skinToDTO(skin);
 
+    }
+
+    // ======================================================== 배변 상태 기록
+    public RecordResponseDTO.DefecationResponseDTO recordDefecation(DefecationRecordDTO dto, List<MultipartFile> images) {
+        Pet pet = getPetOrThrow(dto.getPetId());
+
+        // 이미지가 있다면 10장 제한
+        if (images != null && images.size() > 10) {
+            throw new ImageSizeLimitException(ErrorCode.IMAGE_SIZE_LIMIT_10);
+        }
+
+        // 이미지 업로드 (없을 수도 있음)
+        List<String> imageUrls = List.of();
+        if (images != null && !images.isEmpty()) {
+            imageUrls = s3Uploader.uploadMultiple(images, "defecation");
+        }
+
+        Defecation defecation = DefecationRecordDTO.toEntity(dto, pet, imageUrls);
+
+        log.info("Recording defecation for pet ID: {}, level: {}, state: {}", pet.getId(), dto.getLevel(), dto.getState());
+        defecationRepository.save(defecation);
+        log.info("Successfully recorded defecation with ID: {}", defecation.getId());
+
+        return RecordResponseDTO.DefecationResponseDTO.defecationToDTO(defecation);
     }
 
     // 공통 유틸리티 메서드
