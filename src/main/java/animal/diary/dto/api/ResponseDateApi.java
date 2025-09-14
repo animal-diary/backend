@@ -77,4 +77,10 @@ public class ResponseDateApi extends ResponseDTO<ResponseDateListDTO<?>> {
             super(successCode, data);
         }
     }
+
+    public static class SkinDateResponseApi extends ResponseDTO<ResponseDateListDTO<RecordResponseDTO.SkinResponseDTO>> {
+        public SkinDateResponseApi(SuccessCode successCode, ResponseDateListDTO<RecordResponseDTO.SkinResponseDTO> data) {
+            super(successCode, data);
+        }
+    }
 }

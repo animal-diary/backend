@@ -30,6 +30,7 @@ public class SkinRecordDTO {
 
     public static Skin toEntity(SkinRecordDTO dto, Pet pet, List<String> imageUrls) {
         return Skin.builder()
+                // 유효성 검사
                 .state(NumberState.fromString(dto.getState()))
                 .memo(dto.getMemo())
                 .pet(pet)
