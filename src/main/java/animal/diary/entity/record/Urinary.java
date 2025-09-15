@@ -4,14 +4,12 @@ import animal.diary.entity.record.state.BinaryState;
 import animal.diary.entity.record.state.LevelState;
 import animal.diary.entity.record.state.UrineState;
 import animal.diary.util.StringListConverter;
-import jakarta.persistence.Convert;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
+import org.hibernate.annotations.Formula;
 
 import java.util.List;
 
@@ -35,4 +33,7 @@ public class Urinary extends Diary {
     @Size(max = 5000)
     @Convert(converter = StringListConverter.class)
     private List<String> imageUrls; // 이미지 URL 목록
+
+    @Formula("image_urls")
+    private String imageUrlsRaw;
 }
