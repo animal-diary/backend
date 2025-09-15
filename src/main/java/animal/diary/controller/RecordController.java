@@ -608,6 +608,4 @@ public class RecordController {
                 .status(SuccessCode.SUCCESS_SAVE_RECORD.getStatus().value())
                 .body(new ResponseDTO<>(SuccessCode.SUCCESS_SAVE_RECORD, result));
     }
-
-
 }
