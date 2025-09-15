@@ -137,7 +137,7 @@ public class RecordService {
         Pet pet = getPetOrThrow(dto.getPetId());
 
         // 이미지 10장 제한
-        if (images.size() > 10) {
+        if (images != null && images.size() > 10) {
             throw new ImageSizeLimitException(ErrorCode.IMAGE_SIZE_LIMIT_10);
         }
 
@@ -204,7 +204,7 @@ public class RecordService {
         Pet pet = getPetOrThrow(dto.getPetId());
 
         // 이미지 10장 제한
-        if (images.size() > 10) {
+        if (images != null && images.size() > 10) {
             throw new ImageSizeLimitException(ErrorCode.IMAGE_SIZE_LIMIT_10);
         }
 
@@ -226,7 +226,7 @@ public class RecordService {
         Pet pet = getPetOrThrow(dto.getPetId());
 
         // 이미지 10장 제한
-        if (images.size() > 10) {
+        if (images != null && images.size() > 10) {
             throw new ImageSizeLimitException(ErrorCode.IMAGE_SIZE_LIMIT_10);
         }
 
@@ -279,7 +279,7 @@ public class RecordService {
         Pet pet = getPetOrThrow(dto.getPetId());
 
         // 이미지 10장 제한
-        if (images.size() > 10) {
+        if (images != null && images.size() > 10) {
             throw new ImageSizeLimitException(ErrorCode.IMAGE_SIZE_LIMIT_10);
         }
 

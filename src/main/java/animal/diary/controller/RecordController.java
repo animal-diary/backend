@@ -1,5 +1,6 @@
 package animal.diary.controller;
 
+import animal.diary.annotation.ValidatePetWithApiResponse;
 import animal.diary.code.ErrorCode;
 import animal.diary.code.SuccessCode;
 import animal.diary.code.VitalCategory;
@@ -33,6 +34,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/record")
 @RequiredArgsConstructor
+@ValidatePetWithApiResponse
 @Tag(name = "Record Controller", description = "기록 생성 관련 API")
 public class RecordController {
     private final RecordService recordService;
@@ -50,10 +52,6 @@ public class RecordController {
                             schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = RecordResponseApi.WeightResponseApi.class))
             }),
             @ApiResponse(responseCode = "400", description = "잘못된 요청", content = {
-                    @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json",
-                            schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = ErrorResponseDTO.class))
-            }),
-            @ApiResponse(responseCode = "404", description = "반려동물 정보 없음", content = {
                     @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json",
                             schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = ErrorResponseDTO.class))
             })
@@ -84,10 +82,6 @@ public class RecordController {
             @ApiResponse(responseCode = "400", description = "잘못된 요청", content = {
                     @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json",
                             schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = ErrorResponseDTO.class))
-            }),
-            @ApiResponse(responseCode = "404", description = "반려동물 정보 없음", content = {
-                    @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json",
-                            schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = ErrorResponseDTO.class))
             })
     })
     @PostMapping("/energy")
@@ -114,10 +108,6 @@ public class RecordController {
                             schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = RecordResponseApi.EnergyAndAppetiteResponseApi.class))
             }),
             @ApiResponse(responseCode = "400", description = "잘못된 요청", content = {
-                    @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json",
-                            schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = ErrorResponseDTO.class))
-            }),
-            @ApiResponse(responseCode = "404", description = "반려동물 정보 없음", content = {
                     @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json",
                             schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = ErrorResponseDTO.class))
             })
@@ -148,10 +138,6 @@ public class RecordController {
             @ApiResponse(responseCode = "400", description = "잘못된 요청", content = {
                     @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json",
                             schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = ErrorResponseDTO.class))
-            }),
-            @ApiResponse(responseCode = "404", description = "반려동물 정보 없음", content = {
-                    @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json",
-                            schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = ErrorResponseDTO.class))
             })
     })
     @PostMapping("/RR")
@@ -180,10 +166,6 @@ public class RecordController {
             @ApiResponse(responseCode = "400", description = "잘못된 요청", content = {
                     @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json",
                             schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = ErrorResponseDTO.class))
-            }),
-            @ApiResponse(responseCode = "404", description = "반려동물 정보 없음", content = {
-                    @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json",
-                            schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = ErrorResponseDTO.class))
             })
     })
     @PostMapping("/heart-rate")
@@ -210,10 +192,6 @@ public class RecordController {
                             schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = RecordResponseDTO.SyncopeResponseDTO.class))
             }),
             @ApiResponse(responseCode = "400", description = "잘못된 요청", content = {
-                    @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json",
-                            schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = ErrorResponseDTO.class))
-            }),
-            @ApiResponse(responseCode = "404", description = "반려동물 정보 없음", content = {
                     @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json",
                             schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = ErrorResponseDTO.class))
             })
@@ -260,10 +238,6 @@ public class RecordController {
                             @ExampleObject(name = "사진 개수 제한 초과 (최대 10장)")
                     })
             }),
-            @ApiResponse(responseCode = "404", description = "반려동물 정보 없음", content = {
-                    @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = ErrorResponseDTO.class))
-            })
     })
     @PostMapping(value ="/urine", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ResponseDTO<RecordResponseDTO.UrinaryResponseDTO>> recordUrine(@Validated(UrineGroup.class) @RequestPart UrinaryRecordDTO dto,
@@ -305,10 +279,6 @@ public class RecordController {
             @ApiResponse(responseCode = "400", description = "잘못된 요청", content = {
                     @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json",
                             schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = ErrorResponseDTO.class))
-            }),
-            @ApiResponse(responseCode = "404", description = "반려동물 정보 없음", content = {
-                    @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json",
-                            schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = ErrorResponseDTO.class))
             })
     })
     @PostMapping(value = "/significant", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -346,10 +316,6 @@ public class RecordController {
             @ApiResponse(responseCode = "400", description = "잘못된 요청", content = {
                     @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json",
                             schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = ErrorResponseDTO.class))
-            }),
-            @ApiResponse(responseCode = "404", description = "반려동물 정보 없음", content = {
-                    @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json",
-                            schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = ErrorResponseDTO.class))
             })
     })
     @PostMapping(value = "/convulsion", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -378,10 +344,6 @@ public class RecordController {
                             schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = RecordResponseDTO.SoundResponseDTO.class))
             }),
             @ApiResponse(responseCode = "400", description = "잘못된 요청", content = {
-                    @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json",
-                            schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = ErrorResponseDTO.class))
-            }),
-            @ApiResponse(responseCode = "404", description = "반려동물 정보 없음", content = {
                     @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json",
                             schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = ErrorResponseDTO.class))
             })
@@ -416,10 +378,6 @@ public class RecordController {
             @ApiResponse(responseCode = "400", description = "잘못된 요청", content = {
                     @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json",
                             schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = ErrorResponseDTO.class))
-            }),
-            @ApiResponse(responseCode = "404", description = "반려동물 정보 없음", content = {
-                    @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json",
-                            schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = ErrorResponseDTO.class))
             })
     })
     @PostMapping(value = "/snot", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -451,10 +409,6 @@ public class RecordController {
             @ApiResponse(responseCode = "400", description = "잘못된 요청", content = {
                     @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json",
                             schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = ErrorResponseDTO.class))
-            }),
-            @ApiResponse(responseCode = "404", description = "반려동물 정보 없음", content = {
-                    @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json",
-                            schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = ErrorResponseDTO.class))
             })
     })
     @PostMapping(value = "/vomiting", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -483,10 +437,6 @@ public class RecordController {
                             schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = RecordResponseDTO.WalkingResponseDTO.class))
             }),
             @ApiResponse(responseCode = "400", description = "잘못된 요청", content = {
-                    @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json",
-                            schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = ErrorResponseDTO.class))
-            }),
-            @ApiResponse(responseCode = "404", description = "반려동물 정보 없음", content = {
                     @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json",
                             schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = ErrorResponseDTO.class))
             })
@@ -520,10 +470,6 @@ public class RecordController {
             @ApiResponse(responseCode = "400", description = "잘못된 요청", content = {
                     @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json",
                             schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = ErrorResponseDTO.class))
-            }),
-            @ApiResponse(responseCode = "404", description = "반려동물 정보 없음", content = {
-                    @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json",
-                            schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = ErrorResponseDTO.class))
             })
     })
     @PostMapping(value = "/water")
@@ -550,10 +496,6 @@ public class RecordController {
                             schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = RecordResponseDTO.SkinResponseDTO.class))
             }),
             @ApiResponse(responseCode = "400", description = "잘못된 요청", content = {
-                    @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json",
-                            schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = ErrorResponseDTO.class))
-            }),
-            @ApiResponse(responseCode = "404", description = "반려동물 정보 없음", content = {
                     @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json",
                             schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = ErrorResponseDTO.class))
             })
@@ -587,10 +529,6 @@ public class RecordController {
                             schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = RecordResponseDTO.DefecationResponseDTO.class))
             }),
             @ApiResponse(responseCode = "400", description = "잘못된 요청", content = {
-                    @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json",
-                            schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = ErrorResponseDTO.class))
-            }),
-            @ApiResponse(responseCode = "404", description = "반려동물 정보 없음", content = {
                     @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json",
                             schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = ErrorResponseDTO.class))
             })
