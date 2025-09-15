@@ -51,4 +51,12 @@ public class PetService {
 
         return petList.stream().map((GetMyPetInfoDTO::toDTO)).collect(Collectors.toList());
     }
+
+    // 펫 정보 가져오기
+    public Pet getPetById(Long petId) {
+        return petRepository.findById(petId).orElseThrow(
+                () -> new IllegalArgumentException("존재하지 않는 펫")
+        );
+    }
+
 }

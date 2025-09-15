@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/v1/records")
+@RequestMapping("/api/v1/records")
 @RequiredArgsConstructor
 @RecordNotFoundApiResponse
 @Tag(name = "Record Delete", description = "기록 삭제 API")

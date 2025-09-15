@@ -2,7 +2,10 @@ package animal.diary.controller;
 
 import animal.diary.annotation.ValidatePetId;
 import animal.diary.annotation.ValidatePetWithApiResponse;
+import animal.diary.code.SuccessCode;
 import animal.diary.dto.response.FlatStatisticsResponseDTO;
+import animal.diary.dto.response.FrequencyMonthlyResponseDTO;
+import animal.diary.dto.response.ResponseDTO;
 import animal.diary.service.FlatStatisticsService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -44,11 +47,86 @@ public class FrequencyMonthlyController {
             """
     )
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "소변 통계 조회 성공"),
+        @ApiResponse(responseCode = "200", description = "소변 통계 조회 성공",
+            content = { @io.swagger.v3.oas.annotations.media.Content(
+                mediaType = "application/json",
+                examples = @io.swagger.v3.oas.annotations.media.ExampleObject(
+                    value = """
+                        {
+                          "status": 200,
+                          "code": "SUCCESS_GET_RECORD_LIST",
+                          "message": "기록 리스트를 성공적으로 불러왔습니다.",
+                          "data": {
+                            "output": {
+                              "NONE": {
+                                "count": 2,
+                                "dates": [5, 12]
+                              },
+                              "LOW": {
+                                "count": 3,
+                                "dates": [7, 14, 21]
+                              },
+                              "NORMAL": {
+                                "count": 5,
+                                "dates": [1, 8, 15, 22, 29]
+                              },
+                              "HIGH": {
+                                "count": 1,
+                                "dates": [19]
+                              }
+                            },
+                            "state": {
+                              "NORMAL": {
+                                "count": 6,
+                                "dates": [1, 5, 8, 12, 15, 22]
+                              },
+                              "BLOODY": {
+                                "count": 2,
+                                "dates": [7, 19]
+                              },
+                              "LIGHT": {
+                                "count": 2,
+                                "dates": [14, 21]
+                              },
+                              "DARK": {
+                                "count": 1,
+                                "dates": [29]
+                              },
+                              "ETC": {
+                                "count": 0,
+                                "dates": []
+                              }
+                            },
+                            "binaryState": {
+                              "O": {
+                                "count": 4,
+                                "dates": [7, 14, 19, 21]
+                              },
+                              "X": {
+                                "count": 7,
+                                "dates": [1, 5, 8, 12, 15, 22, 29]
+                              }
+                            },
+                            "withImageOrMemo": {
+                              "O": {
+                                "count": 3,
+                                "dates": [5, 19, 29]
+                              },
+                              "X": {
+                                "count": 8,
+                                "dates": [1, 7, 8, 12, 14, 15, 21, 22]
+                              }
+                            }
+                          }
+                        }
+                        """
+                )
+            )}
+        ),
         @ApiResponse(responseCode = "400", description = "잘못된 요청 파라미터")
     })
     @GetMapping("/urinary/{petId}/{year}/{month}")
-    public ResponseEntity<FlatStatisticsResponseDTO> getUrinaryFlatStatistics(
+    public ResponseEntity<ResponseDTO<FlatStatisticsResponseDTO>> getUrinaryFlatStatistics(
             @Parameter(description = "반려동물 ID", required = true, example = "1")
             @PathVariable Long petId,
             @Parameter(description = "조회 연도 (YYYY)", required = true, example = "2025")
@@ -57,7 +135,9 @@ public class FrequencyMonthlyController {
             @PathVariable int month) {
 
         FlatStatisticsResponseDTO response = flatStatisticsService.getUrinaryFlatStatistics(petId, year, month);
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(
+                new ResponseDTO<>(SuccessCode.SUCCESS_GET_RECORD_LIST, response)
+        );
     }
 
     // ==============================================
@@ -78,8 +158,73 @@ public class FrequencyMonthlyController {
             각 필드별로 독립적인 카운트와 날짜 정보를 제공합니다.
             """
     )
+    @ApiResponses(
+            {@ApiResponse(responseCode = "200", description = "배변 통계 조회 성공",
+                    content = {@io.swagger.v3.oas.annotations.media.Content(
+                            mediaType = "application/json",
+                            examples = @io.swagger.v3.oas.annotations.media.ExampleObject(
+                                    value = """
+                                            {
+                                              "status": 200,
+                                              "code": "SUCCESS_GET_RECORD_LIST",
+                                              "message": "기록 리스트를 성공적으로 불러왔습니다.",
+                                              "data": {
+                                                "level": {
+                                                  "NONE": {
+                                                    "count": 1,
+                                                    "dates": [10]
+                                                  },
+                                                  "LOW": {
+                                                    "count": 4,
+                                                    "dates": [5, 12, 19, 26]
+                                                  },
+                                                  "NORMAL": {
+                                                    "count": 6,
+                                                    "dates": [1, 8, 15, 22, 29, 30]
+                                                  },
+                                                  "HIGH": {
+                                                    "count": 2,
+                                                    "dates": [7, 14]
+                                                  }
+                                                },
+                                                "state": {
+                                                  "NORMAL": {
+                                                    "count": 7,
+                                                    "dates": [1, 5, 8, 12, 15, 22, 29]
+                                                  },
+                                                  "DIARRHEA": {
+                                                    "count": 3,
+                                                    "dates": [7, 14, 19]
+                                                  },
+                                                  "BLOODY": {
+                                                    "count": 2,
+                                                    "dates": [26, 30]
+                                                  },
+                                                  "ETC": {
+                                                    "count": 1,
+                                                    "dates": [10]
+                                                  }
+                                                },
+                                                "withImageOrMemo": {
+                                                  "O": {
+                                                    "count": 4,
+                                                    "dates": [5, 19, 26, 30]
+                                                  },
+                                                  "X": {
+                                                    "count": 8,
+                                                    "dates": [1, 7, 8, 10, 12, 14, 15, 22, 29]
+                                                  }
+                                                }
+                                              }
+                                            }
+                                            """
+                            )
+                    )}
+            ),
+                    @ApiResponse(responseCode = "400", description = "잘못된 요청 파라미터")}
+    )
     @GetMapping("/defecation/{petId}/{year}/{month}")
-    public ResponseEntity<FlatStatisticsResponseDTO> getDefecationFlatStatistics(
+    public ResponseEntity<ResponseDTO<FlatStatisticsResponseDTO>> getDefecationFlatStatistics(
             @Parameter(description = "반려동물 ID", required = true, example = "1")
             @PathVariable Long petId,
             @Parameter(description = "조회 연도(YYYY)", required = true, example = "2025")
@@ -88,7 +233,9 @@ public class FrequencyMonthlyController {
             @PathVariable int month) {
 
         FlatStatisticsResponseDTO response = flatStatisticsService.getDefecationFlatStatistics(petId, year, month);
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(
+                new ResponseDTO<>(SuccessCode.SUCCESS_GET_RECORD_LIST, response)
+        );
     }
 
     // ==============================================
@@ -108,8 +255,55 @@ public class FrequencyMonthlyController {
             각 필드별로 독립적인 카운트와 날짜 정보를 제공합니다.
             """
     )
+    @ApiResponses(
+            {@ApiResponse(responseCode = "200", description = "피부 통계 조회 성공",
+                    content = {@io.swagger.v3.oas.annotations.media.Content(
+                            mediaType = "application/json",
+                            examples = @io.swagger.v3.oas.annotations.media.ExampleObject(
+                                    value = """
+                                            {
+                                              "status": 200,
+                                              "code": "SUCCESS_GET_RECORD_LIST",
+                                              "message": "기록 리스트를 성공적으로 불러왔습니다.",
+                                              "data": {
+                                                "state": {
+                                                  "ZERO": {
+                                                    "count": 5,
+                                                    "dates": [1, 5, 8, 12, 15]
+                                                  },
+                                                  "ONE": {
+                                                    "count": 3,
+                                                    "dates": [7, 14, 19]
+                                                  },
+                                                  "TWO": {
+                                                    "count": 2,
+                                                    "dates": [22, 29]
+                                                  },
+                                                  "THREE": {
+                                                    "count": 0,
+                                                    "dates": []
+                                                  }
+                                                },
+                                                "withImageOrMemo": {
+                                                  "O": {
+                                                    "count": 4,
+                                                    "dates": [5, 14, 19, 29]
+                                                  },
+                                                  "X": {
+                                                    "count": 6,
+                                                    "dates": [1, 7, 8, 12, 15, 22]
+                                                  }
+                                                }
+                                              }
+                                            }
+                                            """
+                            )
+                    )}
+            ),
+                    @ApiResponse(responseCode = "400", description = "잘못된 요청 파라미터")}
+    )
     @GetMapping("/skin/{petId}/{year}/{month}")
-    public ResponseEntity<FlatStatisticsResponseDTO> getSkinFlatStatistics(
+    public ResponseEntity<ResponseDTO<FlatStatisticsResponseDTO>> getSkinFlatStatistics(
             @Parameter(description = "반려동물 ID", required = true, example = "1")
             @PathVariable Long petId,
             @Parameter(description = "조회 연도(YYYY)", required = true, example = "2025")
@@ -118,7 +312,9 @@ public class FrequencyMonthlyController {
             @PathVariable int month) {
 
         FlatStatisticsResponseDTO response = flatStatisticsService.getSkinFlatStatistics(petId, year, month);
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(
+                new ResponseDTO<>(SuccessCode.SUCCESS_GET_RECORD_LIST, response)
+        );
     }
 
     // ==============================================
@@ -139,8 +335,65 @@ public class FrequencyMonthlyController {
             각 필드별로 독립적인 카운트와 날짜 정보를 제공합니다.
             """
     )
+    @ApiResponses(
+            {@ApiResponse(responseCode = "200", description = "경련 통계 조회 성공",
+                    content = {@io.swagger.v3.oas.annotations.media.Content(
+                            mediaType = "application/json",
+                            examples = @io.swagger.v3.oas.annotations.media.ExampleObject(
+                                    value = """
+                                            {
+                                              "status": 200,
+                                              "code": "SUCCESS_GET_RECORD_LIST",
+                                              "message": "기록 리스트를 성공적으로 불러왔습니다.",
+                                              "data": {
+                                                "state": {
+                                                  "O": {
+                                                    "count": 3,
+                                                    "dates": [7, 14, 19]
+                                                  },
+                                                  "X": {
+                                                    "count": 6,
+                                                    "dates": [1, 5, 8, 12, 15, 22]
+                                                  }
+                                                },
+                                                "abnormalState": {
+                                                  "INCONTINENCE": {
+                                                    "count": 1,
+                                                    "dates": [7]
+                                                  },
+                                                  "DROOLING": {
+                                                    "count": 1,
+                                                    "dates": [14]
+                                                  },
+                                                  "UNCONSCIOUS": {
+                                                    "count": 1,
+                                                    "dates": [19]
+                                                  },
+                                                  "NORMAL": {
+                                                    "count": 6,
+                                                    "dates": [1, 5, 8, 12, 15, 22]
+                                                  }
+                                                },
+                                                "withVideo": {
+                                                  "O": {
+                                                    "count": 2,
+                                                    "dates": [14, 19]
+                                                  },
+                                                  "X": {
+                                                    "count": 7,
+                                                    "dates": [1, 5, 7, 8, 12, 15, 22]
+                                                  }
+                                                }
+                                              }
+                                            }
+                                            """
+                            )
+                    )}
+            ),
+                    @ApiResponse(responseCode = "400", description = "잘못된 요청 파라미터")}
+    )
     @GetMapping("/convulsion/{petId}/{year}/{month}")
-    public ResponseEntity<FlatStatisticsResponseDTO> getConvulsionFlatStatistics(
+    public ResponseEntity<ResponseDTO<FlatStatisticsResponseDTO>> getConvulsionFlatStatistics(
             @Parameter(description = "반려동물 ID", required = true, example = "1")
             @PathVariable Long petId,
             @Parameter(description = "조회 연도(YYYY)", required = true, example = "2025")
@@ -149,7 +402,9 @@ public class FrequencyMonthlyController {
             @PathVariable int month) {
 
         FlatStatisticsResponseDTO response = flatStatisticsService.getConvulsionFlatStatistics(petId, year, month);
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(
+                new ResponseDTO<>(SuccessCode.SUCCESS_GET_RECORD_LIST, response)
+        );
     }
 
     // ==============================================
@@ -169,8 +424,51 @@ public class FrequencyMonthlyController {
             각 필드별로 독립적인 카운트와 날짜 정보를 제공합니다.
             """
     )
+    @ApiResponses(
+            {@ApiResponse(responseCode = "200", description = "콧물 통계 조회 성공",
+                    content = {@io.swagger.v3.oas.annotations.media.Content(
+                            mediaType = "application/json",
+                            examples = @io.swagger.v3.oas.annotations.media.ExampleObject(
+                                    value = """
+                                            {
+                                              "status": 200,
+                                              "code": "SUCCESS_GET_RECORD_LIST",
+                                              "message": "기록 리스트를 성공적으로 불러왔습니다.",
+                                              "data": {
+                                                "state": {
+                                                  "CLEAR": {
+                                                    "count": 4,
+                                                    "dates": [1, 5, 8, 12]
+                                                  },
+                                                  "MUCUS": {
+                                                    "count": 3,
+                                                    "dates": [7, 14, 19]
+                                                  },
+                                                  "BLOODY": {
+                                                    "count": 2,
+                                                    "dates": [15, 22]
+                                                  }
+                                                },
+                                                "withImageOrMemo": {
+                                                  "O": {
+                                                    "count": 3,
+                                                    "dates": [5, 15, 22]
+                                                  },
+                                                  "X": {
+                                                    "count": 6,
+                                                    "dates": [1, 7, 8, 12, 14, 19]
+                                                  }
+                                                }
+                                              }
+                                            }
+                                            """
+                            )
+                    )}
+            ),
+                    @ApiResponse(responseCode = "400", description = "잘못된 요청 파라미터")}
+    )
     @GetMapping("/snot/{petId}/{year}/{month}")
-    public ResponseEntity<FlatStatisticsResponseDTO> getSnotFlatStatistics(
+    public ResponseEntity<ResponseDTO<FlatStatisticsResponseDTO>> getSnotFlatStatistics(
             @Parameter(description = "반려동물 ID", required = true, example = "1")
             @PathVariable Long petId,
             @Parameter(description = "조회 연도(YYYY)", required = true, example = "2025")
@@ -179,7 +477,9 @@ public class FrequencyMonthlyController {
             @PathVariable int month) {
 
         FlatStatisticsResponseDTO response = flatStatisticsService.getSnotFlatStatistics(petId, year, month);
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(
+                new ResponseDTO<>(SuccessCode.SUCCESS_GET_RECORD_LIST, response)
+        );
     }
 
     // ==============================================
@@ -199,8 +499,47 @@ public class FrequencyMonthlyController {
             각 필드별로 독립적인 카운트와 날짜 정보를 제공합니다.
             """
     )
+    @ApiResponses(
+            {@ApiResponse(responseCode = "200", description = "구토 통계 조회 성공",
+                    content = {@io.swagger.v3.oas.annotations.media.Content(
+                            mediaType = "application/json",
+                            examples = @io.swagger.v3.oas.annotations.media.ExampleObject(
+                                    value = """
+                                            {
+                                              "status": 200,
+                                              "code": "SUCCESS_GET_RECORD_LIST",
+                                              "message": "기록 리스트를 성공적으로 불러왔습니다.",
+                                              "data": {
+                                                "state": {
+                                                  "O": {
+                                                    "count": 3,
+                                                    "dates": [7, 14, 19]
+                                                  },
+                                                  "X": {
+                                                    "count": 6,
+                                                    "dates": [1, 5, 8, 12, 15, 22]
+                                                  }
+                                                },
+                                                "withImages": {
+                                                  "O": {
+                                                    "count": 2,
+                                                    "dates": [14, 19]
+                                                  },
+                                                  "X": {
+                                                    "count": 7,
+                                                    "dates": [1, 5, 7, 8, 12, 15, 22]
+                                                  }
+                                                }
+                                              }
+                                            }
+                                            """
+                            )
+                    )}
+            ),
+                    @ApiResponse(responseCode = "400", description = "잘못된 요청 파라미터")}
+    )
     @GetMapping("/vomiting/{petId}/{year}/{month}")
-    public ResponseEntity<FlatStatisticsResponseDTO> getVomitingFlatStatistics(
+    public ResponseEntity<ResponseDTO<FlatStatisticsResponseDTO>> getVomitingFlatStatistics(
             @Parameter(description = "반려동물 ID", required = true, example = "1")
             @PathVariable Long petId,
             @Parameter(description = "조회 연도(YYYY)", required = true, example = "2025")
@@ -209,7 +548,9 @@ public class FrequencyMonthlyController {
             @PathVariable int month) {
 
         FlatStatisticsResponseDTO response = flatStatisticsService.getVomitingFlatStatistics(petId, year, month);
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(
+                new ResponseDTO<>(SuccessCode.SUCCESS_GET_RECORD_LIST, response)
+        );
     }
 
     // ==============================================
@@ -226,8 +567,41 @@ public class FrequencyMonthlyController {
             - state: 식욕 상태 (LOW, NORMAL, HIGH)
             """
     )
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "식욕 통계 조회 성공",
+            content = { @io.swagger.v3.oas.annotations.media.Content(
+                mediaType = "application/json",
+                examples = @io.swagger.v3.oas.annotations.media.ExampleObject(
+                    value = """
+                        {
+                          "status": 200,
+                          "code": "SUCCESS_GET_RECORD_LIST",
+                          "message": "기록 리스트를 성공적으로 불러왔습니다.",
+                          "data": {
+                            "state": {
+                              "LOW": {
+                                "count": 3,
+                                "dates": [7, 14, 19]
+                              },
+                              "NORMAL": {
+                                "count": 5,
+                                "dates": [1, 5, 8, 12, 15]
+                              },
+                              "HIGH": {
+                                "count": 1,
+                                "dates": [22]
+                              }
+                            }
+                          }
+                        }
+                        """
+                )
+            )}
+        ),
+        @ApiResponse(responseCode = "400", description = "잘못된 요청 파라미터")
+    })
     @GetMapping("/appetite/{petId}/{year}/{month}")
-    public ResponseEntity<FlatStatisticsResponseDTO> getAppetiteFlatStatistics(
+    public ResponseEntity<ResponseDTO<FlatStatisticsResponseDTO>> getAppetiteFlatStatistics(
             @Parameter(description = "반려동물 ID", required = true, example = "1")
             @PathVariable Long petId,
             @Parameter(description = "조회 연도(YYYY)", required = true, example = "2025")
@@ -236,7 +610,9 @@ public class FrequencyMonthlyController {
             @PathVariable int month) {
 
         FlatStatisticsResponseDTO response = flatStatisticsService.getAppetiteFlatStatistics(petId, year, month);
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(
+                new ResponseDTO<>(SuccessCode.SUCCESS_GET_RECORD_LIST, response)
+        );
     }
 
     @Operation(
@@ -249,8 +625,41 @@ public class FrequencyMonthlyController {
             - state: 활력 상태 (LOW, NORMAL, HIGH)
             """
     )
+    @ApiResponses(
+            {@ApiResponse(responseCode = "200", description = "활력 통계 조회 성공",
+                    content = {@io.swagger.v3.oas.annotations.media.Content(
+                            mediaType = "application/json",
+                            examples = @io.swagger.v3.oas.annotations.media.ExampleObject(
+                                    value = """
+                                            {
+                                              "status": 200,
+                                              "code": "SUCCESS_GET_RECORD_LIST",
+                                              "message": "기록 리스트를 성공적으로 불러왔습니다.",
+                                              "data": {
+                                                "state": {
+                                                  "LOW": {
+                                                    "count": 2,
+                                                    "dates": [7, 14]
+                                                  },
+                                                  "NORMAL": {
+                                                    "count": 6,
+                                                    "dates": [1, 5, 8, 12, 15, 19]
+                                                  },
+                                                  "HIGH": {
+                                                    "count": 1,
+                                                    "dates": [22]
+                                                  }
+                                                }
+                                              }
+                                            }
+                                            """
+                            )
+                    )}
+            ),
+                    @ApiResponse(responseCode = "400", description = "잘못된 요청 파라미터")}
+    )
     @GetMapping("/energy/{petId}/{year}/{month}")
-    public ResponseEntity<FlatStatisticsResponseDTO> getEnergyFlatStatistics(
+    public ResponseEntity<ResponseDTO<FlatStatisticsResponseDTO>> getEnergyFlatStatistics(
             @Parameter(description = "반려동물 ID", required = true, example = "1")
             @PathVariable Long petId,
             @Parameter(description = "조회 연도(YYYY)", required = true, example = "2025")
@@ -259,7 +668,9 @@ public class FrequencyMonthlyController {
             @PathVariable int month) {
 
         FlatStatisticsResponseDTO response = flatStatisticsService.getEnergyFlatStatistics(petId, year, month);
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(
+                new ResponseDTO<>(SuccessCode.SUCCESS_GET_RECORD_LIST, response)
+        );
     }
 
     @Operation(
@@ -272,8 +683,37 @@ public class FrequencyMonthlyController {
             - state: 실신 여부 (O, X)
             """
     )
+    @ApiResponses(
+            {@ApiResponse(responseCode = "200", description = "실신 통계 조회 성공",
+                    content = {@io.swagger.v3.oas.annotations.media.Content(
+                            mediaType = "application/json",
+                            examples = @io.swagger.v3.oas.annotations.media.ExampleObject(
+                                    value = """
+                                            {
+                                              "status": 200,
+                                              "code": "SUCCESS_GET_RECORD_LIST",
+                                              "message": "기록 리스트를 성공적으로 불러왔습니다.",
+                                              "data": {
+                                                "state": {
+                                                  "O": {
+                                                    "count": 3,
+                                                    "dates": [7, 14, 19]
+                                                  },
+                                                  "X": {
+                                                    "count": 6,
+                                                    "dates": [1, 5, 8, 12, 15, 22]
+                                                  }
+                                                }
+                                              }
+                                            }
+                                            """
+                            )
+                    )}
+            ),
+                    @ApiResponse(responseCode = "400", description = "잘못된 요청 파라미터")}
+    )
     @GetMapping("/syncope/{petId}/{year}/{month}")
-    public ResponseEntity<FlatStatisticsResponseDTO> getSyncopeFlatStatistics(
+    public ResponseEntity<ResponseDTO<FlatStatisticsResponseDTO>> getSyncopeFlatStatistics(
             @Parameter(description = "반려동물 ID", required = true, example = "1")
             @PathVariable Long petId,
             @Parameter(description = "조회 연도(YYYY)", required = true, example = "2025")
@@ -282,7 +722,9 @@ public class FrequencyMonthlyController {
             @PathVariable int month) {
 
         FlatStatisticsResponseDTO response = flatStatisticsService.getSyncopeFlatStatistics(petId, year, month);
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(
+                new ResponseDTO<>(SuccessCode.SUCCESS_GET_RECORD_LIST, response)
+        );
     }
 
     @Operation(
@@ -295,8 +737,41 @@ public class FrequencyMonthlyController {
             - state: 물 섭취량 상태 (LOW, NORMAL, HIGH)
             """
     )
+    @ApiResponses(
+            {@ApiResponse(responseCode = "200", description = "물 섭취량 통계 조회 성공",
+                    content = {@io.swagger.v3.oas.annotations.media.Content(
+                            mediaType = "application/json",
+                            examples = @io.swagger.v3.oas.annotations.media.ExampleObject(
+                                    value = """
+                                            {
+                                              "status": 200,
+                                              "code": "SUCCESS_GET_RECORD_LIST",
+                                              "message": "기록 리스트를 성공적으로 불러왔습니다.",
+                                              "data": {
+                                                "state": {
+                                                  "LOW": {
+                                                    "count": 2,
+                                                    "dates": [7, 14]
+                                                  },
+                                                  "NORMAL": {
+                                                    "count": 6,
+                                                    "dates": [1, 5, 8, 12, 15, 19]
+                                                  },
+                                                  "HIGH": {
+                                                    "count": 1,
+                                                    "dates": [22]
+                                                  }
+                                                }
+                                              }
+                                            }
+                                            """
+                            )
+                    )}
+            ),
+                    @ApiResponse(responseCode = "400", description = "잘못된 요청 파라미터")}
+    )
     @GetMapping("/water/{petId}/{year}/{month}")
-    public ResponseEntity<FlatStatisticsResponseDTO> getWaterFlatStatistics(
+    public ResponseEntity<ResponseDTO<FlatStatisticsResponseDTO>> getWaterFlatStatistics(
             @Parameter(description = "반려동물 ID", required = true, example = "1")
             @PathVariable Long petId,
             @Parameter(description = "조회 연도(YYYY)", required = true, example = "2025")
@@ -305,6 +780,47 @@ public class FrequencyMonthlyController {
             @PathVariable int month) {
 
         FlatStatisticsResponseDTO response = flatStatisticsService.getWaterFlatStatistics(petId, year, month);
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(
+                new ResponseDTO<>(SuccessCode.SUCCESS_GET_RECORD_LIST, response)
+        );
+    }
+
+
+    @Operation(summary = "월별 호흡수 통계 조회", description = """
+            특정 반려동물의 월별 호흡수 통계를 조회합니다.
+            - 주의 날짜: 기준 초과 호흡수
+            - 안정 날짜: 기준 이하 호흡수
+            """)
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "호흡수 통계 조회 성공",
+            content = { @io.swagger.v3.oas.annotations.media.Content(
+                mediaType = "application/json",
+                examples = @io.swagger.v3.oas.annotations.media.ExampleObject(
+                    value = """
+                        {
+                          "status": 200,
+                          "code": "SUCCESS_GET_RECORD_LIST",
+                          "message": "기록 리스트를 성공적으로 불러왔습니다.",
+                          "data": {
+                            "cautionDates": [5, 12, 19],
+                            "stableDates": [1, 8, 15, 22, 29]
+                          }
+                        }
+                        """
+                )
+            )}
+        ),
+        @ApiResponse(responseCode = "400", description = "잘못된 요청 파라미터")
+    })
+    @GetMapping("/respiratory-rate/{petId}/{year}/{month}")
+    public ResponseEntity<ResponseDTO<FrequencyMonthlyResponseDTO>> getRespiratoryRate(
+            @Parameter(description = "반려동물 ID", required = true, example = "1") @PathVariable Long petId,
+            @Parameter(description = "조회 연도(YYYY)", required = true, example = "2025") @PathVariable int year,
+            @Parameter(description = "조회 월(1-12, mm)", required = true, example = "9") @PathVariable int month) {
+
+        FrequencyMonthlyResponseDTO response = flatStatisticsService.getRespiratoryRate(petId, year, month);
+        return ResponseEntity.ok(
+                new ResponseDTO<>(SuccessCode.SUCCESS_GET_RECORD_LIST, response)
+        );
     }
 }

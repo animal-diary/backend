@@ -1,10 +1,22 @@
 package animal.diary.service;
 
 import animal.diary.dto.response.FlatStatisticsResponseDTO;
+import animal.diary.dto.response.FrequencyMonthlyResponseDTO;
+import animal.diary.entity.pet.Pet;
+import animal.diary.entity.pet.Type;
+import animal.diary.entity.record.RespiratoryRate;
 import animal.diary.repository.FlatStatisticsRepository;
+import animal.diary.repository.RRRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
+import java.time.YearMonth;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 @Slf4j
 @Service
@@ -12,6 +24,8 @@ import org.springframework.stereotype.Service;
 public class FlatStatisticsService {
 
     private final FlatStatisticsRepository flatStatisticsRepository;
+    private final RRRepository rrRepository;
+    private final PetService petService;
 
     // ==============================================
     // 복합 필드 엔티티들 (여러 필드)
@@ -70,4 +84,32 @@ public class FlatStatisticsService {
         log.info("Getting water flat statistics for pet: {}, year: {}, month: {}", petId, year, month);
         return flatStatisticsRepository.getWaterFlatStatistics(petId, year, month);
     }
+
+    public FrequencyMonthlyResponseDTO getRespiratoryRate(Long petId, int year, int month) {
+        Pet pet = petService.getPetById(petId);
+        int cautionThreshold = (pet.getType() == Type.DOG) ? 30 : 40;
+
+        YearMonth yearMonth = YearMonth.of(year, month);
+        LocalDateTime start = yearMonth.atDay(1).atStartOfDay();
+        LocalDateTime end = yearMonth.atEndOfMonth().atTime(23, 59, 59);
+
+        List<RespiratoryRate> rates = rrRepository.findAllByPetIdAndCreatedAtBetween(petId, start, end);
+
+        Set<Integer> cautionDates = new TreeSet<>();
+        Set<Integer> stableDates = new TreeSet<>();
+
+        // 날짜별로 처리
+        rates.forEach(rate -> {
+            int day = rate.getCreatedAt().getDayOfMonth();
+            if (rate.getCount() > cautionThreshold) {
+                cautionDates.add(day);
+            }
+            if (rate.getCount() <= cautionThreshold) {
+                stableDates.add(day);
+            }
+        });
+
+        return new FrequencyMonthlyResponseDTO(new ArrayList<>(cautionDates), new ArrayList<>(stableDates));
+    }
+
 }

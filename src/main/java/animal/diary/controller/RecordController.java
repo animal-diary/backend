@@ -32,7 +32,7 @@ import java.util.List;
 
 @Slf4j
 @RestController
-@RequestMapping("/record")
+@RequestMapping("/api/v1/record")
 @RequiredArgsConstructor
 @ValidatePetWithApiResponse
 @Tag(name = "Record Controller", description = "기록 생성 관련 API")

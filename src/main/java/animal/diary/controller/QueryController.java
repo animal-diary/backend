@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @RestController
-@RequestMapping("/query")
+@RequestMapping("/api/v1/query")
 @RequiredArgsConstructor
 @ValidatePetWithApiResponse
 @Tag(name = "Query Controller", description = "기록 조회 관련 API")
