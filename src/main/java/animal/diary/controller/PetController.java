@@ -21,7 +21,7 @@ import java.util.List;
 
 @Slf4j
 @RestController
-@RequestMapping("/pets")
+@RequestMapping("/api/v1/pets")
 @RequiredArgsConstructor
 @Tag(name = "Pet Controller", description = "반려동물 관련 API")
 public class PetController {

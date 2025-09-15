@@ -32,7 +32,7 @@ import java.util.List;
 
 @Slf4j
 @RestController
-@RequestMapping("/record")
+@RequestMapping("/api/v1/record")
 @RequiredArgsConstructor
 @ValidatePetWithApiResponse
 @Tag(name = "Record Controller", description = "기록 생성 관련 API")
@@ -473,7 +473,7 @@ public class RecordController {
             })
     })
     @PostMapping(value = "/water")
-    public ResponseEntity<ResponseDTO<RecordResponseDTO.WaterResponseDTO>> recordWaterIntake(@Validated(LevelState.class) @RequestBody RecordWithOutImageDTO.WaterRecord dto) {
+    public ResponseEntity<ResponseDTO<RecordResponseDTO.WaterResponseDTO>> recordWaterIntake(@Validated(StateGroup.class) @RequestBody RecordWithOutImageDTO.WaterRecord dto) {
         log.info("Received water intake record request for pet ID: {}", dto.getPetId());
         RecordResponseDTO.WaterResponseDTO result = recordService.recordWater(dto);
         log.info("Water intake record completed for pet ID: {}", dto.getPetId());

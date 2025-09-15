@@ -21,7 +21,7 @@ import java.util.List;
 
 @Slf4j
 @RestController
-@RequestMapping("/monthly")
+@RequestMapping("/api/v1/monthly")
 @RequiredArgsConstructor
 @Tag(name = "Monthly Controller", description = "월별 기록 조회 관련 API")
 public class MonthlyController {
