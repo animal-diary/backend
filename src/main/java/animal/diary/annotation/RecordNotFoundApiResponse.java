@@ -27,28 +27,9 @@ import java.lang.annotation.Target;
                                 value = """
                                         {
                                           "status": 404,
+                                          "error": "NOT_FOUND",
                                           "code": "DIARY_NOT_FOUND",
-                                          "message": "몸무게 기록을 찾을 수 없습니다. ID: 999",
-                                          "data": null
-                                        }
-                                        """
-                        )
-                )}
-        ),
-        @ApiResponse(
-                responseCode = "400",
-                description = "잘못된 요청 - 유효하지 않은 기록 ID 형식",
-                content = { @io.swagger.v3.oas.annotations.media.Content(
-                        mediaType = "application/json",
-                        schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = ErrorResponseDTO.class),
-                        examples = @io.swagger.v3.oas.annotations.media.ExampleObject(
-                                name = "Invalid Record ID",
-                                value = """
-                                        {
-                                          "status": 400,
-                                          "code": "BAD_REQUEST",
-                                          "message": "기록 ID는 양수여야 합니다.",
-                                          "data": null
+                                          "message": "해당 일지를 찾을 수 없습니다."
                                         }
                                         """
                         )

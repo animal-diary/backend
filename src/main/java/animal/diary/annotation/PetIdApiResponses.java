@@ -25,31 +25,12 @@ import java.lang.annotation.Target;
                         examples = @io.swagger.v3.oas.annotations.media.ExampleObject(
                                 name = "Pet Not Found",
                                 value = """
-                                        {
-                                          "status": 404,
-                                          "code": "PET_NOT_FOUND",
-                                          "message": "반려동물을 찾을 수 없습니다. (ID: 999)",
-                                          "data": null
-                                        }
-                                        """
-                        )
-                )}
-        ),
-        @ApiResponse(
-                responseCode = "400",
-                description = "잘못된 요청 - 유효하지 않은 Pet ID 형식",
-                content = { @io.swagger.v3.oas.annotations.media.Content(
-                        mediaType = "application/json",
-                        schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = ErrorResponseDTO.class),
-                        examples = @io.swagger.v3.oas.annotations.media.ExampleObject(
-                                name = "Invalid Pet ID",
-                                value = """
-                                        {
-                                          "status": 400,
-                                          "code": "BAD_REQUEST",
-                                          "message": "Pet ID는 양수여야 합니다.",
-                                          "data": null
-                                        }
+                                            {
+                                              "status": 404,
+                                              "error": "NOT_FOUND",
+                                              "code": "PET_NOT_FOUND",
+                                              "message": "반려동물 정보를 찾을 수 없습니다."
+                                            }
                                         """
                         )
                 )}
