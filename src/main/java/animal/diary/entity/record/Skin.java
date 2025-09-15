@@ -8,6 +8,7 @@ import jakarta.persistence.Entity;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
+import org.hibernate.annotations.Formula;
 
 import java.util.List;
 
@@ -22,4 +23,7 @@ public class Skin extends Diary{
     @Column(length = 5000)
     @Convert(converter = StringListConverter.class)
     private List<String> imageUrls;
+
+    @Formula("image_urls")
+    private String imageUrlsRaw;
 }

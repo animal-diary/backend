@@ -8,6 +8,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
+import org.hibernate.annotations.Formula;
 
 import java.util.List;
 
@@ -22,6 +23,9 @@ public class Significant extends Diary{
     @Column(length = 5000)
     @Convert(converter = StringListConverter.class)
     private List<String> imageUrls;
+
+    @Formula("image_urls")
+    private String imageUrlsRaw;
 
     private String videoUrl;
 }

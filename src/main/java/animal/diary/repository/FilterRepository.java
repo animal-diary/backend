@@ -1,7 +1,9 @@
 package animal.diary.repository;
 
 import animal.diary.dto.request.UrinaryFilterRequestDTO;
+import animal.diary.dto.request.DefecationFilterRequestDTO;
 import animal.diary.entity.record.Urinary;
+import animal.diary.entity.record.Defecation;
 import animal.diary.entity.record.state.BinaryState;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -13,6 +15,7 @@ import java.time.YearMonth;
 import java.util.List;
 
 import static animal.diary.entity.record.QUrinary.urinary;
+import static animal.diary.entity.record.QDefecation.defecation;
 
 @Repository
 @RequiredArgsConstructor
@@ -74,6 +77,58 @@ public class FilterRepository {
                 .where(builder)
                 .distinct()
                 .orderBy(urinary.createdAt.dayOfMonth().asc())
+                .fetch();
+    }
+
+    public List<Integer> getDefecationFilteredDates(Long petId, int year, int month, DefecationFilterRequestDTO filter) {
+        YearMonth yearMonth = YearMonth.of(year, month);
+        LocalDateTime start = yearMonth.atDay(1).atStartOfDay();
+        LocalDateTime endExclusive = yearMonth.plusMonths(1).atDay(1).atStartOfDay();
+        LocalDateTime endInclusive = endExclusive.minusNanos(1);
+
+        BooleanBuilder builder = new BooleanBuilder();
+        builder.and(defecation.pet.id.eq(petId));
+        builder.and(defecation.createdAt.between(start, endInclusive));
+
+        // 필터 조건 추가 (null이 아닌 경우만)
+        if (filter.getLevel() != null) {
+            builder.and(defecation.level.eq(filter.getLevel()));
+        }
+        if (filter.getState() != null) {
+            builder.and(defecation.state.eq(filter.getState()));
+        }
+
+        // 메모/이미지 유무 필터 (복수 선택 가능, 쉼표로 구분)
+        if (filter.getWithImageOrMemo() != null && !filter.getWithImageOrMemo().trim().isEmpty()) {
+            String[] states = filter.getWithImageOrMemo().split(",");
+            BooleanBuilder imageOrMemoBuilder = new BooleanBuilder();
+
+            for (String stateStr : states) {
+                String trimmedState = stateStr.trim();
+                if (trimmedState.equals("O")) {
+                    // 메모가 있거나 이미지가 있는 경우
+                    imageOrMemoBuilder.or(
+                        (defecation.memo.isNotNull().and(defecation.memo.ne("")))
+                        .or(defecation.imageUrlsRaw.ne("[]").and(defecation.imageUrlsRaw.ne("")).and(defecation.imageUrlsRaw.isNotNull()))
+                    );
+                } else if (trimmedState.equals("X")) {
+                    // 메모도 없고 이미지도 없는 경우
+                    imageOrMemoBuilder.or(
+                        (defecation.memo.isNull().or(defecation.memo.eq("")))
+                        .and(defecation.imageUrlsRaw.eq("[]").or(defecation.imageUrlsRaw.eq("")).or(defecation.imageUrlsRaw.isNull()))
+                    );
+                }
+            }
+
+            builder.and(imageOrMemoBuilder);
+        }
+
+        return jpaQueryFactory
+                .select(defecation.createdAt.dayOfMonth())
+                .from(defecation)
+                .where(builder)
+                .distinct()
+                .orderBy(defecation.createdAt.dayOfMonth().asc())
                 .fetch();
     }
 }

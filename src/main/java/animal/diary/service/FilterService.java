@@ -1,6 +1,7 @@
 package animal.diary.service;
 
 import animal.diary.dto.request.UrinaryFilterRequestDTO;
+import animal.diary.dto.request.DefecationFilterRequestDTO;
 import animal.diary.dto.response.FilterResponseDTO;
 import animal.diary.repository.FilterRepository;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +21,17 @@ public class FilterService {
         log.info("Filtering urinary records for pet: {}, year: {}, month: {}", petId, year, month);
 
         List<Integer> dates = filterRepository.getUrinaryFilteredDates(petId, year, month, filter);
+
+        return FilterResponseDTO.builder()
+                .dates(dates)
+                .count(dates.size())
+                .build();
+    }
+
+    public FilterResponseDTO filterDefecationRecords(Long petId, int year, int month, DefecationFilterRequestDTO filter) {
+        log.info("Filtering defecation records for pet: {}, year: {}, month: {}", petId, year, month);
+
+        List<Integer> dates = filterRepository.getDefecationFilteredDates(petId, year, month, filter);
 
         return FilterResponseDTO.builder()
                 .dates(dates)
