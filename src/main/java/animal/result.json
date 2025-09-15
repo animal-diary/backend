@@ -1,0 +1,76 @@
+{
+  "status": 200,
+  "code": "SUCCESS_GET_RECORD_LIST",
+  "message": "기록 리스트를 성공적으로 불러왔습니다.",
+  "data": {
+    "fieldStatistics": {
+      "level": [
+        {
+          "state": "NONE",
+          "count": 0,
+          "dates": []
+        },
+        {
+          "state": "LOW",
+          "count": 0,
+          "dates": []
+        },
+        {
+          "state": "NORMAL",
+          "count": 1,
+          "dates": [
+            15
+          ]
+        },
+        {
+          "state": "HIGH",
+          "count": 0,
+          "dates": []
+        }
+      ],
+      "state": [
+        {
+          "state": "NORMAL",
+          "count": 1,
+          "dates": [
+            15
+          ]
+        },
+        {
+          "state": "DIARRHEA",
+          "count": 0,
+          "dates": []
+        },
+        {
+          "state": "BLACK",
+          "count": 0,
+          "dates": []
+        },
+        {
+          "state": "BLOODY",
+          "count": 0,
+          "dates": []
+        },
+        {
+          "state": "ETC",
+          "count": 0,
+          "dates": []
+        }
+      ],
+      "withImageOrMemo": [
+        {
+          "state": "O",
+          "count": 1,
+          "dates": [
+            15
+          ]
+        },
+        {
+          "state": "X",
+          "count": 0,
+          "dates": []
+        }
+      ]
+    }
+  }
+}

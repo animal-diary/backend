@@ -13,10 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.time.YearMonth;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
 
 @Slf4j
 @Service
@@ -91,23 +88,28 @@ public class FlatStatisticsService {
 
         YearMonth yearMonth = YearMonth.of(year, month);
         LocalDateTime start = yearMonth.atDay(1).atStartOfDay();
-        LocalDateTime end = yearMonth.atEndOfMonth().atTime(23, 59, 59);
+        LocalDateTime endExclusive = yearMonth.plusMonths(1).atDay(1).atStartOfDay();
+        LocalDateTime endInclusive = endExclusive.minusNanos(1);
 
-        List<RespiratoryRate> rates = rrRepository.findAllByPetIdAndCreatedAtBetween(petId, start, end);
+        List<RespiratoryRate> rates = rrRepository.findAllByPetIdAndCreatedAtBetween(petId, start, endInclusive);
 
         Set<Integer> cautionDates = new TreeSet<>();
         Set<Integer> stableDates = new TreeSet<>();
 
-        // 날짜별로 처리
-        rates.forEach(rate -> {
+        // 날짜별 최대값으로 분류하여 중복 방지
+        Map<Integer, Integer> maxPerDay = new HashMap<>();
+        for (RespiratoryRate rate : rates) {
             int day = rate.getCreatedAt().getDayOfMonth();
-            if (rate.getCount() > cautionThreshold) {
-                cautionDates.add(day);
+            maxPerDay.merge(day, rate.getCount(), Math::max);
+        }
+
+        for (Map.Entry<Integer, Integer> entry : maxPerDay.entrySet()) {
+            if (entry.getValue() > cautionThreshold) {
+                cautionDates.add(entry.getKey());
+            } else {
+                stableDates.add(entry.getKey());
             }
-            if (rate.getCount() <= cautionThreshold) {
-                stableDates.add(day);
-            }
-        });
+        }
 
         return new FrequencyMonthlyResponseDTO(new ArrayList<>(cautionDates), new ArrayList<>(stableDates));
     }

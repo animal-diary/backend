@@ -231,19 +231,19 @@ public class RecordService {
 
 
         List<String> imageUrls = List.of();
-        // 이미지 10장 제한
-        if (images != null && images.size() > 10) {
-            throw new ImageSizeLimitException(ErrorCode.IMAGE_SIZE_LIMIT_10);
-        }
-        else {
+        // 이미지 10장 제한 및 업로드
+        if (images != null && !images.isEmpty()) {
+            if (images.size() > 10) {
+                throw new ImageSizeLimitException(ErrorCode.IMAGE_SIZE_LIMIT_10);
+            }
             imageUrls = s3Uploader.uploadMultiple(images, "vomiting");
         }
 
         Vomiting record = VomitingRecordDTO.toEntity(dto, pet, imageUrls);
 
-        log.info("Recording snot for pet ID: {}, title: {}", pet.getId(), dto.getState());
+        log.info("Recording vomiting for pet ID: {}, state: {}", pet.getId(), dto.getState());
         vomitingRepository.save(record);
-        log.info("Successfully recorded snot with ID: {}", record.getId());
+        log.info("Successfully recorded vomiting with ID: {}", record.getId());
 
         return RecordResponseDTO.VomitingResponseDTO.vomitingToDTO(record);
     }
