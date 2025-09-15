@@ -50,6 +50,7 @@ public class Pet {
     @ElementCollection(targetClass = Disease.class)
     @Enumerated(EnumType.STRING)
     @Getter
+    @Builder.Default
     @CollectionTable(name = "pet_diseases", joinColumns = @JoinColumn(name = "pet_id"))
     @Column(name = "disease")
     private List<Disease> diseases = new ArrayList<>();

@@ -1,5 +1,6 @@
 package animal.diary.controller;
 
+import animal.diary.annotation.RecordNotFoundApiResponse;
 import animal.diary.code.SuccessCode;
 import animal.diary.dto.response.ResponseDTO;
 import animal.diary.service.RecordService;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/v1/records")
 @RequiredArgsConstructor
+@RecordNotFoundApiResponse
 @Tag(name = "Record Delete", description = "기록 삭제 API")
 public class RecordDeleteController {
 
@@ -25,8 +27,7 @@ public class RecordDeleteController {
     @DeleteMapping("/weight/{recordId}")
     @Operation(summary = "몸무게 기록 삭제", description = "특정 ID의 몸무게 기록을 삭제합니다.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "삭제 성공"),
-            @ApiResponse(responseCode = "404", description = "기록을 찾을 수 없음")
+            @ApiResponse(responseCode = "200", description = "삭제 성공")
     })
     public ResponseEntity<ResponseDTO<String>> deleteWeight(@PathVariable Long recordId) {
         recordService.deleteWeight(recordId);
@@ -36,8 +37,7 @@ public class RecordDeleteController {
     @DeleteMapping("/energy/{recordId}")
     @Operation(summary = "기력 기록 삭제", description = "특정 ID의 기력 기록을 삭제합니다.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "삭제 성공"),
-            @ApiResponse(responseCode = "404", description = "기록을 찾을 수 없음")
+            @ApiResponse(responseCode = "200", description = "삭제 성공")
     })
     public ResponseEntity<ResponseDTO<String>> deleteEnergy(@PathVariable Long recordId) {
         recordService.deleteEnergy(recordId);
@@ -47,8 +47,7 @@ public class RecordDeleteController {
     @DeleteMapping("/appetite/{recordId}")
     @Operation(summary = "식욕 기록 삭제", description = "특정 ID의 식욕 기록을 삭제합니다.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "삭제 성공"),
-            @ApiResponse(responseCode = "404", description = "기록을 찾을 수 없음")
+            @ApiResponse(responseCode = "200", description = "삭제 성공")
     })
     public ResponseEntity<ResponseDTO<String>> deleteAppetite(@PathVariable Long recordId) {
         recordService.deleteAppetite(recordId);
@@ -58,8 +57,7 @@ public class RecordDeleteController {
     @DeleteMapping("/rr/{recordId}")
     @Operation(summary = "호흡수 기록 삭제", description = "특정 ID의 호흡수 기록을 삭제합니다.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "삭제 성공"),
-            @ApiResponse(responseCode = "404", description = "기록을 찾을 수 없음")
+            @ApiResponse(responseCode = "200", description = "삭제 성공")
     })
     public ResponseEntity<ResponseDTO<String>> deleteRR(@PathVariable Long recordId) {
         recordService.deleteRR(recordId);
@@ -69,8 +67,7 @@ public class RecordDeleteController {
     @DeleteMapping("/heart-rate/{recordId}")
     @Operation(summary = "심박수 기록 삭제", description = "특정 ID의 심박수 기록을 삭제합니다.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "삭제 성공"),
-            @ApiResponse(responseCode = "404", description = "기록을 찾을 수 없음")
+            @ApiResponse(responseCode = "200", description = "삭제 성공")
     })
     public ResponseEntity<ResponseDTO<String>> deleteHeartRate(@PathVariable Long recordId) {
         recordService.deleteHeartRate(recordId);
@@ -80,8 +77,7 @@ public class RecordDeleteController {
     @DeleteMapping("/syncope/{recordId}")
     @Operation(summary = "기절 기록 삭제", description = "특정 ID의 기절 기록을 삭제합니다.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "삭제 성공"),
-            @ApiResponse(responseCode = "404", description = "기록을 찾을 수 없음")
+            @ApiResponse(responseCode = "200", description = "삭제 성공")
     })
     public ResponseEntity<ResponseDTO<String>> deleteSyncope(@PathVariable Long recordId) {
         recordService.deleteSyncope(recordId);
@@ -91,8 +87,7 @@ public class RecordDeleteController {
     @DeleteMapping("/urinary/{recordId}")
     @Operation(summary = "소변 기록 삭제", description = "특정 ID의 소변 기록과 관련 이미지를 삭제합니다.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "삭제 성공"),
-            @ApiResponse(responseCode = "404", description = "기록을 찾을 수 없음")
+            @ApiResponse(responseCode = "200", description = "삭제 성공")
     })
     public ResponseEntity<ResponseDTO<String>> deleteUrinary(@PathVariable Long recordId) {
         recordService.deleteUrinary(recordId);
@@ -102,8 +97,7 @@ public class RecordDeleteController {
     @DeleteMapping("/significant/{recordId}")
     @Operation(summary = "특이사항 기록 삭제", description = "특정 ID의 특이사항 기록과 관련 이미지/비디오를 삭제합니다.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "삭제 성공"),
-            @ApiResponse(responseCode = "404", description = "기록을 찾을 수 없음")
+            @ApiResponse(responseCode = "200", description = "삭제 성공")
     })
     public ResponseEntity<ResponseDTO<String>> deleteSignificant(@PathVariable Long recordId) {
         recordService.deleteSignificant(recordId);
@@ -113,8 +107,7 @@ public class RecordDeleteController {
     @DeleteMapping("/convulsion/{recordId}")
     @Operation(summary = "경련 기록 삭제", description = "특정 ID의 경련 기록과 관련 이미지를 삭제합니다.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "삭제 성공"),
-            @ApiResponse(responseCode = "404", description = "기록을 찾을 수 없음")
+            @ApiResponse(responseCode = "200", description = "삭제 성공")
     })
     public ResponseEntity<ResponseDTO<String>> deleteConvulsion(@PathVariable Long recordId) {
         recordService.deleteConvulsion(recordId);
@@ -124,8 +117,7 @@ public class RecordDeleteController {
     @DeleteMapping("/sound/{recordId}")
     @Operation(summary = "이상 소리 기록 삭제", description = "특정 ID의 이상 소리 기록과 관련 비디오를 삭제합니다.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "삭제 성공"),
-            @ApiResponse(responseCode = "404", description = "기록을 찾을 수 없음")
+            @ApiResponse(responseCode = "200", description = "삭제 성공")
     })
     public ResponseEntity<ResponseDTO<String>> deleteSound(@PathVariable Long recordId) {
         recordService.deleteSound(recordId);
@@ -135,8 +127,7 @@ public class RecordDeleteController {
     @DeleteMapping("/snot/{recordId}")
     @Operation(summary = "콧물 기록 삭제", description = "특정 ID의 콧물 기록과 관련 이미지를 삭제합니다.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "삭제 성공"),
-            @ApiResponse(responseCode = "404", description = "기록을 찾을 수 없음")
+            @ApiResponse(responseCode = "200", description = "삭제 성공")
     })
     public ResponseEntity<ResponseDTO<String>> deleteSnot(@PathVariable Long recordId) {
         recordService.deleteSnot(recordId);
@@ -146,8 +137,7 @@ public class RecordDeleteController {
     @DeleteMapping("/vomiting/{recordId}")
     @Operation(summary = "구토 기록 삭제", description = "특정 ID의 구토 기록과 관련 이미지를 삭제합니다.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "삭제 성공"),
-            @ApiResponse(responseCode = "404", description = "기록을 찾을 수 없음")
+            @ApiResponse(responseCode = "200", description = "삭제 성공")
     })
     public ResponseEntity<ResponseDTO<String>> deleteVomiting(@PathVariable Long recordId) {
         recordService.deleteVomiting(recordId);
@@ -157,8 +147,7 @@ public class RecordDeleteController {
     @DeleteMapping("/walking/{recordId}")
     @Operation(summary = "걷는 모습 기록 삭제", description = "특정 ID의 걷는 모습 기록과 관련 비디오를 삭제합니다.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "삭제 성공"),
-            @ApiResponse(responseCode = "404", description = "기록을 찾을 수 없음")
+            @ApiResponse(responseCode = "200", description = "삭제 성공")
     })
     public ResponseEntity<ResponseDTO<String>> deleteWalking(@PathVariable Long recordId) {
         recordService.deleteWalking(recordId);
@@ -168,8 +157,7 @@ public class RecordDeleteController {
     @DeleteMapping("/water/{recordId}")
     @Operation(summary = "물 섭취 기록 삭제", description = "특정 ID의 물 섭취 기록을 삭제합니다.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "삭제 성공"),
-            @ApiResponse(responseCode = "404", description = "기록을 찾을 수 없음")
+            @ApiResponse(responseCode = "200", description = "삭제 성공")
     })
     public ResponseEntity<ResponseDTO<String>> deleteWater(@PathVariable Long recordId) {
         recordService.deleteWater(recordId);
@@ -179,8 +167,7 @@ public class RecordDeleteController {
     @DeleteMapping("/skin/{recordId}")
     @Operation(summary = "피부 상태 기록 삭제", description = "특정 ID의 피부 상태 기록과 관련 이미지를 삭제합니다.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "삭제 성공"),
-            @ApiResponse(responseCode = "404", description = "기록을 찾을 수 없음")
+            @ApiResponse(responseCode = "200", description = "삭제 성공")
     })
     public ResponseEntity<ResponseDTO<String>> deleteSkin(@PathVariable Long recordId) {
         recordService.deleteSkin(recordId);
@@ -190,8 +177,7 @@ public class RecordDeleteController {
     @DeleteMapping("/defecation/{recordId}")
     @Operation(summary = "배변 기록 삭제", description = "특정 ID의 배변 기록과 관련 이미지를 삭제합니다.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "삭제 성공"),
-            @ApiResponse(responseCode = "404", description = "기록을 찾을 수 없음")
+            @ApiResponse(responseCode = "200", description = "삭제 성공")
     })
     public ResponseEntity<ResponseDTO<String>> deleteDefecation(@PathVariable Long recordId) {
         recordService.deleteDefecation(recordId);

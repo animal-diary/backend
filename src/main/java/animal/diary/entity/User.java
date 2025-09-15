@@ -30,6 +30,7 @@ public class User {
     @Getter  
     private String email;
 
+    @Builder.Default
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Pet> pets = new ArrayList<>();
 }
