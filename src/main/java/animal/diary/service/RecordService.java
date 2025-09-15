@@ -16,6 +16,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -136,13 +137,14 @@ public class RecordService {
     public RecordResponseDTO.SignificantResponseDTO recordSignificantRecord(SignificantRecordDTO dto, List<MultipartFile> images, MultipartFile video) {
         Pet pet = getPetOrThrow(dto.getPetId());
 
-        // 이미지 10장 제한
-        if (images != null && images.size() > 10) {
-            throw new ImageSizeLimitException(ErrorCode.IMAGE_SIZE_LIMIT_10);
-        }
+        List<String> imageUrls = new ArrayList<>();
 
-        // 이미지 업로드
-        List<String> imageUrls = s3Uploader.uploadMultiple(images, "significant");
+        if (images != null) {
+            if (images.size() > 10) {
+                throw new ImageSizeLimitException(ErrorCode.IMAGE_SIZE_LIMIT_10);
+            }
+            imageUrls = s3Uploader.uploadMultiple(images, "significant");
+        }
 
         // 비디오 업로드
         String videoUrl = "";
@@ -204,12 +206,14 @@ public class RecordService {
         Pet pet = getPetOrThrow(dto.getPetId());
 
         // 이미지 10장 제한
-        if (images != null && images.size() > 10) {
-            throw new ImageSizeLimitException(ErrorCode.IMAGE_SIZE_LIMIT_10);
-        }
+        List<String> imageUrls = new ArrayList<>();
 
-        // 이미지 업로드
-        List<String> imageUrls = s3Uploader.uploadMultiple(images, "snot");
+        if (images != null) {
+            if (images.size() > 10) {
+                throw new ImageSizeLimitException(ErrorCode.IMAGE_SIZE_LIMIT_10);
+            }
+            imageUrls = s3Uploader.uploadMultiple(images, "snot");
+        }
 
         Snot snotRecord = SnotRecordDTO.toEntity(dto, pet, imageUrls);
 
@@ -225,13 +229,15 @@ public class RecordService {
     public RecordResponseDTO.VomitingResponseDTO recordVomiting(VomitingRecordDTO dto, List<MultipartFile> images) {
         Pet pet = getPetOrThrow(dto.getPetId());
 
+
+        List<String> imageUrls = List.of();
         // 이미지 10장 제한
         if (images != null && images.size() > 10) {
             throw new ImageSizeLimitException(ErrorCode.IMAGE_SIZE_LIMIT_10);
         }
-
-        // 이미지 업로드
-        List<String> imageUrls = s3Uploader.uploadMultiple(images, "vomiting");
+        else {
+            imageUrls = s3Uploader.uploadMultiple(images, "vomiting");
+        }
 
         Vomiting record = VomitingRecordDTO.toEntity(dto, pet, imageUrls);
 
@@ -278,13 +284,14 @@ public class RecordService {
     public RecordResponseDTO.SkinResponseDTO recordSkin(SkinRecordDTO dto, List<MultipartFile> images) {
         Pet pet = getPetOrThrow(dto.getPetId());
 
-        // 이미지 10장 제한
-        if (images != null && images.size() > 10) {
-            throw new ImageSizeLimitException(ErrorCode.IMAGE_SIZE_LIMIT_10);
-        }
+        List<String> imageUrls = new ArrayList<>();
 
-        // 이미지 업로드
-        List<String> imageUrls = s3Uploader.uploadMultiple(images, "skin");
+        if (images != null) {
+            if (images.size() > 10) {
+                throw new ImageSizeLimitException(ErrorCode.IMAGE_SIZE_LIMIT_10);
+            }
+            imageUrls = s3Uploader.uploadMultiple(images, "skin");
+        }
 
         Skin skin = SkinRecordDTO.toEntity(dto, pet, imageUrls);
 
@@ -301,16 +308,14 @@ public class RecordService {
         Pet pet = getPetOrThrow(dto.getPetId());
 
         // 이미지가 있다면 10장 제한
-        if (images != null && images.size() > 10) {
-            throw new ImageSizeLimitException(ErrorCode.IMAGE_SIZE_LIMIT_10);
-        }
+        List<String> imageUrls = new ArrayList<>();
 
-        // 이미지 업로드 (없을 수도 있음)
-        List<String> imageUrls = List.of();
-        if (images != null && !images.isEmpty()) {
+        if (images != null) {
+            if (images.size() > 10) {
+                throw new ImageSizeLimitException(ErrorCode.IMAGE_SIZE_LIMIT_10);
+            }
             imageUrls = s3Uploader.uploadMultiple(images, "defecation");
         }
-
         Defecation defecation = DefecationRecordDTO.toEntity(dto, pet, imageUrls);
 
         log.info("Recording defecation for pet ID: {}, level: {}, state: {}", pet.getId(), dto.getLevel(), dto.getState());

@@ -473,7 +473,7 @@ public class RecordController {
             })
     })
     @PostMapping(value = "/water")
-    public ResponseEntity<ResponseDTO<RecordResponseDTO.WaterResponseDTO>> recordWaterIntake(@Validated(LevelState.class) @RequestBody RecordWithOutImageDTO.WaterRecord dto) {
+    public ResponseEntity<ResponseDTO<RecordResponseDTO.WaterResponseDTO>> recordWaterIntake(@Validated(StateGroup.class) @RequestBody RecordWithOutImageDTO.WaterRecord dto) {
         log.info("Received water intake record request for pet ID: {}", dto.getPetId());
         RecordResponseDTO.WaterResponseDTO result = recordService.recordWater(dto);
         log.info("Water intake record completed for pet ID: {}", dto.getPetId());
