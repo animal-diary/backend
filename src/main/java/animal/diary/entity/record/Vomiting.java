@@ -8,6 +8,7 @@ import jakarta.persistence.Entity;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
+import org.hibernate.annotations.Formula;
 
 import java.util.List;
 
@@ -22,4 +23,7 @@ public class Vomiting extends Diary{
     @Schema(description = "토 이미지", example = "https://example.com/vomiting1.jpg, https://example.com/vomiting2.jpg")
     @Convert(converter = StringListConverter.class)
     private List<String> imageUrls;
+
+    @Formula("image_urls")
+    private String imageUrlsRaw;
 }

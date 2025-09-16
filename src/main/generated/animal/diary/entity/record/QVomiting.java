@@ -32,6 +32,8 @@ public class QVomiting extends EntityPathBase<Vomiting> {
 
     public final ListPath<String, StringPath> imageUrls = this.<String, StringPath>createList("imageUrls", String.class, StringPath.class, PathInits.DIRECT2);
 
+    public final StringPath imageUrlsRaw = createString("imageUrlsRaw");
+
     //inherited
     public final DateTimePath<java.time.LocalDateTime> lastModifiedAt;
 
