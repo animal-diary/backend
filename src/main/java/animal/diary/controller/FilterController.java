@@ -192,7 +192,7 @@ public class FilterController {
                     특정 조건들을 모두 만족하는 피부 기록이 있는 날짜들을 반환합니다.
 
                     - year, month: 필터링할 연도와 월
-                    - state: 피부 상태 (ZERO, ONE, TWO, THREE, FOUR, FIVE)
+                    - state: 피부 상태 (ZERO, ONE, TWO, THREE, FOUR, FIVE) (복수 선택 가능, 쉼표로 구분)
                     - withImageOrMemo: 메모/이미지 유무 (O, X 복수 선택 가능, 쉼표로 구분)
 
                     """
@@ -218,7 +218,7 @@ public class FilterController {
                                     name = "필터 조건 예시",
                                     value = """
                                     {
-                                      "state": "THREE",
+                                      "state": "THREE,FOUR",
                                       "withImageOrMemo": "O,X"
                                     }
                                     """

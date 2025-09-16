@@ -20,7 +20,7 @@ public class ConvulsionFilterRequestDTO {
     //    DROOLING("침흘림"),
     //    UNCONSCIOUS("의식없음"),
     //    NORMAL("추가 증상 없음");
-    @Schema(description = "이상 행동 선택 (복수 선택 가능, 쉼표로 구분)", example = "INCONTINENCE,DROOLING", nullable = true)
+    @Schema(description = "이상 행동 선택 (INCONTINENCE, DROOLING, UNCONSCIOUS, NORMAL) (복수 선택 가능, 쉼표로 구분)", example = "INCONTINENCE,DROOLING", nullable = true)
     private String abnormalState;
 
 

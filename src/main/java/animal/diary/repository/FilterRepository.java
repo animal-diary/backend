@@ -12,6 +12,7 @@ import animal.diary.dto.request.EnergyFilterRequestDTO;
 import animal.diary.dto.request.SyncopeFilterRequestDTO;
 import animal.diary.entity.record.state.AbnormalState;
 import animal.diary.entity.record.state.BinaryState;
+import animal.diary.entity.record.state.NumberState;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
@@ -220,8 +221,23 @@ public class FilterRepository {
         builder.and(skin.createdAt.between(start, endInclusive));
 
         // 필터 조건 추가 (null이 아닌 경우만)
-        if (filter.getState() != null) {
-            builder.and(skin.state.eq(filter.getState()));
+        if (filter.getState() != null && !filter.getState().trim().isEmpty()) {
+            String[] states = filter.getState().split(",");
+            BooleanBuilder stateBuilder = new BooleanBuilder();
+
+            for (String stateStr : states) {
+                String trimmedState = stateStr.trim();
+                try {
+                    NumberState numberState = NumberState.valueOf(trimmedState);
+                    stateBuilder.or(skin.state.eq(numberState));
+                } catch (IllegalArgumentException e) {
+                    // 잘못된 상태값은 무시
+                }
+            }
+
+            if (stateBuilder.hasValue()) {
+                builder.and(stateBuilder);
+            }
         }
 
         // 메모/이미지 유무 필터 (복수 선택 가능, 쉼표로 구분)
